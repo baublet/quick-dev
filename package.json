@@ -1,0 +1,32 @@
+{
+  "name": "quick-dev",
+  "version": "1.0.0",
+  "description": "quick-dev",
+  "main": "src/server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baublet/quick-dev.git"
+  },
+  "author": "Ryan Poe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baublet/quick-dev/issues"
+  },
+  "homepage": "https://github.com/baublet/quick-dev#readme",
+  "dependencies": {
+    "add": "^2.0.6",
+    "apollo-server-lambda": "^2.19.0",
+    "express": "^4.17.1",
+    "form-data": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "yarn": "^1.22.10"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.0"
+  }
+}

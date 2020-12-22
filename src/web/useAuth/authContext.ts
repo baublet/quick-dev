@@ -6,6 +6,7 @@ const placeholderFunction: any = () => {
 
 export interface AuthData {
   authenticated: boolean;
+  loading: boolean;
   githubState: null | {
     clientId: string;
     redirectUri: string;
@@ -26,6 +27,7 @@ const authContext = React.createContext<{
   authData: {
     authenticated: false,
     user: null,
+    loading: false,
     githubState: {
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,

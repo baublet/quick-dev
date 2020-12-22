@@ -1,0 +1,21 @@
+type Query {
+  user: User
+}
+
+type Mutation {
+  login(input: LoginInput): UserMutationInput!
+}
+
+input LoginInput {
+  
+}
+
+type User {
+  id: ID!
+  repositories: [Repository!]!
+}
+
+type UserMutationInput {
+  errors: [String!]!
+  user: User
+}

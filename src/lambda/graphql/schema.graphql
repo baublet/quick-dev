@@ -1,13 +1,10 @@
 type Query {
   user: User
+  ping: String!
 }
 
 type Mutation {
-  login(input: LoginInput): UserMutationInput!
-}
-
-input LoginInput {
-  
+  login: UserMutationInput!
 }
 
 type User {
@@ -18,4 +15,9 @@ type User {
 type UserMutationInput {
   errors: [String!]!
   user: User
+}
+
+type Repository {
+  id: ID!
+  name: String!
 }

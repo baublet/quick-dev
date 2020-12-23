@@ -1,3 +1,5 @@
+require('@babel/polyfill/noConflict')
+
 import { APIGatewayEvent } from "aws-lambda";
 import FormData from "form-data";
 import fetch from "node-fetch";

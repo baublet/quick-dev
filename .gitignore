@@ -1,3 +1,6 @@
+builtFunctions
+.env
+
 # Logs
 logs
 *.log

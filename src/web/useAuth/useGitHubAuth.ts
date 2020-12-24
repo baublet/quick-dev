@@ -34,19 +34,12 @@ export function useGitHubAuth(
         body: JSON.stringify(requestData),
       })
         .then((response) => response.json())
-        .then(
-          (data: { accessToken: string; tokenType: string; scope: string }) =>
-            setAuthData({
-              ...authData,
-              authenticated: true,
-              loading: false,
-              githubState: {
-                ...authData.githubState,
-                accessToken: data.accessToken,
-                tokenType: data.tokenType,
-                scope: data.scope,
-              },
-            })
+        .then(() =>
+          setAuthData({
+            ...authData,
+            authenticated: true,
+            loading: false,
+          })
         )
         .catch((error) => {
           console.error({ error });

@@ -12,15 +12,16 @@ export function useAuth() {
 
   useGitHubAuth(authData, setAuthData);
 
-  console.log({ authData });
-
   return {
     authData,
     authenticated: authData.authenticated,
     loading: authData.loading,
     gitHubLink,
     setAuthenticated: (authenticated: boolean) =>
-      setAuthData({ ...authData, authenticated }),
-    setUserData: (user: AuthData["user"]) => setAuthData({ ...authData, user }),
+      setAuthData((authData) => ({ ...authData, authenticated })),
+    setUserData: (user: AuthData["user"]) =>
+      setAuthData((authData) => ({ ...authData, user })),
+    setLoading: (loading: boolean) =>
+      setAuthData((authData) => ({ ...authData, loading })),
   };
 }

@@ -1,7 +1,8 @@
 import { Connection } from "../../common/db";
-import { ServiceHandler } from "../../../common/serviceHandler";
+import { ServiceHandler } from "./serviceHandler";
 
 export interface ContextUser {
+  id: string;
   avatar: string;
   name: string;
   email: string;

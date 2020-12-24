@@ -34,6 +34,7 @@ export function createCache(
     if (!element.expiry) {
       return true;
     }
+
     if (now - element.added > element.expiry) {
       delete cache[key];
       return false;

@@ -32,6 +32,7 @@ export const handler = async (event: APIGatewayEvent) => {
   const accessToken = params.get("access_token");
   const scope = params.get("scope");
   const tokenType = params.get("token_type");
+  const cookieValue = encodeURI(`${tokenType} ${accessToken}`);
 
   return {
     statusCode: 200,
@@ -40,5 +41,8 @@ export const handler = async (event: APIGatewayEvent) => {
       scope,
       tokenType,
     }),
+    headers: {
+      "Set-Cookie": `auth=${cookieValue}; Path=/; HttpOnly`
+    }
   };
 };

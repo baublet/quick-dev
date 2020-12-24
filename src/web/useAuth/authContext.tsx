@@ -13,9 +13,6 @@ export interface AuthData {
     code?: string;
     proxyUrl: string;
     redirectUri: string;
-    accessToken?: string;
-    scope?: string;
-    tokenType?: string;
   };
   user: null | {
     name: string;
@@ -34,8 +31,6 @@ const getDefaultAuthData = (): AuthData => ({
     redirectUri: process.env.GITHUB_CLIENT_REDIRECT_URI,
   },
 });
-
-console.log({ data: getDefaultAuthData() });
 
 const authContext = React.createContext<{
   authData: AuthData;

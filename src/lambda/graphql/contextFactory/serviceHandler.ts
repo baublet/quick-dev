@@ -1,4 +1,4 @@
-import { Context } from "../lambda/graphql/contextFactory";
+import { Context } from "./index";
 
 type ServiceFactory = (context: Context) => any;
 

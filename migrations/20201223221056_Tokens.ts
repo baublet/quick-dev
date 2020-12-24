@@ -2,7 +2,8 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   knex.schema.createTable("tokens", (table) => {
-    table.uuid("id").primary();
+    table.increments();
+    table.uuid("token").unique();
     table.boolean("used").defaultTo("false");
     table.dateTime("expires");
     table.timestamps();

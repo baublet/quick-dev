@@ -20,4 +20,5 @@ type UserMutationInput {
 type Repository {
   id: ID!
   name: String!
+  cloneLink: String!
 }

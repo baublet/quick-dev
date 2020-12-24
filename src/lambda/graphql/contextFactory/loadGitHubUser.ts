@@ -32,14 +32,14 @@ export async function loadGitHubUser({
   accessToken: string;
 }): Promise<GitHubUser> {
   if (!gitHubUserCache.has(accessToken)) {
-    const fetchResponse: GitHubUserResponse = await fetch(
+    const fetchResponse = await fetch(
       `https://api.github.com/user?scope=${scope}`,
       {
         headers: {
           authorization: `${tokenType} ${accessToken}`,
         },
       }
-    ).then((response) => response.json());
+    ).then((response) => response.json() as Promise<GitHubUserResponse>);
 
     const userData: GitHubUser = {
       avatar: fetchResponse.avatar_url,

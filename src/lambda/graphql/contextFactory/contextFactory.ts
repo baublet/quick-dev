@@ -3,6 +3,7 @@ import { APIGatewayEvent } from "aws-lambda";
 import { loadGitHubUser } from "./loadGitHubUser";
 import { Context, ContextUser } from "./";
 import { getDatabaseConnection } from "../../common/db";
+import { serviceHandler } from "../../../common/serviceHandler";
 
 export async function contextFactory({
   event,
@@ -25,8 +26,11 @@ export async function contextFactory({
     }
   }
 
-  const db = getDatabaseConnection();
+  const context: Partial<Context> = {};
 
-  const transaction = await db.transaction();
-  return { user, transaction };
+  context.user = user;
+  context.db = getDatabaseConnection();
+  context.service = serviceHandler(context as Context);
+
+  return context as Context;
 }

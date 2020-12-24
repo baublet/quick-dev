@@ -1,4 +1,4 @@
-export type JobType = "create_instance";
+export type JobType = "create_environment";
 
 export type JobStatus = "ready" | "working" | "failed" | "done";
 
@@ -7,7 +7,7 @@ export interface Job {
   created_at: Date;
   updated_at: Date;
   payload: string;
-  name: JobType;
+  type: JobType;
   status: JobStatus;
   processor: string;
 }

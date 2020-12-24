@@ -1,4 +1,5 @@
-import { Transaction } from "../../common/db";
+import { Connection } from "../../common/db";
+import { ServiceHandler } from "../../../common/serviceHandler";
 
 export interface ContextUser {
   avatar: string;
@@ -8,7 +9,8 @@ export interface ContextUser {
 
 export interface Context {
   user: ContextUser | null;
-  transaction: Transaction;
+  db: Connection;
+  service: ServiceHandler<any>;
 }
 
 export { contextFactory } from "./contextFactory";

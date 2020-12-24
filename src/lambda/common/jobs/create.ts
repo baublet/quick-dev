@@ -3,19 +3,19 @@ import { Transaction } from "../db";
 
 type CreateJobInput<
   T extends Record<string, string | number | boolean> = any
-> = Pick<Job, "name"> & {
+> = Pick<Job, "type"> & {
   payload?: T;
 };
 
 export async function create<
   T extends Record<string, string | number | boolean>
 >(
-  { name, payload = {} as T }: CreateJobInput<T>,
-  trx: Transaction
+  trx: Transaction,
+  { type, payload = {} as T }: CreateJobInput<T>
 ): Promise<Job> {
   const payloadString = JSON.stringify(payload);
   const createdJobIds = await trx<Job>("jobs").insert({
-    name,
+    type,
     payload: payloadString,
   });
 

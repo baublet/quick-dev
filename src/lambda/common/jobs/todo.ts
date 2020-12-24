@@ -2,8 +2,8 @@ import { Job } from "./index";
 import { Transaction } from "../db";
 
 export async function todo(
-  processor: string,
-  trx: Transaction
+  trx: Transaction,
+  processor: string
 ): Promise<Job | undefined> {
   const found = await trx<Job>("jobs")
     .select()
@@ -21,6 +21,8 @@ export async function todo(
     .update({ status: "working", processor })
     .where({ id: jobToDo.id })
     .limit(1);
+
+  trx.commit();
 
   return jobToDo;
 }

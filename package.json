@@ -6,6 +6,7 @@
   "scripts": {
     "db:migration:create": "yarn knex migrate:make -x ts",
     "db:migrate": "yarn ts-node ./node_modules/.bin/knex migrate:latest",
+    "build:netlify": "yarn concurrently npm:build:lambda npm:build:web",
     "build:lambda": "netlify-lambda build src/lambda -c webpack.functions.js",
     "build:web": "webpack-cli -c client.webpack.config.js",
     "develop:lambda": "yarn netlify dev",
@@ -29,6 +30,7 @@
     "dotenv": "^8.2.0",
     "encoding": "^0.1.13",
     "glob": "^7.1.6",
+    "human-readable-ids": "^1.0.4",
     "knex": "^0.21.14",
     "node-fetch": "^3.0.0-beta.9",
     "pg": "^8.5.1",

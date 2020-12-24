@@ -1,14 +1,26 @@
 import React from "react";
 
 import { AuthContext, AuthData } from "./authContext";
+import { useGitHubAuth } from "./useGitHubAuth";
 
 export function useAuth() {
   const value = React.useContext(AuthContext);
 
+  const authData = value.authData;
+  const setAuthData = value.setAuthData;
+  const gitHubLink = `https://github.com/login/oauth/authorize?scope=user&client_id=${authData.githubState.clientId}&redirect_uri=${authData.githubState.redirectUri}`;
+
+  useGitHubAuth(authData, setAuthData);
+
+  console.log({ authData });
+
   return {
+    authData,
+    authenticated: authData.authenticated,
+    loading: authData.loading,
+    gitHubLink,
     setAuthenticated: (authenticated: boolean) =>
-      value.setAuthData({ ...value.authData, authenticated }),
-    setUserData: (user: AuthData["user"]) =>
-      value.setAuthData({ ...value.authData, user }),
+      setAuthData({ ...authData, authenticated }),
+    setUserData: (user: AuthData["user"]) => setAuthData({ ...authData, user }),
   };
 }

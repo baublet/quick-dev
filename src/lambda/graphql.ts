@@ -1,4 +1,5 @@
 require("@babel/polyfill/noConflict");
+require("dotenv").config();
 
 import { ApolloServer } from "apollo-server-lambda";
 import fs from "fs";

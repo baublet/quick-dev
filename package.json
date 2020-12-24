@@ -4,8 +4,13 @@
   "description": "quick-dev",
   "main": "src/server/index.js",
   "scripts": {
-    "build:lambda": "netlify-lambda build src/lambda",
-    "develop": "netlify dev",
+    "db:migration:create": "yarn knex migrate:make -x ts",
+    "db:migrate": "yarn ts-node ./node_modules/.bin/knex migrate:latest",
+    "build:lambda": "netlify-lambda build src/lambda -c webpack.functions.js",
+    "build:web": "webpack-cli -c client.webpack.config.js",
+    "develop:lambda": "yarn netlify dev",
+    "develop:web": "webpack-cli -c client.webpack.config.js --watch",
+    "develop": "yarn concurrently npm:develop:lambda npm:develop:web",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,27 +24,30 @@
   },
   "homepage": "https://github.com/baublet/quick-dev#readme",
   "dependencies": {
-    "add": "^2.0.6",
     "apollo-server-lambda": "^2.19.0",
     "concurrently": "^5.3.0",
-    "express": "^4.17.1",
-    "form-data": "^3.0.0",
+    "dotenv": "^8.2.0",
     "glob": "^7.1.6",
-    "netlify-lambda": "^2.0.2",
+    "knex": "^0.21.14",
     "node-fetch": "^2.6.1",
+    "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "ts-loader": "^8.0.12",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.1.3",
-    "webpack": "^5.11.0",
-    "webpack-cli": "^4.2.0",
-    "yarn": "^1.22.10"
+    "react-router-dom": "^5.2.0",
+    "sqlite3": "^5.0.0"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-typescript": "^7.12.7",
     "@types/react": "^17.0.0",
-    "netlify-cli": "^2.69.11"
+    "concurrently": "^5.3.0",
+    "html-webpack-plugin": "^4.5.0",
+    "netlify-cli": "^2.69.11",
+    "netlify-lambda": "^2.0.2",
+    "ts-loader": "^8.0.12",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0"
   }
 }

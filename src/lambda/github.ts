@@ -1,4 +1,5 @@
-require('@babel/polyfill/noConflict')
+require("@babel/polyfill/noConflict");
+require("dotenv").config();
 
 import { APIGatewayEvent } from "aws-lambda";
 import FormData from "form-data";
@@ -32,10 +33,12 @@ export const handler = async (event: APIGatewayEvent) => {
   const scope = params.get("scope");
   const tokenType = params.get("token_type");
 
-  // Request to return data of a user that has been authenticated
-  const fetchResponse = await fetch(
-    `https://api.github.com/user?access_token=${accessToken}&scope=${scope}&token_type=${tokenType}`
-  ).then((response) => response.json());
-
-  console.log(fetchResponse);
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      accessToken,
+      scope,
+      tokenType,
+    }),
+  };
 };

@@ -1,4 +1,5 @@
 require('@babel/polyfill/noConflict')
+require("dotenv").config();
 
 exports.handler = async function(event, context) {
   return {

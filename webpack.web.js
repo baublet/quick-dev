@@ -1,11 +1,15 @@
+require("dotenv").config();
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const webpack = require("webpack");
 
-require('dotenv').config()
-
 module.exports = {
   entry: "./src/web/index.tsx",
+  devtool: process.env.NODE_ENV === "production" ? undefined : "eval",
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   module: {
     rules: [
       {
@@ -35,7 +39,7 @@ module.exports = {
       title: "QuickStrap",
       template: "src/web/index.html",
       scriptLoading: "defer",
-      publicPath: "/"
+      publicPath: "/",
     }),
     new webpack.DefinePlugin({
       "process.env.GITHUB_CLIENT_ID": `'${process.env.GITHUB_CLIENT_ID}'`,

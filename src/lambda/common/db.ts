@@ -3,7 +3,13 @@ import knex from "knex";
 export type Connection = knex<any, unknown[]>;
 export type Transaction = knex.Transaction<any, any>;
 
-let dbConnection: Connection;
+declare global {
+  module NodeJS {
+    interface Global {
+      dbConnection: Connection;
+    }
+  }
+}
 
 export function getDatabaseConnection() {
   if (!process.env.DATABASE_CONNECTION) {
@@ -13,10 +19,10 @@ export function getDatabaseConnection() {
     process.exit();
   }
 
-  if (!dbConnection) {
+  if (!global.dbConnection) {
     const connectionInfo = JSON.parse(process.env.DATABASE_CONNECTION);
 
-    dbConnection = knex(connectionInfo);
+    global.dbConnection = knex(connectionInfo);
   }
-  return dbConnection;
+  return global.dbConnection;
 }

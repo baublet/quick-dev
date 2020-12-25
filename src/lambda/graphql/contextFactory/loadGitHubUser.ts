@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 
+import { githubApi } from "../../common/githubApi";
 import { createCache } from "../../../common/simpleCache";
 
 declare global {
@@ -15,6 +16,7 @@ global.gitHubUserCache =
 const gitHubUserCache = global.gitHubUserCache;
 
 interface GitHubUserResponse {
+  id: number;
   avatar_url: string;
   html_url: string;
   repos_url: string;
@@ -35,7 +37,6 @@ interface GitHubUser {
 
 export async function loadGitHubUser({
   scope,
-  tokenType,
   accessToken,
 }: {
   scope: string;
@@ -47,17 +48,13 @@ export async function loadGitHubUser({
   }
 
   if (!gitHubUserCache.has(accessToken)) {
-    const fetchResponse = await fetch(
-      `https://api.github.com/user?scope=${scope}`,
-      {
-        headers: {
-          authorization: `${tokenType} ${accessToken}`,
-        },
-      }
-    ).then((response) => response.json() as Promise<GitHubUserResponse>);
+    const fetchResponse = (await githubApi({
+      path: `user?scope=${scope}`,
+      accessToken,
+    })) as GitHubUserResponse;
 
     const userData: GitHubUser = {
-      id: fetchResponse.email,
+      id: fetchResponse.id.toString(),
       avatar: fetchResponse.avatar_url,
       bioUrl: fetchResponse.html_url,
       reposUrl: fetchResponse.repos_url,

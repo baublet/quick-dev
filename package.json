@@ -6,11 +6,11 @@
   "scripts": {
     "db:migration:create": "yarn knex migrate:make -x ts",
     "db:migrate": "yarn ts-node ./node_modules/.bin/knex migrate:latest",
-    "build:netlify": "yarn concurrently npm:build:lambda npm:build:web",
-    "build:lambda": "netlify-lambda build src/lambda -c webpack.functions.js",
-    "build:web": "webpack-cli -c client.webpack.config.js",
+    "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web",
+    "build:lambda": "netlify-lambda build -c webpack.functions.js src/lambda",
+    "build:web": "webpack-cli -c webpack.web.js",
     "develop:lambda": "yarn netlify dev",
-    "develop:web": "webpack-cli -c client.webpack.config.js --watch",
+    "develop:web": "webpack-cli -c webpack.web.js --watch",
     "develop": "yarn concurrently npm:develop:lambda npm:develop:web",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

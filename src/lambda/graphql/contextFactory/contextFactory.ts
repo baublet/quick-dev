@@ -11,27 +11,35 @@ export async function contextFactory({
 }: {
   event: APIGatewayEvent;
 }): Promise<Context> {
-  const cookies = cookie.parse(event.headers.cookie);
-  const authorizationToken = cookies.auth;
+  try {
+    const cookies = cookie.parse(event.headers.cookie || "");
+    const authorizationToken = cookies.auth;
+    const context: Partial<Context> = {};
 
-  let user: ContextUser | null = null;
-  if (authorizationToken) {
-    const tokenParts = authorizationToken.split(" ");
-    const githubUser = await loadGitHubUser({
-      scope: "user",
-      tokenType: tokenParts[0],
-      accessToken: tokenParts[1],
-    });
-    if (githubUser) {
-      user = githubUser;
+    let user: ContextUser | null = null;
+    if (authorizationToken) {
+      const tokenParts = authorizationToken.split(" ");
+      const githubUser = await loadGitHubUser({
+        scope: "user",
+        tokenType: "bearer",
+        accessToken: tokenParts[1],
+      });
+      context.authorizationToken = tokenParts[1];
+      if (githubUser) {
+        user = githubUser;
+      }
     }
+
+    context.user = user;
+    context.db = getDatabaseConnection();
+    context.service = serviceHandler(context as Context);
+
+    return context as Context;
+  } catch (e) {
+    console.error({
+      message: e.message,
+      stackTrace: e.stack,
+    });
+    throw new Error(e);
   }
-
-  const context: Partial<Context> = {};
-
-  context.user = user;
-  context.db = getDatabaseConnection();
-  context.service = serviceHandler(context as Context);
-
-  return context as Context;
 }

@@ -23,13 +23,16 @@ const server = new ApolloServer({
   context,
   introspection: true,
   playground: {
-    endpoint: "/.netlify/functions/graphql"
+    endpoint: "/.netlify/functions/graphql",
+    settings: {
+      "request.credentials": "same-origin",
+    },
   },
 });
 
 exports.handler = server.createHandler({
   cors: {
     origin: "*",
-    credentials: true
+    credentials: true,
   },
 });

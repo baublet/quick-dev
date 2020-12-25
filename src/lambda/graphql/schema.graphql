@@ -11,7 +11,7 @@ type User {
   id: ID!
   name: String!
   email: String!
-  repositories: [Repository!]!
+  repositories(page: PaginationInput): RepositoryConnection!
 }
 
 type UserMutationInput {
@@ -22,5 +22,17 @@ type UserMutationInput {
 type Repository {
   id: ID!
   name: String!
-  cloneLink: String!
+  gitUrl: String!
+  htmlUrl: String!
+}
+
+input PaginationInput {
+  perPage: Int
+  page: Int
+}
+
+type RepositoryConnection {
+  totalPages: Int
+  currentPage: Int!
+  nodes: [Repository!]!
 }

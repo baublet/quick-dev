@@ -12,6 +12,7 @@ export interface Context {
   user: ContextUser | null;
   db: Connection;
   service: ServiceHandler<any>;
+  authorizationToken?: string;
 }
 
 export { contextFactory } from "./contextFactory";

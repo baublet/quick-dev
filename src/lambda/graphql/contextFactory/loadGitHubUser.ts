@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 import { githubApi } from "../../common/githubApi";
 import { createCache } from "../../../common/simpleCache";
 

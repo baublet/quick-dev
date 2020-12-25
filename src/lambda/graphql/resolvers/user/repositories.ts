@@ -1,6 +1,20 @@
 import { githubApi } from "../../../common/githubApi";
 import { Context } from "../../contextFactory";
 
+import { createCache } from "../../../../common/simpleCache";
+
+declare global {
+  module NodeJS {
+    interface Global {
+      gitHubUserReposCache: ReturnType<typeof createCache>;
+    }
+  }
+}
+
+global.gitHubUserReposCache =
+  global.gitHubUserReposCache || createCache({}, 1000 * 60);
+const gitHubUserReposCache = global.gitHubUserReposCache;
+
 interface GitHubRepoResponse {
   id: number;
   full_name: string;
@@ -20,11 +34,12 @@ interface GitHubRepo {
 export async function repositories(
   _parent: Context["user"],
   {
-    page = 1,
-    perPage = 25,
+    input: { page = 1, perPage = 25 },
   }: {
-    perPage: number;
-    page: number;
+    input: {
+      perPage: number;
+      page: number;
+    };
   },
   context: Context
 ): Promise<{
@@ -36,19 +51,26 @@ export async function repositories(
     throw new Error("Not authorized");
   }
 
-  const fetchResponse = await githubApi<GitHubRepoResponse[]>({
-    path: `user/repos?per_page=${perPage}&page=${page}`,
-    accessToken: context.authorizationToken,
-  });
+  const cacheKey = `${context.authorizationToken}-${page}-${perPage}`;
+  console.log("Cache key: " + cacheKey);
 
-  return {
-    currentPage: page,
-    nodes: fetchResponse.map((repo) => ({
-      id: `${repo.id}`,
-      name: repo.full_name,
-      private: repo.private,
-      htmlUrl: repo.url,
-      gitUrl: repo.git_url,
-    })),
-  };
+  if (!gitHubUserReposCache.has(cacheKey)) {
+    const fetchResponse = await githubApi<GitHubRepoResponse[]>({
+      path: `user/repos?per_page=${perPage}&page=${page}`,
+      accessToken: context.authorizationToken,
+    });
+
+    gitHubUserReposCache.set(cacheKey, {
+      currentPage: page,
+      nodes: fetchResponse.map((repo) => ({
+        id: `${repo.id}`,
+        name: repo.full_name,
+        private: repo.private,
+        htmlUrl: repo.url,
+        gitUrl: repo.git_url,
+      })),
+    });
+  }
+
+  return gitHubUserReposCache.get(cacheKey);
 }

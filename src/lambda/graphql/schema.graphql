@@ -11,7 +11,7 @@ type User {
   id: ID!
   name: String!
   email: String!
-  repositories(page: PaginationInput): RepositoryConnection!
+  repositories(input: PaginationInput): RepositoryConnection!
 }
 
 type UserMutationInput {

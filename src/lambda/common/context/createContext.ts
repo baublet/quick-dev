@@ -3,11 +3,14 @@ import { getDatabaseConnection, Connection } from "../../common/db";
 import { serviceHandler, ServiceHandler } from "./serviceHandler";
 import { cache } from "./cache";
 
+export type UserSource = "github";
+
 export interface ContextUser {
   id: string;
   avatar: string;
   name: string;
   email: string;
+  source: UserSource;
 }
 
 export interface Context {
@@ -42,7 +45,10 @@ export async function createContext({
   if (accessToken) {
     const githubUser = await getCurrentUser(context as Context);
     if (githubUser) {
-      user = githubUser;
+      user = {
+        ...githubUser,
+        source: "github",
+      };
     }
   }
 

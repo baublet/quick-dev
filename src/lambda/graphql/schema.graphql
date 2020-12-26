@@ -4,7 +4,28 @@ type Query {
 }
 
 type Mutation {
-  login: UserMutationInput!
+  createEnvironment(input: EnvironmentMutationInput!): EnvironmentMutationPayload!
+}
+
+scalar Date
+
+input EnvironmentMutationInput {
+  repositoryUrl: String!
+}
+
+type EnvironmentMutationPayload {
+  errors: [String!]!
+  environment: Environment
+}
+
+type Environment {
+  id: ID!
+  created: Date!
+  updated: Date!
+  deleted: Boolean!
+  ipv4: String!
+  name: String!
+  subdomain: String!
 }
 
 type User {
@@ -12,11 +33,6 @@ type User {
   name: String!
   email: String!
   repositories: Repositories!
-}
-
-type UserMutationInput {
-  errors: [String!]!
-  user: User
 }
 
 type Repository {

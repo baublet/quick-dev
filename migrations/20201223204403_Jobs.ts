@@ -1,11 +1,11 @@
 import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
-  knex.schema.createTable("jobs", function (table) {
+  await knex.schema.createTable("jobs", function (table) {
     table.increments();
     table.timestamps();
-    table.string("name");
-    table.string("status").index("job_status");
+    table.string("type").notNullable();
+    table.string("status").notNullable().index("jobStatus");
     table.string("processor");
     table.string("error");
     table.string("payload");

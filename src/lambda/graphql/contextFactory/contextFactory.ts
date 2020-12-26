@@ -1,10 +1,8 @@
 import { APIGatewayEvent } from "aws-lambda";
 import cookie from "cookie";
+import { ulid } from "ulid";
 
-import { loadGitHubUser } from "./loadGitHubUser";
-import { Context, ContextUser } from "./";
-import { getDatabaseConnection } from "../../common/db";
-import { serviceHandler } from "./serviceHandler";
+import { createContext, Context } from "../../common/context";
 
 export async function contextFactory({
   event,
@@ -13,28 +11,9 @@ export async function contextFactory({
 }): Promise<Context> {
   try {
     const cookies = cookie.parse(event.headers.cookie || "");
-    const authorizationToken = cookies.auth;
-    const context: Partial<Context> = {};
+    const accessToken = cookies.auth || undefined;
 
-    let user: ContextUser | null = null;
-    if (authorizationToken) {
-      const tokenParts = authorizationToken.split(" ");
-      const githubUser = await loadGitHubUser({
-        scope: "user",
-        tokenType: "bearer",
-        accessToken: tokenParts[1],
-      });
-      context.authorizationToken = tokenParts[1];
-      if (githubUser) {
-        user = githubUser;
-      }
-    }
-
-    context.user = user;
-    context.db = getDatabaseConnection();
-    context.service = serviceHandler(context as Context);
-
-    return context as Context;
+    return createContext({ accessToken, requestId: ulid() });
   } catch (e) {
     console.error({
       message: e.message,

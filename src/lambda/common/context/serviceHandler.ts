@@ -1,8 +1,10 @@
-import { Context } from "./index";
+import { Context } from "./createContext";
 
 type ServiceFactory = (context: Context) => any;
 
-export type ServiceHandler<T extends ServiceFactory> = (service: T) => ReturnType<T>;
+export type ServiceHandler<T extends ServiceFactory> = (
+  service: T
+) => ReturnType<T>;
 
 export function serviceHandler(context: Context): ServiceHandler<any> {
   const serviceMap = new Map<ServiceFactory, any>();

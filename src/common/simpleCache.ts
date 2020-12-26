@@ -1,6 +1,6 @@
-interface SimpleCache {
-  get<T>(key: string): T;
-  set(key: string, value: any, timeInMs?: number): void;
+export interface SimpleCache<T = any> {
+  get(key: string): T;
+  set(key: string, value: T, timeInMs?: number): void;
   has(key: string): boolean;
 }
 

@@ -13,7 +13,7 @@ const userQuery = gql`
   }
 `;
 
-interface CurrentUser {
+export interface CurrentUser {
   id: string;
   name: string;
   email: string;

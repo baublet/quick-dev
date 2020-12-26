@@ -11,7 +11,7 @@ type User {
   id: ID!
   name: String!
   email: String!
-  repositories(input: PaginationInput): RepositoryConnection!
+  repositories: Repositories!
 }
 
 type UserMutationInput {
@@ -31,8 +31,14 @@ input PaginationInput {
   page: Int
 }
 
+type Repositories {
+  gitHub(input: PaginationInput): RepositoryConnection!
+}
+
 type RepositoryConnection {
   totalPages: Int
   currentPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
   nodes: [Repository!]!
 }

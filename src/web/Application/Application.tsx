@@ -1,19 +1,20 @@
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
+
 import { GraphQLProvider } from "../GraphQLProvider";
-
-import { Login } from "../Login";
 import { AuthProvider } from "../useAuth";
-
-import { UserDataTest } from "../UserDataTest";
+import { Header } from "./Header";
+import { Routes } from "./Routes";
 
 export function Application() {
   return (
-    <AuthProvider>
-      <GraphQLProvider>
-        <h1>QuickStrap</h1>
-        <Login />
-        <UserDataTest />
-      </GraphQLProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <GraphQLProvider>
+          <Header />
+          <Routes />
+        </GraphQLProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

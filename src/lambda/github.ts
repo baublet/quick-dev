@@ -32,7 +32,7 @@ export const handler = async (event: APIGatewayEvent) => {
   const accessToken = params.get("access_token");
   const scope = params.get("scope");
   const tokenType = params.get("token_type");
-  const cookieValue = encodeURI(`${tokenType} ${accessToken}`);
+  const cookieValue = encodeURI(`${accessToken}`);
 
   return {
     statusCode: 200,

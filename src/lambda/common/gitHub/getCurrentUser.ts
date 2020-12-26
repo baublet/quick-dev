@@ -1,17 +1,5 @@
-import { githubApi } from "../../common/githubApi";
-import { createCache } from "../../../common/simpleCache";
-
-declare global {
-  module NodeJS {
-    interface Global {
-      gitHubUserCache: ReturnType<typeof createCache>;
-    }
-  }
-}
-
-global.gitHubUserCache =
-  global.gitHubUserCache || createCache({}, 1000 * 60 * 5);
-const gitHubUserCache = global.gitHubUserCache;
+import { githubApi } from "./githubApi";
+import { Context } from "../context";
 
 interface GitHubUserResponse {
   id: number;
@@ -23,7 +11,7 @@ interface GitHubUserResponse {
   public_repos: number;
 }
 
-interface GitHubUser {
+export interface GitHubUser {
   id: string;
   avatar: string;
   bioUrl: string;
@@ -33,26 +21,30 @@ interface GitHubUser {
   publicRepos: number;
 }
 
-export async function loadGitHubUser({
-  scope,
-  accessToken,
-}: {
-  scope: string;
-  tokenType: string;
-  accessToken: string;
-}): Promise<GitHubUser | null> {
+export async function getCurrentUser(
+  context: Context
+): Promise<GitHubUser | null> {
+  const accessToken = context.accessToken;
   if (!accessToken) {
     return null;
   }
 
+  const gitHubUserCache = context.cache.gitHubUserCache;
+
   if (!gitHubUserCache.has(accessToken)) {
     const fetchResponse = (await githubApi({
-      path: `user?scope=${scope}`,
+      path: "user?scope=user",
       accessToken,
     })) as GitHubUserResponse;
 
+    console.log("GitHub user fetch res: ", fetchResponse)
+
+    if(!fetchResponse.id) {
+      return null;
+    }
+
     const userData: GitHubUser = {
-      id: fetchResponse.id.toString(),
+      id: fetchResponse.id?.toString(),
       avatar: fetchResponse.avatar_url,
       bioUrl: fetchResponse.html_url,
       reposUrl: fetchResponse.repos_url,
@@ -62,7 +54,9 @@ export async function loadGitHubUser({
     };
 
     gitHubUserCache.set(accessToken, userData);
+  } else {
+    console.debug("Cache hit for gitHub/getCurrentUser")
   }
 
-  return gitHubUserCache.get<GitHubUser>(accessToken);
+  return gitHubUserCache.get(accessToken);
 }

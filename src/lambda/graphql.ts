@@ -1,5 +1,6 @@
 require("@babel/polyfill/noConflict");
 require("dotenv").config();
+require('source-map-support').install();
 
 import { ApolloServer } from "apollo-server-lambda";
 import fs from "fs";

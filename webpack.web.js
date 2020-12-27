@@ -36,7 +36,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "QuickStrap",
+      title: "StrapYard",
       template: "src/web/index.html",
       scriptLoading: "defer",
       publicPath: "/",

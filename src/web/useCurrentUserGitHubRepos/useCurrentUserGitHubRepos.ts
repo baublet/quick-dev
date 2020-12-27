@@ -46,8 +46,9 @@ export function useCurrentUserGitHubRepos(
     variables: {
       page,
       perPage
-    },
+    }
   });
+
 
   if (loading) {
     return {

@@ -1,31 +1,20 @@
-interface Environment {
-  id: number;
-  publicId: string;
-  provider: "digital_ocean";
-  status:
-    | "hibernating"
-    | "shutdown"
-    | "saving_snapshot"
-    | "powering_on"
-    | "provisioning"
-    | "shutting_down"
-    | "ready";
-  publicStatus: "on" | "off";
-  repositoryUrl: string;
-  ipv4?: string;
-  port?: number;
-}
+import { Environment } from "../../common/environment";
 
-interface FindEnvironmentParameters {
-  id?: number;
-  publicId?: string;
+interface ExternalEnvironment {
+  id: string;
+  name: string;
+  memory: number; // in GB
+  cpus: number;
+  disk: number; // in GB
+  locked: boolean;
+  status: "new" | "active" | "off" | "archive";
+  sizeSlug: string;
+  provider: "digital_ocean";
 }
 
 export interface EnvironmentHandler {
-  findEnvironment: (
-    search: FindEnvironmentParameters
-  ) => Promise<Environment | undefined>;
-  createEnvironment: () => Promise<void>;
-  shutdownEnvironment: () => Promise<void>;
-  snapshotEnvironment: () => Promise<void>;
+  getEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
+  newEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
+  // Should always work. If something is wrong, it throws
+  destroyEnvironment: (environment: Environment | string) => Promise<void>;
 }

@@ -4,10 +4,13 @@ export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
   | "error_creating"
+  | "ready_to_provision"
   | "provisioning"
   | "error_provisioning"
   | "paused" // You can always pause (e.g., in DO, "shut down")
+  | "pausing"
   | "stopped" // You can always stop (e.g., in DO, "shut down", snapshot, delete)
+  | "stopping"
   | "saving_snapshot"
   | "starting"
   | "error_starting"
@@ -22,20 +25,21 @@ export type EnvironmentSubdomainStatus =
 
 export type EnvironmentUserSource = "github";
 
-export type EnvironmentSource = "do";
+export type EnvironmentSource = "digital_ocean";
 
-export type EnvironmentSize = "s" | "m" | "l" | "xl";
+export type EnvironmentSize = "s" | "m" | "l" | "xl" | "xxl";
 
 export interface Environment {
   created_at: Date;
   deleted: boolean;
   id: number;
   ipv4: string;
-  lifeCycleStatus: EnvironmentLifecycleStatus;
+  lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;
   repositoryUrl: string;
   size: EnvironmentSize;
   source: EnvironmentSource;
+  sourceId?: string;
   subdomain: string;
   subdomainStatus: EnvironmentSubdomainStatus;
   updated_at: Date;
@@ -49,3 +53,4 @@ export { get } from "./get";
 export { update } from "./update";
 export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
+export { resetEnvironmentId } from "./resetEnvironmentId";

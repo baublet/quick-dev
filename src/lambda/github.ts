@@ -1,5 +1,6 @@
 require("@babel/polyfill/noConflict");
 require("dotenv").config();
+require('source-map-support').install();
 
 import { APIGatewayEvent } from "aws-lambda";
 import FormData from "form-data";

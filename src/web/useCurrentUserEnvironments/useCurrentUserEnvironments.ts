@@ -1,5 +1,6 @@
-import type { Environment } from "../../lambda/common/environment";
 import { useQuery, gql } from "@apollo/client";
+
+import type { Environment } from "../../lambda/common/environment";
 
 const ENVIRONMENTS_QUERY = gql`
   {
@@ -10,6 +11,7 @@ const ENVIRONMENTS_QUERY = gql`
           id
           name
           size
+          lifecycleStatus
         }
       }
     }
@@ -21,13 +23,15 @@ interface Environments {
     environments: {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
-      nodes: Pick<Environment, "id" | "name" | "size">[];
+      nodes: Pick<Environment, "id" | "name" | "size" | "lifecycleStatus">[];
     };
   };
 }
 
 export function useCurrentUserEnvironments() {
-  const { loading, data } = useQuery<Environments>(ENVIRONMENTS_QUERY);
+  const { loading, data } = useQuery<Environments>(ENVIRONMENTS_QUERY, {
+    pollInterval: 5000,
+  });
 
   if (loading) {
     return {

@@ -29,6 +29,7 @@ type Environment {
   name: String!
   subdomain: String!
   size: String!
+  lifecycleStatus: String!
 }
 
 type User {

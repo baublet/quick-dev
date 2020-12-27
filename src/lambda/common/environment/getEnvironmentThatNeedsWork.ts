@@ -1,11 +1,13 @@
-import {
-  Environment,
-  EnvironmentSource,
-  EnvironmentLifecycleStatus,
-} from "./index";
+import { Environment, EnvironmentLifecycleStatus } from "./index";
 import { ConnectionOrTransaction } from "../db";
+import { log } from "../../../common/logger";
 
-const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = ["new"];
+const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
+  "new",
+  "creating",
+];
+
+const INTERNAL_RATE_LIMIT = 1000 * 30; // 30 seconds
 
 export async function getEnvironmentThatNeedsWork(
   trx: ConnectionOrTransaction,
@@ -18,7 +20,7 @@ export async function getEnvironmentThatNeedsWork(
     // Grab an environment that needs work
     const found = await trx<Environment>("environments")
       .select()
-      .where("processor", "=", null)
+      .whereNull("processor")
       .whereIn("lifeCycleStatus", processorStatusesThatNeedWork)
       .limit(1);
 
@@ -29,6 +31,7 @@ export async function getEnvironmentThatNeedsWork(
         .where({
           id: found[0].id,
         })
+        .whereNull("processor")
         .limit(1);
 
       // We updated, meaning this processor has dibs
@@ -36,6 +39,13 @@ export async function getEnvironmentThatNeedsWork(
         return found[0];
       }
       // Uh oh... no updated rows. That means another processor got here first!
+      log.warning(
+        "Environment processor found work, but another processor took it. Trying again."
+      );
+    } else {
+      log.debug(
+        "Environment processor couldn't find any environments to process against."
+      );
     }
   }
 }

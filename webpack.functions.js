@@ -1,6 +1,8 @@
+const prod = process.env.NODE_ENV === "production";
+
 module.exports = {
-  devtool: process.env.NODE_ENV === "production" ? undefined : "eval",
-  externals: [
-    { knex: "knex" }
-  ],
+  mode: "development",
+  devtool: "source-map",
+  optimization: { minimize: prod },
+  externals: [{ knex: "knex" }],
 };

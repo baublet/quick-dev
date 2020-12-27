@@ -10,8 +10,9 @@
     "build:lambda": "netlify-lambda build -c webpack.functions.js src/lambda",
     "build:web": "webpack-cli -c webpack.web.js",
     "develop:lambda": "yarn netlify dev",
+    "develop:workerCaller": "yarn ts-node ./devWorkerCaller.ts",
     "develop:web": "webpack-cli -c webpack.web.js --watch",
-    "develop": "yarn concurrently npm:develop:lambda npm:develop:web",
+    "develop": "yarn concurrently npm:develop:lambda npm:develop:web npm:develop:workerCaller",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -40,6 +41,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.0",
     "ulid": "^2.3.0"
   },

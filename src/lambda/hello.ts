@@ -1,5 +1,6 @@
 require('@babel/polyfill/noConflict')
 require("dotenv").config();
+require('source-map-support').install();
 
 exports.handler = async function(event, context) {
   return {

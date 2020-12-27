@@ -27,7 +27,7 @@ export async function getCurrentUserRepos(
     perPage: number;
   }
 ): Promise<{
-  totalPages?: number;
+  totalCount?: number;
   currentPage: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;

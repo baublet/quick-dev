@@ -4,7 +4,9 @@ type Query {
 }
 
 type Mutation {
-  createEnvironment(input: EnvironmentMutationInput!): EnvironmentMutationPayload!
+  createEnvironment(
+    input: EnvironmentMutationInput!
+  ): EnvironmentMutationPayload!
 }
 
 scalar Date
@@ -26,6 +28,7 @@ type Environment {
   ipv4: String!
   name: String!
   subdomain: String!
+  size: String!
 }
 
 type User {
@@ -33,6 +36,7 @@ type User {
   name: String!
   email: String!
   repositories: Repositories!
+  environments: EnvironmentConnection!
 }
 
 type Repository {
@@ -51,8 +55,16 @@ type Repositories {
   gitHub(input: PaginationInput): RepositoryConnection!
 }
 
+type EnvironmentConnection {
+  totalCount: Int!
+  currentPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  nodes: [Environment!]!
+}
+
 type RepositoryConnection {
-  totalPages: Int
+  totalCount: Int
   currentPage: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!

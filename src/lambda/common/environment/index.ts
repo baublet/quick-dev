@@ -1,4 +1,4 @@
-import {} from "../context"
+import {} from "../context";
 
 export type EnvironmentLifecycleStatus =
   | "new"
@@ -48,3 +48,4 @@ export { create } from "./create";
 export { get } from "./get";
 export { update } from "./update";
 export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
+export { getEnvironmentCount } from "./getEnvironmentCount";

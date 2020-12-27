@@ -3,11 +3,11 @@ import { useQuery, gql } from "@apollo/client";
 import type { GitHubRepo } from "../../lambda/common/gitHub/getCurrentUserRepos";
 
 const GITHUB_REPOS_QUERY = gql`
-  query($page: Int!) {
+  query($page: Int!, $perPage: Int!) {
     user {
       repositories {
-        gitHub(input: { page: $page, perPage: 25 }) {
-          totalPages
+        gitHub(input: { page: $page, perPage: $perPage }) {
+          totalCount
           currentPage
           hasNextPage
           hasPreviousPage
@@ -24,7 +24,8 @@ const GITHUB_REPOS_QUERY = gql`
 `;
 
 export function useCurrentUserGitHubRepos(
-  page: number = 1
+  page: number = 1,
+  perPage: number = 10
 ): {
   loading: boolean;
   repositories: GitHubRepo[];
@@ -44,6 +45,7 @@ export function useCurrentUserGitHubRepos(
   }>(GITHUB_REPOS_QUERY, {
     variables: {
       page,
+      perPage
     },
   });
 

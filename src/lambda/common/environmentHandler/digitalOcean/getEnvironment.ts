@@ -26,6 +26,14 @@ export const getEnvironment: EnvironmentHandler["newEnvironment"] = async (
         name: string;
       };
       size_slug: string;
+      networks: {
+        v4: {
+          ip_address: string;
+          netmask: string;
+          gateway: string;
+          type: string;
+        }[];
+      };
     };
   }>({
     method: "get",
@@ -48,5 +56,8 @@ export const getEnvironment: EnvironmentHandler["newEnvironment"] = async (
     status: droplet.status,
     sizeSlug: droplet.size_slug,
     provider: "digital_ocean",
+    ipv4: droplet.networks.v4.length
+      ? droplet.networks.v4[0].ip_address
+      : undefined,
   };
 };

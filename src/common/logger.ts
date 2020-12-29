@@ -1,5 +1,5 @@
 function logger(level: "debug" | "error" | "log" | "warning", ...data: any[]) {
-  console[level](...data);
+  console[level](JSON.stringify(data));
 }
 
 export const log = {

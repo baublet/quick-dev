@@ -12,6 +12,7 @@ export async function processCreatingEnvironment(environment: Environment) {
     await update(getDatabaseConnection(), environment.id, {
       lifecycleStatus: "ready_to_provision",
       processor: null,
+      ipv4: droplet.ipv4,
     });
   }
 }

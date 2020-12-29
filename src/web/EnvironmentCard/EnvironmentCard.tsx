@@ -5,7 +5,10 @@ import { H4 } from "../components/H4";
 import { Meatball } from "../components/Meatball";
 
 interface EnvironmentProps {
-  environment: Pick<Environment, "id" | "name" | "size" | "lifecycleStatus">;
+  environment: Pick<
+    Environment,
+    "id" | "name" | "size" | "lifecycleStatus" | "ipv4"
+  >;
 }
 
 export function EnvironmentCard({ environment }: EnvironmentProps) {
@@ -13,6 +16,11 @@ export function EnvironmentCard({ environment }: EnvironmentProps) {
     <div className="relative max-w-xs p-2 border rounded border-gray-300 hover:border-gray-500">
       <H4>{environment.name}</H4>
       <b>Status:</b> {environment.lifecycleStatus}
+      {environment.ipv4 ? (
+        <div>
+          <b>IP:</b> {environment.ipv4}
+        </div>
+      ) : null}
       <div className="absolute top-0 right-0 mt-1 mr-1">
         <Meatball>Test</Meatball>
       </div>

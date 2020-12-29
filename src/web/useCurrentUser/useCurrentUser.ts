@@ -32,20 +32,12 @@ export function useCurrentUser(): {
     authenticated,
   } = useAuth();
 
-  console.log({
-    loading,
-    data,
-  });
-
   React.useEffect(() => {
     setLoading(loading);
   }, [loading]);
 
   React.useEffect(() => {
-    console.log("Use effect");
-    console.log("data.user", data?.user);
     if (data?.user) {
-      console.log("Setting authenticated and userData");
       setAuthenticated(true);
       setUserData(data.user);
     }

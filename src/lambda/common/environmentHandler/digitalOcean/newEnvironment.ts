@@ -15,6 +15,7 @@ export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
     region: "nyc3",
     size,
     image: "ubuntu-16-04-x64",
+    user_data: 
   };
 
   log.info("Creating a new DigitalOcean environment", { body, environment });

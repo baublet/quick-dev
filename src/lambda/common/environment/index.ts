@@ -1,10 +1,6 @@
-import {} from "../context";
-
 export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
-  | "error_creating"
-  | "ready_to_provision"
   | "provisioning"
   | "error_provisioning"
   | "paused" // You can always pause (e.g., in DO, "shut down")

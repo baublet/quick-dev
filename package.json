@@ -9,10 +9,11 @@
     "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web",
     "build:lambda": "netlify-lambda build -c webpack.functions.js src/lambda",
     "build:web": "webpack-cli -c webpack.web.js",
+    "develop:ngrok": "rm -rf .ngrokDomain && node ./ngrok.js",
     "develop:lambda": "yarn netlify dev",
     "develop:workerCaller": "yarn ts-node ./devWorkerCaller.ts",
     "develop:web": "webpack-cli -c webpack.web.js --watch",
-    "develop": "yarn concurrently npm:develop:lambda npm:develop:web npm:develop:workerCaller",
+    "develop": "yarn concurrently npm:develop:lambda npm:develop:web npm:develop:workerCaller npm:develop:ngrok",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -54,6 +55,7 @@
     "html-webpack-plugin": "^4.5.0",
     "netlify-cli": "^2.69.11",
     "netlify-lambda": "^2.0.2",
+    "ngrok": "^3.4.0",
     "ts-loader": "^8.0.12",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3",

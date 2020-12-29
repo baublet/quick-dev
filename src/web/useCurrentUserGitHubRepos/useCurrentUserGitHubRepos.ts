@@ -59,8 +59,6 @@ export function useCurrentUserGitHubRepos(
     };
   }
 
-  console.log({ data });
-
   const gitHubData = data?.user?.repositories?.gitHub || ({} as any);
   const nodes = gitHubData.nodes || [];
   const hasNextPage = Boolean(gitHubData.hasNextPage);

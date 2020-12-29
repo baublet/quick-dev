@@ -1,6 +1,7 @@
 builtFunctions
 builtWeb
 .env
+.ngrokDomain
 
 # Logs
 logs

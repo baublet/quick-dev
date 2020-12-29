@@ -9,6 +9,7 @@ const ENVIRONMENTS_QUERY = gql`
         totalCount
         nodes {
           id
+          ipv4
           name
           size
           lifecycleStatus
@@ -23,7 +24,10 @@ interface Environments {
     environments: {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
-      nodes: Pick<Environment, "id" | "name" | "size" | "lifecycleStatus">[];
+      nodes: Pick<
+        Environment,
+        "id" | "name" | "size" | "lifecycleStatus" | "ipv4"
+      >[];
     };
   };
 }

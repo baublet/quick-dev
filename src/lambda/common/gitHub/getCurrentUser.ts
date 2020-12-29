@@ -1,3 +1,4 @@
+import { log } from "../../../common/logger";
 import { githubApi } from "./githubApi";
 import { Context } from "../context";
 
@@ -37,9 +38,9 @@ export async function getCurrentUser(
       accessToken,
     })) as GitHubUserResponse;
 
-    console.log("GitHub user fetch res: ", fetchResponse)
+    log.debug("GitHub user fetch res: ", fetchResponse);
 
-    if(!fetchResponse.id) {
+    if (!fetchResponse.id) {
       return null;
     }
 
@@ -55,7 +56,7 @@ export async function getCurrentUser(
 
     gitHubUserCache.set(accessToken, userData);
   } else {
-    console.debug("Cache hit for gitHub/getCurrentUser")
+    console.debug("Cache hit for gitHub/getCurrentUser");
   }
 
   return gitHubUserCache.get(accessToken);

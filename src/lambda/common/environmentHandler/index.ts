@@ -10,6 +10,7 @@ interface ExternalEnvironment {
   status: "new" | "active" | "off" | "archive";
   sizeSlug: string;
   provider: "digital_ocean";
+  ipv4?: string;
 }
 
 export interface EnvironmentHandler {

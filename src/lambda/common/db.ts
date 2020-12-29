@@ -15,7 +15,7 @@ declare global {
 
 export function getDatabaseConnection() {
   if (!process.env.DATABASE_CONNECTION) {
-    console.log(
+    log.debug(
       "No database connection (DATABASE_CONNECTION) found in environment."
     );
     process.exit();

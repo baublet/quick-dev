@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hit our function to tell StrapYard that our environment is up
+IP_ADDRESS=$(curl http://checkip.amazonaws.com)
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data "{'environmentId':'$STRAPYARD_ENVIRONMENT_ID', 'ipv4': '$IP_ADDRESS'}" \
+  "https://$STRAPYARD_URL/.netlify/functions/environmentProvisioning"
+
 sudo apt-get update
 
 # Install Docker
@@ -37,3 +44,10 @@ echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" |
   sudo tee -a /etc/apt/sources.list.d/caddy-fury.list
 sudo apt-get update
 sudo apt-get install -y caddy
+
+# Setup Caddy for CodeServer
+echo "$STRAPYARD_SUBDOMAIN.env.strapyard.dev
+reverse_proxy 127.0.0.1:8080" >>/etc/caddy/Caddyfile
+
+sudo systemctl reload caddy
+sudo systemctl restart code-server@$USER

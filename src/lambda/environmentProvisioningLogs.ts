@@ -11,8 +11,9 @@ import { create } from "./common/environmentLogs";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
+  log.debug({ body: event.body });
   const parsedBody: { base64: string } = JSON.parse(event.body);
-  const logData = Buffer.from(parsedBody.base64, 'base64').toString('ascii')
+  const logData = Buffer.from(parsedBody.base64, "base64").toString("ascii");
   const db = getDatabaseConnection();
   const secret = event.headers.authorization;
 

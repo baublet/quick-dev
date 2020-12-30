@@ -24,7 +24,7 @@ function replace(
 export async function getProvisionScript(
   environment: Environment
 ): Promise<string> {
-  const url = await getCurrentUrl();
+  const url = await getCurrentUrl("public");
   return new Promise((resolve) => {
     readFile(
       path.resolve(process.cwd(), "src", "provisionerV1", "provision.sh"),
@@ -41,7 +41,7 @@ export async function getProvisionScript(
             replaceWith: environment.subdomain,
           },
           {
-            needle: /\$STRAPYARD_URL/g,
+            needle: /\$STRAPYARD_PUBLIC_URL/g,
             replaceWith: url,
           },
           {

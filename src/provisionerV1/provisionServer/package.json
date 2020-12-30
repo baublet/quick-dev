@@ -1,0 +1,14 @@
+{
+  "name": "strapyard-provisioner-v1",
+  "version": "1.0.0",
+  "main": "provisionServer.ts",
+  "author": "Ryan Poe",
+  "license": "MIT",
+  "scripts": {
+    "start": "pm2 install typescript && yarn pm2 start provisionServer.ts"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pm2": "^4.5.1"
+  }
+}

@@ -6,7 +6,7 @@ curl --header "Content-Type: application/json" \
   --header "Authorization: $STRAPYARD_ENVIRONMENT_SECRET" \
   --request POST \
   --data "{\"subdomain\":\"$STRAPYARD_SUBDOMAIN\", \"ipv4\": \"$IP_ADDRESS\"}" \
-  "$STRAPYARD_URL/.netlify/functions/environmentProvisioning"
+  "$STRAPYARD_PUBLIC_URL/.netlify/functions/environmentProvisioning"
 
 sudo apt-get update
 
@@ -60,5 +60,5 @@ sudo systemctl restart code-server@root
 curl --header "Authorization: $STRAPYARD_ENVIRONMENT_SECRET" \
   --header "Content-Type: application/json" \
   --request POST \
-  --data '{"base64" : $( base64 /var/log/cloud-init-output.log )}' \
-  "$STRAPYARD_URL/.netlify/functions/environmentProvisioningLogs"
+  --data "{\"base64\" : \"$( base64 /var/log/cloud-init-output.log )\"}" \
+  "$STRAPYARD_PUBLIC_URL/.netlify/functions/environmentProvisioningLogs"

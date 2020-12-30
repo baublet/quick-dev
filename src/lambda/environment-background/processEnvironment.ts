@@ -5,7 +5,6 @@ import {
 import { getDatabaseConnection } from "../common/db";
 import { log } from "../../common/logger";
 
-import { processCreatingEnvironment } from "./creating";
 import { processNewEnvironment } from "./new";
 
 /**
@@ -43,7 +42,6 @@ export async function processEnvironment(currentProcessor: string) {
         await processNewEnvironment(environment);
         break;
       default:
-        await processCreatingEnvironment(environment);
         break;
     }
   } catch (e) {

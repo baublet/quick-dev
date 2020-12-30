@@ -33,6 +33,7 @@ export interface Environment {
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;
   repositoryUrl: string;
+  secret: string;
   size: EnvironmentSize;
   source: EnvironmentSource;
   sourceId?: string;
@@ -50,3 +51,7 @@ export { update } from "./update";
 export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
 export { resetEnvironmentId } from "./resetEnvironmentId";
+export { loader } from "./loader";
+export { getById } from "./getById";
+export { getBySubdomain } from "./getBySubdomain";
+export { getBySecret } from "./getBySecret";

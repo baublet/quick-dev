@@ -25,11 +25,12 @@ type Environment {
   created: Date!
   updated: Date!
   deleted: Boolean!
-  ipv4: String!
+  ipv4: String
   name: String!
   subdomain: String!
   size: String!
   lifecycleStatus: String!
+  logs(input: PaginationInput): RepositoryConnection!
 }
 
 type User {
@@ -62,6 +63,14 @@ type EnvironmentConnection {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   nodes: [Environment!]!
+}
+
+type EnvironmentLogConnection {
+  totalCount: Int!
+  currentPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  nodes: [String!]!
 }
 
 type RepositoryConnection {

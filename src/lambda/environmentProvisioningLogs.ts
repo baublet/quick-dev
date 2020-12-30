@@ -6,12 +6,13 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
-import { getBySecret, update } from "./common/environment";
+import { getBySecret } from "./common/environment";
+import { create } from "./common/environmentLogs";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
-  const body = JSON.parse(event.body);
-  const ipv4 = body.ipv4;
+  const parsedBody: { base64: string } = JSON.parse(event.body);
+  const logData = Buffer.from(parsedBody.base64, 'base64').toString('ascii')
   const db = getDatabaseConnection();
   const secret = event.headers.authorization;
 
@@ -19,13 +20,6 @@ export const handler = async (event: APIGatewayEvent) => {
     log.error("EnvironmentProvisioning did not receive a secret");
     return {
       statusCode: 403,
-    };
-  }
-
-  if (!ipv4) {
-    log.error(`EnvironmentProvisioning received a malformed body`, body);
-    return {
-      statusCode: 400,
     };
   }
 
@@ -54,11 +48,12 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Update the environment in the database
-  await update(db, environment.id, {
-    ipv4,
+  await create(db, {
+    environmentId: environment.id,
+    log: logData,
   });
 
-  log.debug("Updated environment IP", { environment, ipv4 });
+  log.debug("Added logs for environment", { environment });
 
   return {
     statusCode: 200,

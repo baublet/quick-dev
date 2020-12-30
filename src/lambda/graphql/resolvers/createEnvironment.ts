@@ -1,4 +1,5 @@
 import { hri } from "human-readable-ids";
+import { ulid } from "ulid";
 
 import { Context } from "../../common/context";
 import { create, Environment } from "../../common/environment";
@@ -22,6 +23,7 @@ export async function createEnvironment(
       subdomain,
       user: context.user.email,
       userSource: context.user.source,
+      secret: ulid(),
     });
   });
 

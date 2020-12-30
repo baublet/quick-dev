@@ -3,19 +3,21 @@ import { digitalOceanApi } from "./digitalOceanApi";
 import { EnvironmentHandler } from "../index";
 import { environmentToUniqueName } from "../environmentToUniqueName";
 import { sizeToDOSize } from "./sizeToDOSize";
+import { getProvisionScript } from "../../../../provisionerV1/getProvisionScript";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
 ) => {
   const name = environmentToUniqueName(environment);
   const size = sizeToDOSize(environment.size);
+  const provisionScript = await getProvisionScript(environment);
 
   const body = {
     name,
     region: "nyc3",
     size,
     image: "ubuntu-16-04-x64",
-    user_data: 
+    user_data: provisionScript,
   };
 
   log.info("Creating a new DigitalOcean environment", { body, environment });

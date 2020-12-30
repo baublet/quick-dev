@@ -6,6 +6,7 @@
   "scripts": {
     "db:migration:create": "yarn knex migrate:make -x ts",
     "db:migrate": "yarn ts-node ./node_modules/.bin/knex migrate:latest",
+    "db:reset": "rm -rf strapyard.sqlite && yarn db:migrate",
     "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web",
     "build:lambda": "netlify-lambda build -c webpack.functions.js src/lambda",
     "build:web": "webpack-cli -c webpack.web.js",
@@ -32,6 +33,7 @@
     "classnames": "^2.2.6",
     "concurrently": "^5.3.0",
     "cookie": "^0.4.1",
+    "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "encoding": "^0.1.13",
     "glob": "^7.1.6",

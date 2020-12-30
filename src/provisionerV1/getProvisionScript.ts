@@ -15,7 +15,7 @@ function replace(
   let recreated = haystack;
 
   for (const replacer of replacers) {
-    recreated = recreated.replaceAll(replacer.needle, replacer.replaceWith);
+    recreated = recreated.replace(replacer.needle, replacer.replaceWith);
   }
 
   return recreated;
@@ -26,26 +26,31 @@ export async function getProvisionScript(
 ): Promise<string> {
   const url = await getCurrentUrl();
   return new Promise((resolve) => {
-    readFile(path.resolve(".", "provision.sh"), (err, data) => {
-      if (err) {
-        log.error(err);
-        process.exit(1);
+    readFile(
+      path.resolve(process.cwd(), "src", "provisionerV1", "provision.sh"),
+      (err, data) => {
+        if (err) {
+          log.error(err);
+          process.exit(1);
+        }
+
+        const fileData = data.toString();
+        const replacedFile = replace(fileData, [
+          {
+            needle: /\$STRAPYARD_SUBDOMAIN/g,
+            replaceWith: environment.subdomain,
+          },
+          {
+            needle: /\$STRAPYARD_URL/g,
+            replaceWith: url,
+          },
+          {
+            needle: /\$STRAPYARD_ENVIRONMENT_SECRET/g,
+            replaceWith: environment.secret,
+          },
+        ]);
+        resolve(replacedFile);
       }
-
-      const fileData = data.toString();
-      const replacedFile = replace(fileData, [
-        {
-          needle: "$STRAPYARD_SUBDOMAIN",
-          replaceWith: environment.subdomain,
-        },
-        {
-          needle: "$STRAPYARD_URL",
-          replaceWith: url,
-        },
-      ]);
-
-      // Replace stuff
-      resolve(replacedFile);
-    });
+    );
   });
 }

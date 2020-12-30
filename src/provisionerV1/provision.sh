@@ -3,9 +3,10 @@
 # Hit our function to tell StrapYard that our environment is up
 IP_ADDRESS=$(curl http://checkip.amazonaws.com)
 curl --header "Content-Type: application/json" \
+  --header "Authorization: $STRAPYARD_ENVIRONMENT_SECRET" \
   --request POST \
-  --data "{'environmentId':'$STRAPYARD_ENVIRONMENT_ID', 'ipv4': '$IP_ADDRESS'}" \
-  "https://$STRAPYARD_URL/.netlify/functions/environmentProvisioning"
+  --data "{\"subdomain\":\"$STRAPYARD_SUBDOMAIN\", \"ipv4\": \"$IP_ADDRESS\"}" \
+  "$STRAPYARD_URL/.netlify/functions/environmentProvisioning"
 
 sudo apt-get update
 
@@ -33,11 +34,13 @@ sudo apt-get install -y rvm
 
 # Install Node Version Manager
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Install Codeserver
 curl -fsSL https://code-server.dev/install.sh | sh
+sudo systemctl enable --now code-server@root
 
 # Install Caddy for the webserver
 echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" |
@@ -47,7 +50,15 @@ sudo apt-get install -y caddy
 
 # Setup Caddy for CodeServer
 echo "$STRAPYARD_SUBDOMAIN.env.strapyard.dev
-reverse_proxy 127.0.0.1:8080" >>/etc/caddy/Caddyfile
+reverse_proxy 127.0.0.1:8080" >/etc/caddy/Caddyfile
 
 sudo systemctl reload caddy
-sudo systemctl restart code-server@$USER
+systemctl status caddy.service
+
+sudo systemctl restart code-server@root
+
+curl --header "Authorization: $STRAPYARD_ENVIRONMENT_SECRET" \
+  --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"base64" : $( base64 /var/log/cloud-init-output.log )}' \
+  "$STRAPYARD_URL/.netlify/functions/environmentProvisioningLogs"

@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string("subdomain").unique().index();
     table.string("name").notNullable();
     table.string("ipv4");
+    table.string("secret").index().notNullable().unique();
     table.boolean("deleted").index().defaultTo(false);
     table.string("source").defaultTo("do").notNullable().index();
     table.string("sourceId"); // e.g., ID of the environment in DO

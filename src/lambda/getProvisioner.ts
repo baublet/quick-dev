@@ -6,10 +6,6 @@ import { APIGatewayEvent } from "aws-lambda";
 import path from "path";
 import fs from "fs";
 
-import { log } from "../common/logger";
-import { getDatabaseConnection } from "./common/db";
-import { getBySecret } from "./common/environment";
-
 const PROVISIONER_PATH = path.resolve(process.cwd(), "dist", "provisioner.js");
 
 async function getProvisionerScript(): Promise<string> {
@@ -23,8 +19,6 @@ async function getProvisionerScript(): Promise<string> {
   });
 }
 
-// Uses Rollup to build our Provisioner if it hasn't been built yet. Then it
-// returns the bundled source for executing via nodejs in dev environments
 export const handler = async (event: APIGatewayEvent) => {
   return {
     statusCode: 200,

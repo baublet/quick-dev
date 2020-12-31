@@ -20,13 +20,19 @@ IP_ADDRESS=$(curl http://checkip.amazonaws.com)
 curl --header "Content-Type: application/json" \
   --header "Authorization: ${environment.secret}" \
   --request POST \
-  --data "{\"subdomain\":\"${environment.subdomain}\", \"ipv4\": \"$IP_ADDRESS\"}" \
+  --data "{\\"subdomain\\":\\"${environment.subdomain}\\", \\"ipv4\\": \\"$IP_ADDRESS\\"}" \
   "${baseUrl}/.netlify/functions/environmentProvisioning"
 
-curl -sL https://deb.nodesource.com/setup_13.x | echo -
+# install Node so we can start our dev server
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
+npm install pm2@latest -g
 curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
-SECRET=${environment.secret} nodejs ~/provisioner.js
+SECRET=${environment.secret} pm2 start ~/provisioner.js
+
+# Safe delay so pm2 has time to boot the server
+sleep 2
+echo "~fin~"
   `;
 
   const body = {

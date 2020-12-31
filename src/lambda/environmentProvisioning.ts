@@ -10,6 +10,7 @@ import { getBySecret, update } from "./common/environment";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
+  console.log({ body: event.body });
   const body = JSON.parse(event.body);
   const ipv4 = body.ipv4;
   const db = getDatabaseConnection();

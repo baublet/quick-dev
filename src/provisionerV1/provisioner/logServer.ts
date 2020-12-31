@@ -1,33 +1,31 @@
-import { Application, Request, Response, NextFunction } from "express";
+import path from "path";
+import { Application } from "express";
+import fs from "fs";
 
-const express = require("express");
-const app: Application = express();
-const port = 8333;
+import { verifySecret } from "./index";
+import { readBytesAfterN } from "./readBytesAfterN";
 
-const secret = process.env.SECRET;
+export const LOG_PATH = path.resolve("/var/log/strapyard/");
 
-const LOG_FILES = {
-  cloud: "/var/log/cloud-init-output.log",
-};
+export function logServer(app: Application) {
+  const LOG_FILES = {
+    cloud: "/var/log/cloud-init-output.log",
+  };
 
-function verifySecret(req: Request, res: Response, next: NextFunction) {
-  if (req.query.secret === secret) {
-    return next();
-  }
-  if (req.headers.authorization === secret) {
-    return next();
-  }
-  res.send(403);
+  app.get("/startupLogs", verifySecret, (req, res) => {
+    res.sendFile(LOG_FILES.cloud);
+  });
+
+  app.get("/logs/:commandId", verifySecret, (req, res) => {
+    const logFile = path.resolve(
+      LOG_PATH,
+      req.params.commandId.replace(/\./g, "") || "notHere"
+    );
+    if (!fs.existsSync(logFile)) {
+      res.send(404);
+      return;
+    }
+    const after = parseInt(`${req.query.after}`, 10) || 0;
+    readBytesAfterN(logFile, after);
+  });
 }
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.get("/startupLogs", verifySecret, (req, res) => {
-  res.sendFile(LOG_FILES.cloud);
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});

@@ -3,14 +3,31 @@ import { digitalOceanApi } from "./digitalOceanApi";
 import { EnvironmentHandler } from "../index";
 import { environmentToUniqueName } from "../environmentToUniqueName";
 import { sizeToDOSize } from "./sizeToDOSize";
-import { getProvisionScript } from "../../../../provisionerV1/getProvisionScript";
+import { getCurrentUrl } from "../../getCurrentUrl";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
 ) => {
   const name = environmentToUniqueName(environment);
   const size = sizeToDOSize(environment.size);
-  const provisionScript = await getProvisionScript(environment);
+  const baseUrl = await getCurrentUrl();
+  const provisionScript = `#!/bin/bash
+
+sudo apt-get update
+
+# Hit our function to tell StrapYard that our environment is up
+IP_ADDRESS=$(curl http://checkip.amazonaws.com)
+curl --header "Content-Type: application/json" \
+  --header "Authorization: ${environment.secret}" \
+  --request POST \
+  --data "{\"subdomain\":\"${environment.subdomain}\", \"ipv4\": \"$IP_ADDRESS\"}" \
+  "${baseUrl}/.netlify/functions/environmentProvisioning"
+
+curl -sL https://deb.nodesource.com/setup_13.x | echo -
+sudo apt-get install -y nodejs
+curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
+SECRET=${environment.secret} nodejs ~/provisioner.js
+  `;
 
   const body = {
     name,

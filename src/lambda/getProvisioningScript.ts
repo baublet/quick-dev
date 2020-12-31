@@ -7,18 +7,16 @@ import { APIGatewayEvent } from "aws-lambda";
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
 import { getBySecret } from "./common/environment";
-import { create } from "./common/environmentLogs";
+import { getProvisionScript } from "../provisionerV1/getProvisionScript";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
-  log.debug({ body: event.body });
-  const parsedBody: { base64: string } = JSON.parse(event.body);
-  const logData = Buffer.from(parsedBody.base64, "base64").toString("ascii");
   const db = getDatabaseConnection();
-  const secret = event.headers.authorization;
+  const secret = event.queryStringParameters.secret;
+  const subdomain = event.queryStringParameters.subdomain;
 
   if (!secret) {
-    log.error("EnvironmentProvisioning did not receive a secret");
+    log.error("getProvisioningScript did not receive a secret");
     return {
       statusCode: 403,
     };
@@ -27,9 +25,9 @@ export const handler = async (event: APIGatewayEvent) => {
   // Check if the environment exists
   const environment = await getBySecret(db, secret);
 
-  if (!environment) {
+  if (!environment || environment.subdomain !== subdomain) {
     log.error(
-      `EnvironmentProvisioning received invalid environment secret (not found)`,
+      `getProvisioningScript received invalid environment subdomain (not found)`,
       { secret }
     );
     return {
@@ -40,7 +38,7 @@ export const handler = async (event: APIGatewayEvent) => {
   // Make sure they're not in the wrong status for some reason
   if (environment.lifecycleStatus !== "creating") {
     log.error(
-      `EnvironmentProvisioning request received for environment that's not in the proper status`,
+      `getProvisioningServer request received for environment that's not in the proper status`,
       { environment }
     );
     return {
@@ -48,15 +46,8 @@ export const handler = async (event: APIGatewayEvent) => {
     };
   }
 
-  // Update the environment in the database
-  await create(db, {
-    environmentId: environment.id,
-    log: logData,
-  });
-
-  log.debug("Added logs for environment", { environment });
-
   return {
     statusCode: 200,
+    body: await getProvisionScript(environment),
   };
 };

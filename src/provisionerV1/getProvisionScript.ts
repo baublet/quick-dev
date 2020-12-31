@@ -25,13 +25,13 @@ export async function getProvisionScript(
   environment: Environment
 ): Promise<string> {
   const url = await getCurrentUrl("public");
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     readFile(
       path.resolve(process.cwd(), "src", "provisionerV1", "provision.sh"),
       (err, data) => {
         if (err) {
           log.error(err);
-          process.exit(1);
+          return resolve("");
         }
 
         const fileData = data.toString();

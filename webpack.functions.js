@@ -4,5 +4,10 @@ module.exports = {
   mode: "development",
   devtool: "source-map",
   optimization: { minimize: prod },
-  externals: [{ knex: "knex" }],
+  externals: [
+    {
+      knex: "knex",
+      webpack: "webpack"
+    },
+  ],
 };

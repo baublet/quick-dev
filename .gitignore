@@ -2,6 +2,8 @@ builtFunctions
 builtWeb
 .env
 .ngrokDomain
+tmp/*
+!tmp/.gitkeep
 
 # Logs
 logs

@@ -10,21 +10,20 @@ import { getBySecret, update } from "./common/environment";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
-  console.log({ body: event.body });
   const body = JSON.parse(event.body);
   const ipv4 = body.ipv4;
   const db = getDatabaseConnection();
   const secret = event.headers.authorization;
 
   if (!secret) {
-    log.error("EnvironmentProvisioning did not receive a secret");
+    log.error("EnvironmentCreated did not receive a secret");
     return {
       statusCode: 403,
     };
   }
 
   if (!ipv4) {
-    log.error(`EnvironmentProvisioning received a malformed body`, body);
+    log.error(`EnvironmentCreated received a malformed body`, body);
     return {
       statusCode: 400,
     };
@@ -35,7 +34,7 @@ export const handler = async (event: APIGatewayEvent) => {
 
   if (!environment) {
     log.error(
-      `EnvironmentProvisioning received invalid environment secret (not found)`,
+      `EnvironmentCreated received invalid environment secret (not found)`,
       { secret }
     );
     return {
@@ -46,7 +45,7 @@ export const handler = async (event: APIGatewayEvent) => {
   // Make sure they're not in the wrong status for some reason
   if (environment.lifecycleStatus !== "creating") {
     log.error(
-      `EnvironmentProvisioning request received for environment that's not in the proper status`,
+      `EnvironmentCreated request received for environment that's not in the proper status`,
       { environment }
     );
     return {

@@ -34,7 +34,7 @@ export async function getCurrentUser(
 
   if (!gitHubUserCache.has(accessToken)) {
     const fetchResponse = (await githubApi({
-      path: "user?scope=user",
+      path: "user",
       accessToken,
     })) as GitHubUserResponse;
 

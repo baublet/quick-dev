@@ -98,6 +98,7 @@ module.exports = () => {
           "process.env.GITHUB_CLIENT_SECRET": `'${process.env.GITHUB_CLIENT_SECRET}'`,
           "process.env.GITHUB_CLIENT_REDIRECT_URI": `'${githubRedirectUri}'`,
           "process.env.GITHUB_CLIENT_PROXY_URL": `'${process.env.GITHUB_CLIENT_PROXY_URL}'`,
+          "process.env.GITHUB_CLIENT_SCOPE": `'${process.env.GITHUB_CLIENT_SCOPE}'`,
         }),
       ],
     });

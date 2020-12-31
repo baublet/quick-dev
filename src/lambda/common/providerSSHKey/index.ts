@@ -1,0 +1,13 @@
+import { EnvironmentUserSource, EnvironmentSource } from "../environment";
+
+export interface ProviderSSHKey {
+  id: number;
+  sshKeyId: number;
+  userSource: EnvironmentUserSource;
+  user: string;
+  source: EnvironmentSource;
+  sourceId: string;
+}
+
+export { create } from "./create";
+export { get } from "./get";

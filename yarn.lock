@@ -11629,6 +11629,13 @@ sqlite3@^5.0.0:
   optionalDependencies:
     node-gyp "3.x"
 
+ssh-keygen@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/ssh-keygen/-/ssh-keygen-0.5.0.tgz#04439075453043894231e8eaa7bbb4320d1d4af3"
+  integrity sha512-TZmhcpeZTkEnIZF0aItjXz0zIIkHnJyti4bIFiO4Ir0tqwsKDPtC7nFnvjPAy/diGXNy7m5ZcGg44QfUNA9y5g==
+  dependencies:
+    underscore "1.4.x"
+
 sshpk@^1.7.0:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.16.1.tgz#fb661c0bef29b39db40769ee39fa70093d6f6877"
@@ -12560,6 +12567,11 @@ unc-path-regex@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
   integrity sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
+
+underscore@1.4.x:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.4.4.tgz#61a6a32010622afa07963bf325203cf12239d604"
+  integrity sha1-YaajIBBiKvoHljvzJSA88SI51gQ=
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

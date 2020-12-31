@@ -1,8 +1,10 @@
 import { hri } from "human-readable-ids";
 import { ulid } from "ulid";
+import { log } from "../../../common/logger";
 
 import { Context } from "../../common/context";
 import { create, Environment } from "../../common/environment";
+import { getOrCreateSSHKey } from "../../common/environmentHandler/digitalOcean/getOrCreateSSHKey";
 
 interface CreateEnvironmentArguments {
   input: {
@@ -17,7 +19,7 @@ export async function createEnvironment(
 ): Promise<{ errors: string[]; environment?: Environment }> {
   const created = await context.db.transaction(async (trx) => {
     const subdomain = hri.random();
-    return create(trx, {
+    const environment = await create(trx, {
       name: subdomain,
       repositoryUrl,
       subdomain,
@@ -25,6 +27,15 @@ export async function createEnvironment(
       userSource: context.user.source,
       secret: ulid(),
     });
+
+    try {
+      await getOrCreateSSHKey(trx, context, environment);
+    } catch (e) {
+      log.error("Error creating environment: ", { error: e });
+      throw e;
+    }
+
+    return environment;
   });
 
   return {

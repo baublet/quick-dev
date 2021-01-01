@@ -1,5 +1,6 @@
 type Query {
   user: User
+  environment(input: EnvironmentInput!): Environment
   ping: String!
 }
 
@@ -39,6 +40,10 @@ type User {
   email: String!
   repositories: Repositories!
   environments: EnvironmentConnection!
+}
+
+input EnvironmentInput {
+  id: String!
 }
 
 type Repository {

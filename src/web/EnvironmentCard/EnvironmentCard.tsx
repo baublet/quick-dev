@@ -3,6 +3,7 @@ import React from "react";
 import type { Environment } from "../../lambda/common/environment";
 import { H4 } from "../components/H4";
 import { Meatball } from "../components/Meatball";
+import { Link } from "../components/Link";
 
 interface EnvironmentProps {
   environment: Pick<
@@ -14,7 +15,9 @@ interface EnvironmentProps {
 export function EnvironmentCard({ environment }: EnvironmentProps) {
   return (
     <div className="relative max-w-xs p-2 border rounded border-gray-300 hover:border-gray-500">
-      <H4>{environment.name}</H4>
+      <H4>
+        <Link to={`/environment/${environment.id}`}>{environment.name}</Link>
+      </H4>
       <b>Status:</b> {environment.lifecycleStatus}
       {environment.ipv4 ? (
         <div>

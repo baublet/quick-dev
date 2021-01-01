@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import sshKeygen from "ssh-keygen";
 import { ulid } from "ulid";
 
@@ -27,9 +28,13 @@ export async function createSSHKeyPair(
           log.error(err);
           return reject("SSH key gen error " + err);
         }
-        resolve({
-          privateKey: out.key,
-          publicKey: out.pubKey,
+        fs.unlink(location, () => {
+          fs.unlink(`${location}.pub`, () => {
+            resolve({
+              privateKey: out.key,
+              publicKey: out.pubKey,
+            });
+          });
         });
       }
     );

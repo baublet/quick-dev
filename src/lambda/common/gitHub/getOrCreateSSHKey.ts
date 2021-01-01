@@ -10,6 +10,8 @@ export async function getOrCreateSSHKey(
 ): Promise<SSHKey> {
   const extant = await getByUser(trx, context.user.email, context.user.source);
   if (extant) {
+    // TODO: check that the key exists in their github. If it does, return this one, otherwise,
+    // we need to delete this one and create a new one.
     return extant;
   }
 

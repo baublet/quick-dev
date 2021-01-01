@@ -30,7 +30,7 @@ type Environment {
   subdomain: String!
   size: String!
   lifecycleStatus: String!
-  logs(input: PaginationInput): RepositoryConnection!
+  logs: EnvironmentLogsConnection
 }
 
 type User {
@@ -55,6 +55,10 @@ input PaginationInput {
 
 type Repositories {
   gitHub(input: PaginationInput): RepositoryConnection!
+}
+
+type EnvironmentLogsConnection {
+  startupLogs: String!
 }
 
 type EnvironmentConnection {

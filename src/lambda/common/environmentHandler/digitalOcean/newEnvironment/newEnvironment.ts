@@ -6,6 +6,7 @@ import { sizeToDOSize } from "../sizeToDOSize";
 import { getCurrentUrl } from "../../../getCurrentUrl";
 import { getSSHKeyOrThrow } from "../../../gitHub";
 import { getDatabaseConnection } from "../../../db";
+import { getBySSHKeyId } from "../../../providerSSHKey";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
@@ -20,6 +21,16 @@ export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
       environment.user,
       environment.userSource
     );
+    const providerSshKey = await getBySSHKeyId(trx, sshKey.id);
+
+    if (!providerSshKey) {
+      log.error("Provider SSH key not found for extant SSH key", {
+        sshKey,
+        environment,
+      });
+      throw new Error("Provider SSH key not found for extant SSH key");
+    }
+
     const provisionScript = `#!/bin/bash
 
 sudo apt-get update
@@ -59,7 +70,7 @@ echo "~fin~"
       size,
       image: "ubuntu-16-04-x64",
       user_data: provisionScript,
-      ssh_keys: [sshKey],
+      ssh_keys: [providerSshKey.sourceId],
     };
 
     log.info("Creating a new DigitalOcean environment", { body, environment });

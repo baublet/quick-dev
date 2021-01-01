@@ -2,6 +2,7 @@ import { user } from "./resolvers/user";
 import { repositories } from "./resolvers/user/repositories";
 import { gitHub } from "./resolvers/user/repositories/gitHub";
 import { environments } from "./resolvers/user/environments";
+import { environmentLogs } from "./resolvers/environment/logs";
 
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
@@ -14,6 +15,9 @@ export const resolvers = {
   },
   Mutation: {
     createEnvironment,
+  },
+  Environment: {
+    logs: environmentLogs,
   },
   User: {
     repositories,

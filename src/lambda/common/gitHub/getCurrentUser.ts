@@ -56,7 +56,7 @@ export async function getCurrentUser(
 
     gitHubUserCache.set(accessToken, userData);
   } else {
-    console.debug("Cache hit for gitHub/getCurrentUser");
+    log.debug("Cache hit for gitHub/getCurrentUser");
   }
 
   return gitHubUserCache.get(accessToken);

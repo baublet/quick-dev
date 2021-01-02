@@ -1,5 +1,5 @@
-import { Job } from "./index";
-import { Transaction } from "../db";
+import { IntermediateJob, Job } from "./index";
+import { ConnectionOrTransaction } from "../db";
 
 type CreateJobInput<
   T extends Record<string, string | number | boolean> = any
@@ -10,11 +10,11 @@ type CreateJobInput<
 export async function create<
   T extends Record<string, string | number | boolean>
 >(
-  trx: Transaction,
+  trx: ConnectionOrTransaction,
   { type, payload = {} as T }: CreateJobInput<T>
 ): Promise<Job> {
   const payloadString = JSON.stringify(payload);
-  const createdJobIds = await trx<Job>("jobs").insert({
+  const createdJobIds = await trx<IntermediateJob>("jobs").insert({
     type,
     payload: payloadString,
   });

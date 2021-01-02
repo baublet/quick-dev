@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 import { Context } from "../context";
-import { Environment } from "../environment";
+import { Environment, loader } from "../environment";
 import { log } from "../../../common/logger";
 
 export async function getEnvironmentStartupLogs(

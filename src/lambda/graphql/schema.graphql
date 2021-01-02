@@ -62,8 +62,28 @@ type Repositories {
   gitHub(input: PaginationInput): RepositoryConnection!
 }
 
+enum EnvironmentCommandStatus {
+  NOT_READY
+  RUNNING
+  FAILURE
+  SUCCESS
+}
+
+type EnvironmentCommandLog {
+  id: ID!
+  logs: String!
+}
+
+type EnvironmentCommand {
+  id: ID!
+  title: String!
+  status: EnvironmentCommandStatus!
+  logs(after: Int = 0): [EnvironmentCommandLog!]!
+}
+
 type EnvironmentLogsConnection {
   startupLogs: String!
+  commands: [EnvironmentCommand!]!
 }
 
 type EnvironmentConnection {

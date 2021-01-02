@@ -6,7 +6,9 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
+import { enqueueJob } from "./common/enqueueJob";
 import { getBySecret, update } from "./common/environment";
+import { create } from "./common/environmentCommand";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
@@ -46,8 +48,23 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Update the environment in the database
-  await update(db, environment.id, {
-    lifecycleStatus: "provisioning",
+  await db.transaction(async (trx) => {
+    await update(trx, environment.id, {
+      lifecycleStatus: "provisioning",
+    });
+
+    // Add an initial command, for test purposes
+    const environmentCommand = await create(trx, {
+      command: "whoami",
+      environmentId: environment.id,
+      title: "Admin Only: Initial Command",
+      adminOnly: true,
+      status: "running",
+    });
+
+    await enqueueJob(trx, "sendCommand", {
+      environmentCommandId: environmentCommand.commandId,
+    });
   });
 
   log.debug("Updated environment to provisioning", { environment });

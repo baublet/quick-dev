@@ -16,6 +16,9 @@ export async function environment(
   const id = args.input.id;
   const environment = await getById(context.db, parseInt(id, 10));
 
+  if (!environment) {
+    throw new Error("Environment not found");
+  }
   throwIfUserDoesNotOwnEnvironment(context.user, environment);
 
   return environment;

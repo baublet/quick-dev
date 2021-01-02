@@ -14,9 +14,10 @@ export function commandRunner(app: Application) {
       return res.send(400);
     }
 
-    const logFile = path.resolve(LOG_PATH, `{commandId}.log`);
+    const logFile = path.resolve(LOG_PATH, `${commandId}.log`);
+    // Only waits until the command _starts_ running to resolve
     await runCommand(body, logFile);
 
-    return res.send(200);
+    res.send(200);
   });
 }

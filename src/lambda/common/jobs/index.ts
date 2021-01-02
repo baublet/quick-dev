@@ -1,16 +1,31 @@
-export type JobType = "create_environment";
+export type JobType = "sendCommand";
 
 export type JobStatus = "ready" | "working" | "failed" | "done";
+
+export interface JobHistory {
+  action: "startWork" | "fail" | "endWork";
+  processor: string;
+  date: Date;
+  output?: string;
+}
 
 export interface Job {
   id: number;
   created_at: Date;
   updated_at: Date;
-  payload: string;
+  payload: Record<string, any>;
   type: JobType;
   status: JobStatus;
-  processor: string;
+  processor?: string;
+  history: JobHistory[];
 }
+
+export type IntermediateJob = Omit<Job, "payload" | "history"> & {
+  payload: string;
+  history: string;
+};
 
 export { create } from "./create";
 export { todo } from "./todo";
+export { jobComplete } from "./jobComplete";
+export { jobFailed } from "./jobFailed";

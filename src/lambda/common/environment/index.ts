@@ -37,6 +37,7 @@ export interface Environment {
   size: EnvironmentSize;
   source: EnvironmentSource;
   sourceId?: string;
+  startupLogs?: string;
   subdomain: string;
   subdomainStatus: EnvironmentSubdomainStatus;
   updated_at: Date;

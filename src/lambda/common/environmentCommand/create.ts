@@ -15,7 +15,7 @@ export async function create(
   ).insert({
     ...input,
     commandId: ulid(),
-    status: "not_ready",
+    status: "waiting",
   });
   const id = createdIds[0];
   const found = await trx<EnvironmentCommand>("environmentCommands")

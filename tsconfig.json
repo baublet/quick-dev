@@ -1,4 +1,5 @@
 {
+  "exclude": ["./builtWeb", "./builtFunctions", "./dist"],
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

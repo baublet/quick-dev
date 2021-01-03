@@ -1,10 +1,11 @@
 import { hri } from "human-readable-ids";
 import { ulid } from "ulid";
-import { log } from "../../../common/logger";
 
+import { log } from "../../../common/logger";
 import { Context } from "../../common/context";
 import { create, Environment } from "../../common/environment";
 import { getOrCreateSSHKey } from "../../common/environmentHandler/digitalOcean/getOrCreateSSHKey";
+import { getRepoStrapYardFile } from "../../common/gitHub";
 
 interface CreateEnvironmentArguments {
   input: {
@@ -17,7 +18,7 @@ export async function createEnvironment(
   { input: { repositoryUrl } }: CreateEnvironmentArguments,
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
-  const created = await context.db.transaction(async (trx) => {
+  return context.db.transaction(async (trx) => {
     let sshKeyId: number;
     try {
       const providerKey = await getOrCreateSSHKey(trx, context, {
@@ -30,22 +31,32 @@ export async function createEnvironment(
       throw e;
     }
 
+    const environmentStrapYardFile = await getRepoStrapYardFile(
+      context,
+      repositoryUrl
+    );
+
+    if (typeof environmentStrapYardFile === "string") {
+      return {
+        errors: [environmentStrapYardFile],
+      };
+    }
+
     const subdomain = hri.random();
     const environment = await create(trx, {
       name: subdomain,
       repositoryUrl,
+      secret: ulid(),
+      sshKeyId,
+      strapYardFile: environmentStrapYardFile.rawFile,
       subdomain,
       user: context.user.email,
       userSource: context.user.source,
-      secret: ulid(),
-      sshKeyId,
     });
 
-    return environment;
+    return {
+      environment,
+      errors: [],
+    };
   });
-
-  return {
-    errors: [],
-    environment: created,
-  };
 }

@@ -32,19 +32,20 @@ export interface Environment {
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;
+  processor?: string;
   repositoryUrl: string;
   secret: string;
   size: EnvironmentSize;
   source: EnvironmentSource;
   sourceId?: string;
-  startupLogs?: string;
   sshKeyId: number;
+  startupLogs?: string;
+  strapYardFile: string;
   subdomain: string;
   subdomainStatus: EnvironmentSubdomainStatus;
   updated_at: Date;
   user: string;
   userSource: EnvironmentUserSource;
-  processor?: string;
 }
 
 export { create } from "./create";

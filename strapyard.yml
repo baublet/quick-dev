@@ -1,0 +1,4 @@
+name: StrapYard
+description: Yo dawg 8)
+steps:
+  - command: whoami

@@ -3,7 +3,10 @@ import path from "path";
 import fs from "fs";
 import mkdirp from "mkdirp";
 
+import { reportComplete } from "./reportComplete";
+
 export async function runCommand(
+  commandId: string,
   command: string,
   logStreamPath: string
 ): Promise<void> {
@@ -14,11 +17,6 @@ export async function runCommand(
 
     const process = spawn("bash", ["-c", command]);
     console.log(`Streaming command ${command} to ${logStreamPath}`);
-
-    process.on("data", (data) => {
-      const buffer = data.toString();
-      console.log("process.on", buffer);
-    });
 
     process.stdout.on("data", (data) => {
       const buffer = data.toString();
@@ -36,8 +34,8 @@ export async function runCommand(
       console.log(`error: ${error.message}`);
     });
 
-    process.on("close", () => {
-      fs.writeFileSync(logStreamPath + ".complete", Date.now().toString());
+    process.on("exit", (code) => {
+      reportComplete(commandId, logStreamPath, code);
     });
 
     resolve();

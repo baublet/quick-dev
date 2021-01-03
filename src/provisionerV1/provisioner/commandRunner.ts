@@ -23,7 +23,7 @@ export function commandRunner(app: Application) {
 
       const logFile = path.resolve(LOG_PATH, `${commandId}.log`);
       // Only waits until the command _starts_ running to resolve
-      await runCommand(command, logFile);
+      await runCommand(commandId, command, logFile);
 
       res.sendStatus(200);
     }

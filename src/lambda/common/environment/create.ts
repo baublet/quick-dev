@@ -8,6 +8,7 @@ type CreateEnvironmentInput = Partial<Environment> &
     | "repositoryUrl"
     | "secret"
     | "sshKeyId"
+    | "strapYardFile" // Raw file
     | "subdomain"
     | "user"
     | "userSource"

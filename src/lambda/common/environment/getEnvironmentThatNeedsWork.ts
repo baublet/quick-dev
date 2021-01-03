@@ -20,18 +20,21 @@ export async function getEnvironmentThatNeedsWork(
     // Grab an environment that needs work
     const found = await trx<Environment>("environments")
       .select()
-      .whereNull("processor")
-      .whereIn("lifeCycleStatus", processorStatusesThatNeedWork)
+      .andWhere((q) => q.whereNull("processor"))
+      .andWhere((q) =>
+        q.whereIn("lifeCycleStatus", processorStatusesThatNeedWork)
+      )
+      .andWhere({ deleted: false })
       .limit(1);
 
     // If we found one, update the processor to the one passed in
     if (found.length > 0) {
       const updatedRows = await trx<Environment>("environments")
         .update({ processor: input.currentProcessor })
-        .where({
+        .whereNull("processor")
+        .andWhere({
           id: found[0].id,
         })
-        .whereNull("processor")
         .limit(1);
 
       // We updated, meaning this processor has dibs

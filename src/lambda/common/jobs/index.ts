@@ -1,4 +1,6 @@
-export type JobType = "sendCommand";
+import { JobKey } from "../../worker-background/jobs";
+
+export type JobType = JobKey;
 
 export type JobStatus = "ready" | "working" | "failed" | "done";
 

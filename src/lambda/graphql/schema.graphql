@@ -6,14 +6,22 @@ type Query {
 
 type Mutation {
   createEnvironment(
-    input: EnvironmentMutationInput!
+    input: CreateEnvironmentMutationInput!
+  ): EnvironmentMutationPayload!
+  deleteEnvironment(
+    input: DeleteEnvironmentMutationInput!
   ): EnvironmentMutationPayload!
 }
 
 scalar Date
+scalar ID
 
-input EnvironmentMutationInput {
+input CreateEnvironmentMutationInput {
   repositoryUrl: String!
+}
+
+input DeleteEnvironmentMutationInput {
+  id: ID!
 }
 
 type EnvironmentMutationPayload {
@@ -43,7 +51,7 @@ type User {
 }
 
 input EnvironmentInput {
-  id: String!
+  id: ID!
 }
 
 type Repository {

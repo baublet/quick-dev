@@ -1,11 +1,11 @@
-import { JobType, create } from "./jobs";
-import { JOB_MAP } from "../worker-background/jobs";
+import { create } from "./jobs";
+import { JOB_MAP, JobKey } from "../worker-background/jobs";
 import { ConnectionOrTransaction } from "./db";
 import { log } from "../../common/logger";
 
 type JobFns = typeof JOB_MAP;
 
-export async function enqueueJob<T extends JobType>(
+export async function enqueueJob<T extends JobKey>(
   trx: ConnectionOrTransaction,
   type: T,
   payload: Parameters<JobFns[T]>[1]

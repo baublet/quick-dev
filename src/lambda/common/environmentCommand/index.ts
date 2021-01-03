@@ -2,6 +2,7 @@ export interface EnvironmentCommand {
   id: number;
   adminOnly: boolean;
   environmentId: number;
+  environmentDeleted: boolean;
   commandId: string;
   command: string;
   title: string;
@@ -14,3 +15,4 @@ export { getByEnvironmentId } from "./getByEnvironmentId";
 export { getByCommandId } from "./getByCommandId";
 export { update } from "./update";
 export { createMany } from "./createMany";
+export { environmentDeleted } from "./environmentDeleted";

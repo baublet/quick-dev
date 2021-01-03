@@ -2,14 +2,16 @@ import fetch from "node-fetch";
 
 import { log } from "../../../../common/logger";
 
-export function digitalOceanApi<T = any>({
+export async function digitalOceanApi<T = any>({
   body,
   path,
   method = "post",
+  expectStatus,
 }: {
   path: string;
   method?: "post" | "delete" | "get";
   body?: Record<string, any>;
+  expectStatus?: number;
 }): Promise<T> {
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
     throw new Error("No DIGITAL_OCEAN_TOKEN found in path variables");
@@ -32,16 +34,25 @@ export function digitalOceanApi<T = any>({
   if (body) {
     options.body = JSON.stringify(body);
   }
-  return fetch(`https://api.digitalocean.com/v2/${path}`, options).then(
-    (response) => {
-      try {
-        return response.json();
-      } catch (e) {
-        log.error("Error with DigitalOcean request: ", {
-          message: e.message,
-        });
-        return {};
-      }
+  const response = await fetch(
+    `https://api.digitalocean.com/v2/${path}`,
+    options
+  );
+
+  if (expectStatus) {
+    if (response.status !== expectStatus) {
+      throw new Error(
+        `DigitalOcean API request expected status ${expectStatus}. Got instead ${response.status}`
+      );
     }
-  ) as Promise<T>;
+  }
+
+  try {
+    return response.json() as Promise<T>;
+  } catch (e) {
+    log.error("Error with DigitalOcean request", {
+      message: e.message,
+    });
+    throw e;
+  }
 }

@@ -58,3 +58,4 @@ export { loader } from "./loader";
 export { getById } from "./getById";
 export { getBySubdomain } from "./getBySubdomain";
 export { getBySecret } from "./getBySecret";
+export { del } from "./delete";

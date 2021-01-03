@@ -5,6 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table.increments();
     table.timestamps(undefined, true);
 
+    table.boolean("environmentDeleted").index().notNullable().defaultTo(false);
     table.boolean("adminOnly").index().notNullable().defaultTo(false);
     table.integer("environmentId").index().notNullable();
     table.string("commandId").index().notNullable();

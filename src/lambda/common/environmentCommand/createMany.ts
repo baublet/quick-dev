@@ -4,7 +4,7 @@ import { EnvironmentCommand } from "./index";
 import { ConnectionOrTransaction } from "../db";
 
 type CreateEnvironmentCommandInput = (Partial<EnvironmentCommand> &
-  Pick<EnvironmentCommand, "environmentId" | "command" | "title" | "status">)[];
+  Pick<EnvironmentCommand, "environmentId" | "command" | "title">)[];
 
 export async function createMany(
   trx: ConnectionOrTransaction,
@@ -14,9 +14,9 @@ export async function createMany(
     "environmentCommands"
   ).insert(
     input.map((step) => ({
+      status: "waiting",
       ...step,
       commandId: ulid(),
-      status: "waiting",
     }))
   );
   const ids = createdIds;

@@ -1,6 +1,6 @@
 import { getCurrentUser } from "../gitHub";
 import { getDatabaseConnection, Connection } from "../../common/db";
-import { serviceHandler, ServiceHandler } from "./serviceHandler";
+import { serviceHandler } from "./serviceHandler";
 import { cache } from "./cache";
 
 export type UserSource = "github";
@@ -16,7 +16,7 @@ export interface ContextUser {
 export interface Context {
   user: ContextUser | null;
   db: Connection;
-  service: ServiceHandler<any>;
+  service: ReturnType<typeof serviceHandler>;
   accessToken?: string;
   cache: typeof global.globalCache;
   requestId: string;

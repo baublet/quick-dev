@@ -3,6 +3,7 @@ import { ulid } from "ulid";
 
 import { log } from "../../../common/logger";
 import { Context } from "../../common/context";
+import { enqueueJob } from "../../common/enqueueJob";
 import { create, Environment } from "../../common/environment";
 import { getOrCreateSSHKey } from "../../common/environmentHandler/digitalOcean/getOrCreateSSHKey";
 import { getRepoStrapYardFile } from "../../common/gitHub";
@@ -52,6 +53,9 @@ export async function createEnvironment(
       subdomain,
       user: context.user.email,
       userSource: context.user.source,
+    });
+    await enqueueJob(trx, "createEnvironmentCommands", {
+      environmentId: environment.id,
     });
 
     return {

@@ -9,6 +9,7 @@ export async function getByCommandId(
   const found = await trx<EnvironmentCommand>("environmentCommands")
     .select(props)
     .where("commandId", "=", commandId)
+    .andWhere("environmentDeleted", "=", false)
     .limit(1);
 
   if (found.length > 0) {

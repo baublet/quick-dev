@@ -1,5 +1,6 @@
 import { IntermediateJob, Job } from "./index";
 import { ConnectionOrTransaction } from "../db";
+import { log } from "../../../common/logger";
 
 type CreateJobInput<
   T extends Record<string, string | number | boolean> = any
@@ -17,10 +18,12 @@ export async function create<
   const createdJobIds = await trx<IntermediateJob>("jobs").insert({
     type,
     payload: payloadString,
+    status: "ready",
+    history: "[]",
   });
 
   const id = createdJobIds[0];
+  const found = await trx<Job>("jobs").select().where("id", "=", id);
 
-  const found = await trx<Job>("jobs").select().where(id);
   return found[0];
 }

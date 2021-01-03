@@ -4,6 +4,7 @@ require('source-map-support').install();
 
 import { APIGatewayEvent } from "aws-lambda";
 import { ulid } from "ulid";
+import { log } from "../common/logger";
 
 import { processEnvironment } from "./environment-background/processEnvironment";
 
@@ -15,6 +16,7 @@ export const handler = async (event: APIGatewayEvent) => {
   const processor = ulid();
 
   const intervalNumber = setInterval(async () => {
+    log.debug("Environment provisioner heartbeat", { processor });
     if (heartbeats++ >= maxBeats) {
       clearInterval(intervalNumber);
       return;

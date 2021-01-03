@@ -33,6 +33,9 @@ export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
 
     const provisionScript = `#!/bin/bash
 
+whoami
+pwd
+cd /root
 sudo apt-get update
 
 # Hit our function to tell StrapYard that our environment is up
@@ -50,7 +53,7 @@ npm install pm2@latest -g
 
 # Pull down our bundled and fully packed provisioner server and boot it up 8)
 curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
-SECRET=${environment.secret} pm2 start ~/provisioner.js
+SECRET=${environment.secret} pm2 start ~/provisioner.js --watch
 
 # Safe delay so pm2 has time to boot the server
 sleep 2

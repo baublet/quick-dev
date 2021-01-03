@@ -2,7 +2,6 @@ import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
 import mkdirp from "mkdirp";
-import { LOG_PATH } from "./logServer";
 
 export async function runCommand(
   command: string,
@@ -11,18 +10,34 @@ export async function runCommand(
   return new Promise(async (resolve) => {
     const dirLocation = path.dirname(logStreamPath);
     mkdirp.sync(dirLocation);
+    fs.writeFileSync(logStreamPath, "");
 
     const process = spawn("bash", ["-c", command]);
-    process.stdout.on("data", (data) => {
-      fs.appendFile(logStreamPath, data, () => {});
+    console.log(`Streaming command ${command} to ${logStreamPath}`);
+
+    process.on("data", (data) => {
+      const buffer = data.toString();
+      console.log("process.on", buffer);
     });
+
+    process.stdout.on("data", (data) => {
+      const buffer = data.toString();
+      console.log("process.stdout.on", buffer);
+      fs.appendFileSync(logStreamPath, buffer);
+    });
+
     process.stderr.on("data", (data) => {
-      fs.appendFile(logStreamPath, data, () => {});
+      const buffer = data.toString();
+      console.log("process.stderr.on", buffer);
+      fs.appendFileSync(logStreamPath, buffer);
+    });
+
+    process.on("error", (error) => {
+      console.log(`error: ${error.message}`);
     });
 
     process.on("close", () => {
-      // Report complete
-      fs.writeFile(logStreamPath + ".complete", "", () => {});
+      fs.writeFileSync(logStreamPath + ".complete", Date.now().toString());
     });
 
     resolve();

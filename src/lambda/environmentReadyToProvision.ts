@@ -48,24 +48,31 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Update the environment in the database
-  await db.transaction(async (trx) => {
-    await update(trx, environment.id, {
-      lifecycleStatus: "provisioning",
-    });
+  try {
+    await db.transaction(async (trx) => {
+      await update(trx, environment.id, {
+        lifecycleStatus: "provisioning",
+      });
 
-    // Add an initial command, for test purposes
-    const environmentCommand = await create(trx, {
-      command: "whoami",
-      environmentId: environment.id,
-      title: "Admin Only: Initial Command",
-      adminOnly: true,
-      status: "running",
-    });
+      // Add an initial command, for test purposes
+      const environmentCommand = await create(trx, {
+        command: "whoami",
+        environmentId: environment.id,
+        title: "Admin Only: Initial Command",
+        adminOnly: true,
+        status: "running",
+      });
 
-    await enqueueJob(trx, "sendCommand", {
-      environmentCommandId: environmentCommand.commandId,
+      await enqueueJob(trx, "sendCommand", {
+        environmentCommandId: environmentCommand.commandId,
+      });
     });
-  });
+  } catch (e) {
+    log.error("Error adding initial command", {
+      message: e.message,
+      stack: e.stack,
+    });
+  }
 
   log.debug("Updated environment to provisioning", { environment });
 

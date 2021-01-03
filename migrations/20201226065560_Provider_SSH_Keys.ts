@@ -3,8 +3,8 @@ import * as Knex from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("providerSSHKeys", (table) => {
     table.increments();
-    table.timestamps();
-    
+    table.timestamps(undefined, true);
+
     table.integer("sshKeyId").index().notNullable();
 
     table.string("userSource").notNullable();

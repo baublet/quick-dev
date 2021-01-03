@@ -21,6 +21,7 @@ export async function getOrCreateSSHKey(
   const persistedKey = await createKey(trx, {
     userSource: context.user.source,
     user: context.user.email,
+    fingerprint: sshKey.fingerprint,
     privateKey: sshKey.privateKey,
     publicKey: sshKey.publicKey,
   });

@@ -18,6 +18,7 @@ export async function jobFailed(
   const history = JSON.parse(job.history);
   history.push(historyItem);
   job.status = "failed";
+  job.processor = null;
   await trx<IntermediateJob>("jobs")
     .update(job)
     .where("id", "=", jobId)

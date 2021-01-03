@@ -7,10 +7,19 @@ export async function environmentLogs(
   _args: unknown,
   context: Context
 ): Promise<null | {
-  startupLogs: Promise<string>;
+  startupLogs: () => Promise<string>;
 }> {
   if (!parent.ipv4) {
     return null;
   }
-  return { startupLogs: getEnvironmentStartupLogs(parent, context) };
+
+  const startupLogs = async () => {
+    try {
+      return await getEnvironmentStartupLogs(parent, context);
+    } catch (e) {
+      return "";
+    }
+  };
+
+  return { startupLogs };
 }

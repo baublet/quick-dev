@@ -7,6 +7,7 @@ export interface SSHKey {
   user: string;
   privateKey: string;
   publicKey: string;
+  fingerprint: string;
 }
 
 export { create } from "./create";

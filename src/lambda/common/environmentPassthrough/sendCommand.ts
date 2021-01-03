@@ -9,7 +9,11 @@ export async function sendCommand(
   environmentCommand: EnvironmentCommand
 ) {
   if (!environment.ipv4) {
-    return null;
+    log.error(
+      "Environment prompted to receive a command, but has no IPv4 address",
+      { environment, environmentCommand }
+    );
+    throw new Error("Environment is not ready for commands");
   }
 
   const response = await fetch(
@@ -18,6 +22,7 @@ export async function sendCommand(
       method: "post",
       body: environmentCommand.command,
       headers: {
+        "Content-Type": "text/plain",
         authorization: environment.secret,
       },
     }
@@ -34,4 +39,9 @@ export async function sendCommand(
     });
     throw new Error("Error sending command");
   }
+
+  log.info("Environment received command OK", {
+    environment,
+    environmentCommand,
+  });
 }

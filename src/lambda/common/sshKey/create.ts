@@ -3,7 +3,7 @@ import { ConnectionOrTransaction } from "../db";
 
 type CreateSSHKeyInput = Pick<
   SSHKey,
-  "user" | "userSource" | "privateKey" | "publicKey">;
+  "user" | "userSource" | "privateKey" | "publicKey" | "fingerprint">;
 
 export async function create(
   trx: ConnectionOrTransaction,

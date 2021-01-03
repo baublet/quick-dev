@@ -1,4 +1,5 @@
 import { Application, Request, Response, NextFunction } from "express";
+import bodyParser from "body-parser";
 
 import { logServer } from "./logServer";
 import { commandRunner } from "./commandRunner";
@@ -6,8 +7,9 @@ import { commandRunner } from "./commandRunner";
 const express = require("express");
 const app: Application = express();
 const port = 8333;
-
 const secret = process.env.SECRET;
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 export function verifySecret(req: Request, res: Response, next: NextFunction) {
   if (req.query.secret === secret) {

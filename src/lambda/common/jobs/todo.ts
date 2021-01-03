@@ -1,8 +1,8 @@
 import { Job, IntermediateJob } from "./index";
-import { Transaction } from "../db";
+import { Connection } from "../db";
 
 export async function todo(
-  trx: Transaction,
+  trx: Connection,
   knownJobTypes: string[],
   processor: string
 ): Promise<Job | undefined> {
@@ -11,6 +11,7 @@ export async function todo(
     .whereIn("type", knownJobTypes)
     .andWhere({
       status: "ready",
+      processor: null,
     })
     .limit(1);
 
@@ -30,7 +31,6 @@ export async function todo(
   if (!updatedRows) {
     return undefined;
   }
-  trx.commit();
 
   return {
     ...jobToDo,

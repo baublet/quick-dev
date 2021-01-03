@@ -3,7 +3,8 @@ import * as Knex from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("jobs", function (table) {
     table.increments();
-    table.timestamps();
+    table.timestamps(undefined, true);
+
     table
       .timestamp("lastTouched")
       .index()

@@ -3,7 +3,7 @@ import * as Knex from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("environmentCommands", (table) => {
     table.increments();
-    table.timestamps();
+    table.timestamps(undefined, true);
 
     table.boolean("adminOnly").index().notNullable().defaultTo(false);
     table.integer("environmentId").index().notNullable();

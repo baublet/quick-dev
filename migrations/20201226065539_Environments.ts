@@ -3,6 +3,8 @@ import * as Knex from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("environments", (table) => {
     table.increments();
+    table.timestamps(undefined, true);
+
     table.string("subdomain").unique().index();
     table.string("name").notNullable();
     table.string("ipv4");
@@ -21,7 +23,6 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .defaultTo("not_configured")
       .index();
-    table.timestamps();
   });
 }
 

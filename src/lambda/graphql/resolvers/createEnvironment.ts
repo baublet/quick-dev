@@ -18,6 +18,18 @@ export async function createEnvironment(
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
   const created = await context.db.transaction(async (trx) => {
+    let sshKeyId: number;
+    try {
+      const providerKey = await getOrCreateSSHKey(trx, context, {
+        user: context.user.email,
+        userSource: context.user.source,
+      });
+      sshKeyId = providerKey.sshKeyId;
+    } catch (e) {
+      log.error("Error creating environment: ", { error: e });
+      throw e;
+    }
+
     const subdomain = hri.random();
     const environment = await create(trx, {
       name: subdomain,
@@ -26,14 +38,8 @@ export async function createEnvironment(
       user: context.user.email,
       userSource: context.user.source,
       secret: ulid(),
+      sshKeyId,
     });
-
-    try {
-      await getOrCreateSSHKey(trx, context, environment);
-    } catch (e) {
-      log.error("Error creating environment: ", { error: e });
-      throw e;
-    }
 
     return environment;
   });

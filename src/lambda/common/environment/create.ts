@@ -4,7 +4,13 @@ import { ConnectionOrTransaction } from "../db";
 type CreateEnvironmentInput = Partial<Environment> &
   Pick<
     Environment,
-    "name" | "subdomain" | "user" | "repositoryUrl" | "userSource" | "secret"
+    | "name"
+    | "repositoryUrl"
+    | "secret"
+    | "sshKeyId"
+    | "subdomain"
+    | "user"
+    | "userSource"
   >;
 
 export async function create(

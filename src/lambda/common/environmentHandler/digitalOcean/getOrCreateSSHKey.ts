@@ -10,14 +10,19 @@ import { Context } from "../../context";
 import { log } from "../../../../common/logger";
 import { ConnectionOrTransaction } from "../../db";
 
+interface GetOrCreateKeyArgs {
+  user: string;
+  userSource: Environment["userSource"];
+}
+
 export async function getOrCreateSSHKey(
   trx: ConnectionOrTransaction,
   context: Context,
-  environment: Environment
+  args: GetOrCreateKeyArgs
 ): Promise<ProviderSSHKey> {
-  const { user, userSource, source } = environment;
+  const { user, userSource } = args;
 
-  const extant = await get(trx, { user, userSource, source });
+  const extant = await get(trx, { user, userSource, source: "digital_ocean" });
   if (extant) {
     return extant;
   }

@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string("ipv4");
     table.string("secret").index().notNullable().unique();
     table.boolean("deleted").index().defaultTo(false);
+    table.integer("sshKeyId").index().notNullable();
     table.string("source").defaultTo("do").notNullable().index();
     table.string("sourceId"); // e.g., ID of the environment in DO
     table.string("userSource").defaultTo("github").index(); // e.g., GitHub

@@ -38,6 +38,7 @@ export interface Environment {
   source: EnvironmentSource;
   sourceId?: string;
   startupLogs?: string;
+  sshKeyId: number;
   subdomain: string;
   subdomainStatus: EnvironmentSubdomainStatus;
   updated_at: Date;

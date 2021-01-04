@@ -1,9 +1,9 @@
 import React from "react";
 
-import type { Environment } from "../../lambda/common/environment";
 import { H4 } from "../components/H4";
 import { Meatball } from "../components/Meatball";
 import { Link } from "../components/Link";
+import { Environment } from "../generated"
 
 interface EnvironmentProps {
   environment: Pick<

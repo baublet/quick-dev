@@ -1,6 +1,6 @@
 export interface ParsedDefinitionStep {
   name?: string;
-  run: string;
+  command: string;
 }
 
 export interface ParsedDefinitionFile {

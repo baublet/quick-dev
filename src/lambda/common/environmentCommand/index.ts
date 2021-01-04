@@ -1,7 +1,7 @@
 export interface EnvironmentCommand {
   id: number | string;
   adminOnly: boolean;
-  environmentId: number;
+  environmentId: number | string;
   environmentDeleted: boolean;
   commandId: string;
   command: string;

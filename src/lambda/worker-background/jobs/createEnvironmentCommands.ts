@@ -30,8 +30,8 @@ export const createEnvironmentCommands = async (
   );
   const commandsToCreate = parsedFile.steps.map((step) => ({
     environmentId: environment.id,
-    command: step.run,
-    title: step.name || step.run,
+    command: step.command,
+    title: step.name || step.command,
   }));
 
   log.info("Creating commands from StrapYard file", {

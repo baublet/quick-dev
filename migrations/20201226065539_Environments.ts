@@ -19,11 +19,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string("lifecycleStatus").notNullable().defaultTo("new").index();
     table.string("processor").index();
     table.string("size").notNullable().defaultTo("s");
-    table
-      .string("subdomainStatus")
-      .notNullable()
-      .defaultTo("not_configured")
-      .index();
+    table.string("strapYardFile").notNullable();
   });
 }
 

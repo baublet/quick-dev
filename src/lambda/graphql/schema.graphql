@@ -40,6 +40,11 @@ type Environment {
   size: String!
   lifecycleStatus: String!
   logs: EnvironmentLogsConnection
+  permissions: EnvironmentPermissions!
+}
+
+type EnvironmentPermissions {
+  canDelete: Boolean!
 }
 
 type User {

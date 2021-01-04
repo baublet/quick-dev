@@ -8,11 +8,11 @@ export async function update(
   id: EnvironmentCommand["id"],
   input: UpdateEnvironmentCommandInput
 ): Promise<EnvironmentCommand> {
-  await trx<EnvironmentCommand>("environmentCommand")
+  await trx<EnvironmentCommand>("environmentCommands")
     .update(input)
     .where({ id })
     .limit(1);
-  const freshRows = trx<EnvironmentCommand>("environmentCommand")
+  const freshRows = trx<EnvironmentCommand>("environmentCommands")
     .select({ id })
     .limit(1);
   return freshRows[0];

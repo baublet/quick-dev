@@ -6,7 +6,7 @@ export async function environmentDeleted(
   trx: ConnectionOrTransaction,
   environmentId: Environment["id"]
 ): Promise<number> {
-  return await trx<EnvironmentCommand>("environmentCommand")
+  return await trx<EnvironmentCommand>("environmentCommands")
     .update({ environmentDeleted: true })
     .where({ environmentId })
     .limit(1);

@@ -1,0 +1,15 @@
+overwrite: true
+schema: "src/lambda/graphql/schema.graphql"
+documents: "./src/web/**/*.graphql"
+generates:
+  src/lambda/graphql/generated.ts:
+    plugins:
+      - "typescript"
+  src/web/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      scalars:
+        ID: number | string

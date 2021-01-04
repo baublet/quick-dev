@@ -25,7 +25,7 @@ export async function processEnvironment(currentProcessor: string) {
     );
 
     if (!environment) {
-      log.debug("No environments need processing...");
+      log.debug("processEnvironment.ts: No environments need processing...");
       return;
     }
 

@@ -43,11 +43,11 @@ export async function getEnvironmentThatNeedsWork(
       }
       // Uh oh... no updated rows. That means another processor got here first!
       log.warning(
-        "Environment processor found work, but another processor took it. Trying again."
+        "getEnvironmentThatNeedsWork: Environment processor found work, but another processor took it. Trying again."
       );
     } else {
       log.debug(
-        "Environment processor couldn't find any environments to process against."
+        "getEnvironmentThatNeedsWork: Environment processor couldn't find any environments to process against."
       );
     }
   }

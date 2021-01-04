@@ -1,0 +1,14 @@
+query EnvironmentDetails($id: ID!) {
+  environment(input: { id: $id }) {
+    id
+    name
+    subdomain
+    ipv4
+    permissions {
+      canDelete
+    }
+    logs {
+      startupLogs
+    }
+  }
+}

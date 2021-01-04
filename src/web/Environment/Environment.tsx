@@ -1,10 +1,13 @@
 import React from "react";
 
 import type { Environment } from "../../lambda/common/environment";
-import { H3 } from "../components/H3";
-import { Loader } from "../components/Loader";
 import { useEnvironmentDetails } from "./useEnvironmentDetails";
 import { EnvironmentLogs } from "./EnvironmentLogs";
+
+import { H3 } from "../components/H3";
+import { RightNavigationLayout } from "../components/RightNavigationLayout";
+import { Loader } from "../components/Loader";
+import { EnvironmentActions } from "./EnvironmentActions";
 
 interface EnvironmentProps {
   id: number | string;
@@ -12,13 +15,23 @@ interface EnvironmentProps {
 
 export function Environment({ id }: EnvironmentProps) {
   const { loading, environment } = useEnvironmentDetails(id);
+  const hasLogs = Boolean(environment && environment.logs);
 
   return (
     <div>
-      <Loader display={loading} />
-      {!environment ? null : (
+      <RightNavigationLayout
+        navigation={
+          loading ? null : <EnvironmentActions environment={environment} />
+        }
+        content={
+          <>
+            <H3>{environment?.name || ""}</H3>
+            <Loader display={loading} />
+          </>
+        }
+      />
+      {!hasLogs ? null : (
         <>
-          <H3>{environment.name}</H3>
           <EnvironmentLogs
             environmentId={environment.id}
             startupLogs={environment.logs.startupLogs}

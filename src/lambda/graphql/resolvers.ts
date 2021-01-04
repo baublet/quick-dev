@@ -5,9 +5,11 @@ import { environments } from "./resolvers/user/environments";
 
 import { environment } from "./resolvers/environment";
 import { environmentLogs } from "./resolvers/environment/logs";
+import { environmentPermissions } from "./resolvers/environment/permissions";
 
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
+import { deleteEnvironment } from "./resolvers/deleteEnvironment";
 
 // Provide resolver functions for your schema fields
 export const resolvers = {
@@ -18,9 +20,11 @@ export const resolvers = {
   },
   Mutation: {
     createEnvironment,
+    deleteEnvironment,
   },
   Environment: {
     logs: environmentLogs,
+    permissions: environmentPermissions,
   },
   User: {
     repositories,

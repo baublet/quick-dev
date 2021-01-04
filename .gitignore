@@ -4,6 +4,7 @@ builtWeb
 .ngrokDomain
 tmp/*
 !tmp/.gitkeep
+generated.ts
 
 # Logs
 logs

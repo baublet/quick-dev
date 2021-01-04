@@ -12,7 +12,12 @@ function loadEnvironments(
 
 export function loader(context: Context) {
   return new DataLoader<number, Environment>(async (ids) => {
-    const foundEnvironments = await loadEnvironments(context, ids);
-    return ids.map((id) => foundEnvironments.find((env) => env.id === id));
+    const idsToNumbers = ids.map((id: string | number) =>
+      parseInt(`${id}`, 10)
+    );
+    const foundEnvironments = await loadEnvironments(context, idsToNumbers);
+    return idsToNumbers.map((id) =>
+      foundEnvironments.find((env) => env.id === id)
+    );
   });
 }

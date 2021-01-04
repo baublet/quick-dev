@@ -28,15 +28,18 @@ export const createEnvironmentCommands = async (
     environment.repositoryUrl,
     environment.strapYardFile
   );
+  const commandsToCreate = parsedFile.steps.map((step) => ({
+    environmentId: environment.id,
+    command: step.run,
+    title: step.name || step.run,
+  }));
 
-  const createdCommands = await createMany(
-    trx,
-    parsedFile.steps.map((step) => ({
-      environmentId: environment.id,
-      command: step.run,
-      title: step.name || step.run,
-    }))
-  );
+  log.info("Creating commands from StrapYard file", {
+    parsedFile,
+    commandsToCreate,
+  });
+
+  const createdCommands = await createMany(trx, commandsToCreate);
 
   log.debug("EnvironmentCommands created", { environment, createdCommands });
 };

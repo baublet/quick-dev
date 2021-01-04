@@ -1,6 +1,6 @@
 import { ConnectionOrTransaction } from "../../common/db";
 import { IntermediateJob, JobHistory } from "./index";
-import { getById} from "./getById"
+import { getById } from "./getById";
 
 export async function jobComplete(
   trx: ConnectionOrTransaction,
@@ -15,7 +15,8 @@ export async function jobComplete(
   const job = await getById(trx, jobId);
   const history = JSON.parse(job.history);
   history.push(historyItem);
-  job.status = "done"
+  job.status = "done";
+  job.history = JSON.stringify(history);
   await trx<IntermediateJob>("jobs")
     .update(job)
     .where("id", "=", jobId)

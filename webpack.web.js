@@ -94,6 +94,7 @@ module.exports = () => {
           publicPath: "/",
         }),
         new webpack.DefinePlugin({
+          "process.env.DEBUG": `'${process.env.DEBUG}'`,
           "process.env.GITHUB_CLIENT_ID": `'${process.env.GITHUB_CLIENT_ID}'`,
           "process.env.GITHUB_CLIENT_SECRET": `'${process.env.GITHUB_CLIENT_SECRET}'`,
           "process.env.GITHUB_CLIENT_REDIRECT_URI": `'${githubRedirectUri}'`,

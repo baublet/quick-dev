@@ -15,21 +15,33 @@ export async function deleteEnvironment(
   { input: { id } }: DeleteEnvironmentArguments,
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
+  const environment = await context.service(loader).load(id);
   return context.db.transaction(async (trx) => {
-    const environment = await context.service(loader).load(id);
 
-    if (!environment || !canDelete(context, environment)) {
-      log.error("Deletion request rejected", { context, environment });
+    if (!environment) {
+      log.error("Deletion request rejected: environment not found", { context, environment });
+      return {
+        errors: ["Environment not found"],
+      };
+    }
+
+    if(!canDelete(context, environment)) {
+      log.error("Deletion request unauthorized", { context, environment });
       return {
         errors: ["Environment not found"],
       };
     }
 
     try {
-      await del(trx, id);
-      await enqueueJob(trx, "deleteEnvironmentInProvider", {
-        environmentId: id,
+      log.info("Attempting to delete environment", {
+        environment,
       });
+      await Promise.all([
+        del(trx, id),
+        enqueueJob(trx, "deleteEnvironmentInProvider", {
+          environmentId: id,
+        }),
+      ]);
     } catch (e) {
       log.error("Deletion request failed", {
         context,

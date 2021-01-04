@@ -1,0 +1,8 @@
+mutation deleteEnvironment($id: ID!) {
+  deleteEnvironment(input: { id: $id }) {
+    errors
+    environment {
+      id
+    }
+  }
+}

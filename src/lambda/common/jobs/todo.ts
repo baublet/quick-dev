@@ -1,5 +1,6 @@
 import { Job, IntermediateJob } from "./index";
 import { Connection } from "../db";
+import { log } from "../../../common/logger";
 
 export async function todo(
   trx: Connection,
@@ -23,9 +24,10 @@ export async function todo(
   const history = JSON.parse(found[0].history);
   const jobToDo = found[0];
   const updatedRows = await trx<Job>("jobs")
-    .update({ status: "working", processor })
+    .update({ status: "working", processor, updated_at: trx.fn.now() })
     .where({ id: jobToDo.id })
     .andWhere({ processor: null })
+    .andWhere("status", "<>", "working")
     .limit(1);
 
   if (!updatedRows) {

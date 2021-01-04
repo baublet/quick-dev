@@ -2,12 +2,7 @@ import { Environment, EnvironmentLifecycleStatus } from "./index";
 import { ConnectionOrTransaction } from "../db";
 import { log } from "../../../common/logger";
 
-const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
-  "new",
-  "creating",
-];
-
-const INTERNAL_RATE_LIMIT = 1000 * 30; // 30 seconds
+const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = ["new"];
 
 export async function getEnvironmentThatNeedsWork(
   trx: ConnectionOrTransaction,
@@ -30,7 +25,7 @@ export async function getEnvironmentThatNeedsWork(
     // If we found one, update the processor to the one passed in
     if (found.length > 0) {
       const updatedRows = await trx<Environment>("environments")
-        .update({ processor: input.currentProcessor })
+        .update({ processor: input.currentProcessor, updated_at: trx.fn.now() })
         .whereNull("processor")
         .andWhere({
           id: found[0].id,

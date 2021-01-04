@@ -15,7 +15,7 @@ import { processNewEnvironment } from "./new";
  */
 export async function processEnvironment(currentProcessor: string) {
   let subdomain: string = "unknown";
-  let id: number;
+  let id: number | string;
   try {
     const environment = await getEnvironmentThatNeedsWork(
       getDatabaseConnection(),

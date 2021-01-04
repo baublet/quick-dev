@@ -17,9 +17,13 @@ export async function processNewEnvironment(environment: Environment) {
       sourceId: createdDroplet.id,
     });
   } catch (e) {
+    log.error("Error creating/updating an environment", {
+      message: e.message,
+    });
     if (createdDropletId) {
-      log.error("Error creating/updating an environment", { message: e.message });
-      await DigitalOceanHandler.destroyEnvironment(createdDropletId);
+      await DigitalOceanHandler.destroyEnvironment({
+        sourceId: createdDropletId,
+      });
     }
     throw e;
   }

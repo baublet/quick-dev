@@ -4,6 +4,9 @@ module.exports = {
       name: "functions",
       script: "./node_modules/.bin/netlify",
       args: "dev",
+      env: {
+        DEBUG: "true",
+      },
     },
     {
       name: "webpack",

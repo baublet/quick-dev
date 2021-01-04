@@ -1,13 +1,15 @@
 export interface EnvironmentCommand {
-  id: number | string;
   adminOnly: boolean;
-  environmentId: number | string;
-  environmentDeleted: boolean;
-  commandId: string;
   command: string;
-  title: string;
-  status: "waiting" | "running" | "failure" | "success";
+  commandId: string;
+  created_at: Date;
+  environmentDeleted: boolean;
+  environmentId: number | string;
+  id: number | string;
   logs?: string;
+  status: "waiting" | "running" | "failure" | "success";
+  title: string;
+  updated_at: Date;
 }
 
 export { create } from "./create";

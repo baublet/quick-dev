@@ -3,7 +3,7 @@ import { ConnectionOrTransaction } from "../db";
 
 export async function getBySSHKeyId(
   trx: ConnectionOrTransaction,
-  sshKeyId: number
+  sshKeyId: number | string
 ): Promise<ProviderSSHKey | undefined> {
   const found = await trx<ProviderSSHKey>("providerSSHKeys")
     .select()

@@ -14,7 +14,3 @@ async function callWorkers() {
 setInterval(() => {
   callWorkers();
 }, PING_INTERVAL);
-
-setInterval(() => {
-  console.log("Worker caller is running 8)");
-}, 30000);

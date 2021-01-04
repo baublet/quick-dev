@@ -1,15 +1,21 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 import { EnvironmentDetails } from "./useEnvironmentDetails";
 import { DestructiveActionButton } from "../components/buttons/DestructiveActionButton";
-import { useDeleteEnvironmentMutation } from "../generated"
+import { useDeleteEnvironmentMutation } from "../generated";
 
 interface EnvironmentActionsProps {
   environment: EnvironmentDetails["environment"];
 }
 
-export function DeleteEnvironmentButton({ environment }: EnvironmentActionsProps) {
-  const [deleteMutation] = useDeleteEnvironmentMutation();
+export function DeleteEnvironmentButton({
+  environment,
+}: EnvironmentActionsProps) {
+  const history = useHistory();
+  const [deleteMutation] = useDeleteEnvironmentMutation({
+    onCompleted: () => history.push("/environments"),
+  });
 
   const deleteEnvironment = () =>
     deleteMutation({

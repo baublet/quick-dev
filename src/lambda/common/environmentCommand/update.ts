@@ -9,7 +9,10 @@ export async function update(
   input: UpdateEnvironmentCommandInput
 ): Promise<EnvironmentCommand> {
   await trx<EnvironmentCommand>("environmentCommands")
-    .update(input)
+    .update({
+      updated_at: trx.fn.now(),
+      ...input,
+    })
     .where({ id })
     .limit(1);
   const freshRows = trx<EnvironmentCommand>("environmentCommands")

@@ -8,9 +8,18 @@ import { H3 } from "../components/H3";
 import { RightNavigationLayout } from "../components/RightNavigationLayout";
 import { Loader } from "../components/Loader";
 import { EnvironmentActions } from "./EnvironmentActions";
+import { EnvironmentBuilding } from "./EnvironmentBuilding";
 
 interface EnvironmentProps {
   id: number | string;
+}
+
+function EnvironmentInitializing() {
+  return (
+    <div className="">
+      <Loader display={true} />
+    </div>
+  );
 }
 
 export function Environment({ id }: EnvironmentProps) {
@@ -30,13 +39,13 @@ export function Environment({ id }: EnvironmentProps) {
           </>
         }
       />
-      {!hasLogs ? null : (
-        <>
-          <EnvironmentLogs
-            environmentId={environment.id}
-            startupLogs={environment.logs.startupLogs}
-          />
-        </>
+      {loading ? null : !hasLogs ? (
+        <EnvironmentBuilding />
+      ) : (
+        <EnvironmentLogs
+          environmentId={environment.id}
+          startupLogs={environment.logs.startupLogs}
+        />
       )}
     </div>
   );

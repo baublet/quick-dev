@@ -9,7 +9,7 @@ export async function del(
   await environmentDeleted(trx, id);
 
   await trx<Environment>("environments")
-    .update({ deleted: true })
+    .update({ deleted: true, updated_at: trx.fn.now() })
     .where({ id })
     .limit(1);
   const freshRows = trx<Environment>("environments").select({ id }).limit(1);

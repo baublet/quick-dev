@@ -7,5 +7,5 @@ export function Divider(
     HTMLHRElement
   >
 ) {
-  return <hr {...props} className={cx("my-5", props.className)} />;
+  return <hr {...props} className={cx("my-5 w-full", props.className)} />;
 }

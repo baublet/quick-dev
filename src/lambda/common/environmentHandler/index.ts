@@ -17,5 +17,5 @@ export interface EnvironmentHandler {
   getEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
   newEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
   // Should always work. If something is wrong, it throws
-  destroyEnvironment: (environment: Environment) => Promise<void>;
+  destroyEnvironment: (environment: Pick<Environment, "sourceId">) => Promise<void>;
 }

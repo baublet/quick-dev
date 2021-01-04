@@ -5,7 +5,7 @@ import { getById } from "./getById";
 export async function jobFailed(
   trx: ConnectionOrTransaction,
   processor: string,
-  jobId: number,
+  jobId: number | string,
   output: string
 ) {
   const historyItem: JobHistory = {
@@ -21,7 +21,10 @@ export async function jobFailed(
   job.processor = null;
   job.history = JSON.stringify(history);
   await trx<IntermediateJob>("jobs")
-    .update(job)
+    .update({
+      updated_at: trx.fn.now(),
+      ...job,
+    })
     .where("id", "=", jobId)
     .limit(1);
 }

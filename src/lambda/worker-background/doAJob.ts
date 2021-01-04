@@ -11,6 +11,7 @@ export async function doAJob(processor: string): Promise<void> {
   // issues and ensure a job only gets assigned a single worker
   const jobToDo = await todo(db, knownJobTypes, processor);
   if (!jobToDo) {
+    log.debug("No job to do");
     return;
   }
 

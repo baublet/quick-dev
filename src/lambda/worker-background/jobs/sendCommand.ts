@@ -1,7 +1,7 @@
 import { getByCommandId } from "../../common/environmentCommand";
 import { getById } from "../../common/environment";
 
-import {sendCommand as sendCommandToEnvironment} from "../../common/environmentPassthrough"
+import { sendCommand as sendCommandToEnvironment } from "../../common/environmentPassthrough";
 import { ConnectionOrTransaction } from "../../common/db";
 
 export const sendCommand = async (
@@ -14,5 +14,5 @@ export const sendCommand = async (
   const environmentCommand = await getByCommandId(trx, environmentCommandId);
   const environment = await getById(trx, environmentCommand.environmentId);
 
-  await sendCommandToEnvironment(environment, environmentCommand)
+  await sendCommandToEnvironment(environment, environmentCommand);
 };

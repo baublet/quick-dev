@@ -11,6 +11,10 @@ import { getBySSHKeyId } from "../../../providerSSHKey";
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
 ) => {
+  log.info("Provisioning new DigitalOcean environment", {
+    environment,
+  });
+
   const db = getDatabaseConnection();
   return db.transaction(async (trx) => {
     const name = environmentToUniqueName(environment);
@@ -39,6 +43,7 @@ cd /root
 sudo apt-get update
 
 # Hit our function to tell StrapYard that our environment is up
+echo "\n\nInforming StrapYard (${baseUrl}) that the environment is allocatedn\n\n"
 IP_ADDRESS=$(curl http://checkip.amazonaws.com)
 curl --header "Content-Type: application/json" \
   --header "Authorization: ${environment.secret}" \
@@ -52,12 +57,14 @@ sudo apt-get install -y nodejs
 npm install pm2@latest -g
 
 # Pull down our bundled and fully packed provisioner server and boot it up 8)
+echo "\n\nDownloading provisioner from StrapYard (${baseUrl})n"
 curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
 SECRET=${environment.secret} STRAPYARD_URL=${baseUrl} pm2 start ~/provisioner.js --watch
 
 # Safe delay so pm2 has time to boot the server
 sleep 2
 
+echo "\n\nNotifying StrapYard (${baseUrl}) that provisioner is ready to go\n\n"
 curl --header "Content-Type: application/json" \
   --header "Authorization: ${environment.secret}" \
   --request POST \

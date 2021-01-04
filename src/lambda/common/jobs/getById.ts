@@ -3,7 +3,7 @@ import { ConnectionOrTransaction } from "../db";
 
 export async function getById(
   trx: ConnectionOrTransaction,
-  id: number,
+  id: number | string,
   props: (keyof IntermediateJob)[] | "*" = "*"
 ): Promise<IntermediateJob | undefined> {
   const found = await trx<IntermediateJob>("jobs")

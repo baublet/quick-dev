@@ -4,11 +4,11 @@ require('source-map-support').install();
 
 import { APIGatewayEvent } from "aws-lambda";
 import { ulid } from "ulid";
+import { log } from "../common/logger";
 
 import { processEnvironment } from "./environment-background/processEnvironment";
 
-// 5 seconds worth of jobs
-const maxBeats = 5;
+const maxBeats = 1;
 
 export const handler = async (event: APIGatewayEvent) => {
   let heartbeats = 0;
@@ -19,6 +19,7 @@ export const handler = async (event: APIGatewayEvent) => {
       clearInterval(intervalNumber);
       return;
     }
+    log.debug("Environment Worker heartbeat")
     await processEnvironment(processor);
   }, 1000);
 };

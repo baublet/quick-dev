@@ -2,15 +2,14 @@ require("@babel/polyfill/noConflict");
 require("dotenv").config();
 require("source-map-support").install();
 
-import { APIGatewayEvent } from "aws-lambda";
 import { hri } from "human-readable-ids";
 
+import { log } from "../common/logger";
 import { doAJob } from "./worker-background/doAJob";
 
-// 5 seconds worth of jobs
-const maxBeats = 5;
+const maxBeats = 1;
 
-export const handler = async (event: APIGatewayEvent) => {
+export const handler = async () => {
   let heartbeats = 0;
   const processor = hri.random();
 
@@ -19,6 +18,7 @@ export const handler = async (event: APIGatewayEvent) => {
       clearInterval(intervalNumber);
       return;
     }
-    doAJob(processor);
+    log.debug("Worker heartbeat");
+    await doAJob(processor);
   }, 1000);
 };

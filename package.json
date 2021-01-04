@@ -29,6 +29,7 @@
   "homepage": "https://github.com/baublet/quick-dev#readme",
   "dependencies": {
     "@apollo/client": "^3.3.6",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "apollo-server-lambda": "^2.19.0",
     "classnames": "^2.2.6",
     "cookie": "^0.4.1",

@@ -16,7 +16,7 @@
     "develop:lambda": "yarn netlify dev",
     "develop:workers": "yarn ts-node ./devWorkers.ts",
     "develop:web": "webpack-cli -c webpack.web.js --watch",
-    "develop": "yarn concurrently npm:develop:lambda npm:develop:web npm:develop:workers npm:develop:ngrok",
+    "develop": "yarn concurrently npm:develop:lambda npm:develop:web npm:develop:workers npm:develop:ngrok npm:build:graphql",
     "test": "jest",
     "n": "graphql-codegen --config codegen.yml"
   },

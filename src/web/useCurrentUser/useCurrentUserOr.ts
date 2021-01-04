@@ -1,10 +1,10 @@
 import { useHistory } from "react-router-dom";
 
-import { useCurrentUser, CurrentUser } from "./useCurrentUser";
+import { useCurrentUser } from "./useCurrentUser";
 
 export function useCurrentUserOr(
   or: "throwUnauthorized" | "redirect" = "throwUnauthorized"
-): CurrentUser | null {
+) {
   const { loading, user } = useCurrentUser();
   const { push } = useHistory();
 

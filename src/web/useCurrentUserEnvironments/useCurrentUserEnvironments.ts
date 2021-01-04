@@ -1,39 +1,7 @@
-import { useQuery, gql } from "@apollo/client";
-
-import type { Environment } from "../../lambda/common/environment";
-
-const ENVIRONMENTS_QUERY = gql`
-  {
-    user {
-      environments {
-        totalCount
-        nodes {
-          id
-          ipv4
-          name
-          size
-          lifecycleStatus
-        }
-      }
-    }
-  }
-`;
-
-interface Environments {
-  user: {
-    environments: {
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      nodes: Pick<
-        Environment,
-        "id" | "name" | "size" | "lifecycleStatus" | "ipv4"
-      >[];
-    };
-  };
-}
+import { useCurrentUserEnvironmentsQuery } from "../generated";
 
 export function useCurrentUserEnvironments() {
-  const { loading, data } = useQuery<Environments>(ENVIRONMENTS_QUERY, {
+  const { loading, data } = useCurrentUserEnvironmentsQuery({
     pollInterval: 5000,
   });
 

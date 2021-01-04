@@ -1,0 +1,18 @@
+query CurrentUserGitHubRepos($page: Int!, $perPage: Int!) {
+  user {
+    repositories {
+      gitHub(input: { page: $page, perPage: $perPage }) {
+        totalCount
+        currentPage
+        hasNextPage
+        hasPreviousPage
+        nodes {
+          id
+          name
+          gitUrl
+          htmlUrl
+        }
+      }
+    }
+  }
+}

@@ -1,17 +1,7 @@
 import React from "react";
-import { useQuery, gql } from "@apollo/client";
 
+import { useCurrentUserQuery } from "../generated";
 import { useAuth } from "../useAuth";
-
-const userQuery = gql`
-  {
-    user {
-      id
-      name
-      email
-    }
-  }
-`;
 
 export interface CurrentUser {
   id: string;
@@ -19,12 +9,8 @@ export interface CurrentUser {
   email: string;
 }
 
-export function useCurrentUser(): {
-  loading: boolean;
-  user?: CurrentUser;
-  authenticated: boolean;
-} {
-  const { loading, data } = useQuery<{ user: CurrentUser }>(userQuery);
+export function useCurrentUser() {
+  const { loading, data } = useCurrentUserQuery();
   const {
     setUserData,
     setAuthenticated,

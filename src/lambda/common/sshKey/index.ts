@@ -1,7 +1,7 @@
 import { EnvironmentUserSource } from "../environment";
 
 export interface SSHKey {
-  id: number;
+  id: number | string;
   environmentId: number;
   userSource: EnvironmentUserSource;
   user: string;

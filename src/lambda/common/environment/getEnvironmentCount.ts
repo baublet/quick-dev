@@ -11,6 +11,7 @@ export async function getEnvironmentCount(
 ): Promise<number> {
   const result = await trx<Environment>("environments")
     .where({ user })
+    .andWhere("deleted", "=", false)
     .count("id", { as: "count" });
 
   return result[0].count as number;

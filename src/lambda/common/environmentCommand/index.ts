@@ -1,5 +1,5 @@
 export interface EnvironmentCommand {
-  id: number;
+  id: number | string;
   adminOnly: boolean;
   environmentId: number;
   environmentDeleted: boolean;

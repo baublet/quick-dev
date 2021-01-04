@@ -1,0 +1,14 @@
+query CurrentUserEnvironments {
+  user {
+    environments {
+      totalCount
+      nodes {
+        id
+        ipv4
+        name
+        size
+        lifecycleStatus
+      }
+    }
+  }
+}

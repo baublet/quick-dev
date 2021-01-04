@@ -28,7 +28,7 @@ export type EnvironmentSize = "s" | "m" | "l" | "xl" | "xxl";
 export interface Environment {
   created_at: Date;
   deleted: boolean;
-  id: number;
+  id: string | number;
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;

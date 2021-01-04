@@ -12,7 +12,7 @@ export interface JobHistory {
 }
 
 export interface Job {
-  id: number;
+  id: number | string;
   created_at: Date;
   updated_at: Date;
   payload: Record<string, any>;

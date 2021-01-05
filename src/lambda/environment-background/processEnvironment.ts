@@ -14,11 +14,12 @@ import { processNewEnvironment } from "./new";
  * handler, and either update the status OR do nothing, and keep waiting...
  */
 export async function processEnvironment(currentProcessor: string) {
+  const db = getDatabaseConnection();
   let subdomain: string = "unknown";
   let id: number | string;
   try {
     const environment = await getEnvironmentThatNeedsWork(
-      getDatabaseConnection(),
+      db,
       {
         currentProcessor,
       }
@@ -39,7 +40,7 @@ export async function processEnvironment(currentProcessor: string) {
 
     switch (environment.lifecycleStatus) {
       case "new":
-        await processNewEnvironment(environment);
+        await processNewEnvironment(db, environment);
         break;
       default:
         break;
@@ -48,7 +49,7 @@ export async function processEnvironment(currentProcessor: string) {
     let resettingToRetry = false;
     if (id !== undefined) {
       resettingToRetry = true;
-      await resetEnvironmentId(getDatabaseConnection(), id);
+      await resetEnvironmentId(db, id);
     }
     log.error(
       `Environment processor ${currentProcessor} threw and error while processing environment: ${subdomain}`,

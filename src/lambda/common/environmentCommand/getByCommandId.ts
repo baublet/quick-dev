@@ -3,7 +3,7 @@ import { ConnectionOrTransaction } from "../db";
 
 export async function getByCommandId(
   trx: ConnectionOrTransaction,
-  commandId: string,
+  commandId: string | number,
   props: (keyof EnvironmentCommand)[] | "*" = "*"
 ): Promise<EnvironmentCommand | undefined> {
   const found = await trx<EnvironmentCommand>("environmentCommands")

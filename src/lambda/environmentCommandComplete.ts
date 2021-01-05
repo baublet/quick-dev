@@ -29,7 +29,7 @@ export const handler = async (event: APIGatewayEvent) => {
       statusCode: 403,
     };
   }
-
+s
   if (!secret) {
     log.error("EnvironmentCommandComplete did not receive a secret", {
       headers: event.headers,

@@ -1,18 +1,16 @@
 import fetch from "node-fetch";
 
 import { Context } from "../context";
-import { Environment, loader } from "../environment";
+import { Environment, update } from "../environment";
 import { log } from "../../../common/logger";
 
 export async function getEnvironmentStartupLogs(
   environment: Environment,
   context?: Context
 ): Promise<string> {
-  if (context) {
-    if (context.cache.environmentStartupLogsCache.has(environment.secret)) {
-      log.debug("Cache hit for environment startup logs", { environment });
-      return context.cache.environmentStartupLogsCache.get(environment.secret);
-    }
+  // If the startup logs exist on the environment, send those
+  if (environment.startupLogs !== undefined) {
+    return environment.startupLogs;
   }
 
   if (!environment.ipv4) {
@@ -34,9 +32,7 @@ export async function getEnvironmentStartupLogs(
     status: response.status,
   });
 
-  if (context) {
-    context.cache.environmentStartupLogsCache.set(environment.secret, body);
-  }
+  await update(context.db, environment.id, { startupLogs: body });
 
   return body;
 }

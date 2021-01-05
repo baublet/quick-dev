@@ -7,7 +7,7 @@ import { ConnectionOrTransaction } from "../../common/db";
 export const sendCommand = async (
   trx: ConnectionOrTransaction,
   payload: {
-    environmentCommandId: string;
+    environmentCommandId: string | number;
   }
 ) => {
   const environmentCommandId = payload.environmentCommandId;

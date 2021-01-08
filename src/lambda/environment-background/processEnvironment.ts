@@ -6,6 +6,7 @@ import { getDatabaseConnection } from "../common/db";
 import { log } from "../../common/logger";
 
 import { processNewEnvironment } from "./new";
+import { processProvisioningEnvironment } from "./provisioning";
 
 /**
  * Takes an environment that needs work done on it, ticks it over to a
@@ -18,33 +19,33 @@ export async function processEnvironment(currentProcessor: string) {
   let subdomain: string = "unknown";
   let id: number | string;
   try {
-    const environment = await getEnvironmentThatNeedsWork(
-      db,
-      {
-        currentProcessor,
+    const environment = await getEnvironmentThatNeedsWork(db, {
+      currentProcessor,
+    });
+    await db.transaction(async (trx) => {
+      if (!environment) {
+        log.debug("processEnvironment.ts: No environments need processing...");
+        return;
       }
-    );
 
-    if (!environment) {
-      log.debug("processEnvironment.ts: No environments need processing...");
-      return;
-    }
+      if (environment) {
+        id = environment.id;
+        subdomain = environment.subdomain;
+        log.info(
+          `Environment processor ${currentProcessor} working on ${subdomain}`
+        );
+      }
 
-    if (environment) {
-      id = environment.id;
-      subdomain = environment.subdomain;
-      log.info(
-        `Environment processor ${currentProcessor} working on ${subdomain}`
-      );
-    }
-
-    switch (environment.lifecycleStatus) {
-      case "new":
-        await processNewEnvironment(db, environment);
-        break;
-      default:
-        break;
-    }
+      switch (environment.lifecycleStatus) {
+        case "new":
+          await processNewEnvironment(trx, environment);
+          break;
+        case "provisioning":
+          await processProvisioningEnvironment(trx, environment);
+        default:
+          break;
+      }
+    });
   } catch (e) {
     let resettingToRetry = false;
     if (id !== undefined) {
@@ -52,7 +53,7 @@ export async function processEnvironment(currentProcessor: string) {
       await resetEnvironmentId(db, id);
     }
     log.error(
-      `Environment processor ${currentProcessor} threw and error while processing environment: ${subdomain}`,
+      `Environment processor ${currentProcessor} threw an error while processing environment: ${subdomain}`,
       {
         message: e.message,
         stack: e.stack,

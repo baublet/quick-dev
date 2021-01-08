@@ -10,12 +10,12 @@ export async function up(knex: Knex): Promise<void> {
       .index()
       .notNullable()
       .defaultTo(knex.fn.now());
-    table.string("type").notNullable();
-    table.string("status").notNullable().index();
-    table.string("processor");
-    table.string("error");
-    table.string("payload");
-    table.string("history").notNullable();
+    table.text("type").notNullable();
+    table.text("status").notNullable().index();
+    table.text("processor");
+    table.text("error");
+    table.text("payload");
+    table.text("history").notNullable();
   });
 }
 

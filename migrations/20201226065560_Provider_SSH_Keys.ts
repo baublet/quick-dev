@@ -7,11 +7,11 @@ export async function up(knex: Knex): Promise<void> {
 
     table.integer("sshKeyId").index().notNullable();
 
-    table.string("userSource").notNullable();
-    table.string("user").notNullable();
+    table.text("userSource").notNullable();
+    table.text("user").notNullable();
 
-    table.string("source").defaultTo("do").notNullable().index();
-    table.string("sourceId"); // e.g., ID of the SSH key in DO
+    table.text("source").defaultTo("do").notNullable().index();
+    table.text("sourceId"); // e.g., ID of the SSH key in DO
   });
 }
 

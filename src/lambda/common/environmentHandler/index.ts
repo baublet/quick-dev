@@ -1,4 +1,5 @@
 import { Environment } from "../../common/environment";
+import { EnvironmentDomainRecord } from "../../common/environmentDomainRecord";
 
 interface ExternalEnvironment {
   id: string;
@@ -17,5 +18,9 @@ export interface EnvironmentHandler {
   getEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
   newEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
   // Should always work. If something is wrong, it throws
-  destroyEnvironment: (environment: Pick<Environment, "sourceId">) => Promise<void>;
+  destroyEnvironment: (
+    environment: Pick<Environment, "sourceId">,
+    environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
+  ) => Promise<void>;
+  createEnvironmentDomainRecord: (type: string, name: string, data: string) => Promise<void>
 }

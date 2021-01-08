@@ -6,6 +6,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
+import { enqueueJob } from "./common/enqueueJob";
 import { getBySecret } from "./common/environment";
 import {
   EnvironmentCommand,
@@ -29,7 +30,7 @@ export const handler = async (event: APIGatewayEvent) => {
       statusCode: 403,
     };
   }
-s
+
   if (!secret) {
     log.error("EnvironmentCommandComplete did not receive a secret", {
       headers: event.headers,
@@ -68,6 +69,9 @@ s
   const statusToSet = status === "failure" ? "failure" : "success";
   const updatedCommand = await update(db, environmentCommand.id, {
     status: statusToSet,
+  });
+  await enqueueJob(db, "getEnvironmentCommandLogs", {
+    environmentCommandId: environmentCommand.commandId,
   });
   log.debug("Updated environment command to " + statusToSet, {
     environment,

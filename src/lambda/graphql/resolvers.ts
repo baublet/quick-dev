@@ -6,6 +6,7 @@ import { environments } from "./resolvers/user/environments";
 import { environment } from "./resolvers/environment";
 import { environmentLogs } from "./resolvers/environment/logs";
 import { environmentPermissions } from "./resolvers/environment/permissions";
+import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
@@ -21,6 +22,9 @@ export const resolvers = {
   Mutation: {
     createEnvironment,
     deleteEnvironment,
+  },
+  EnvironmentCommand: {
+    logs: environmentCommandLogs,
   },
   Environment: {
     logs: environmentLogs,

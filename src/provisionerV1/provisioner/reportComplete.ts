@@ -4,6 +4,10 @@ import fetch from "node-fetch";
 const secret = process.env.SECRET;
 const strapYardUrl = process.env.STRAPYARD_URL;
 
+function log(text: string) {
+  fs.appendFileSync(process.cwd() + "/error.log", text + "\n");
+}
+
 export async function reportComplete(
   commandId: string,
   logStreamPath: string,
@@ -12,7 +16,7 @@ export async function reportComplete(
   try {
     const status = exitCode === 0 ? "success" : "failure";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;
-    console.log(`Notifying command complete: ${url}`);
+    log(`Notifying command complete: ${url}`);
     const response = await fetch(url, {
       method: "post",
       headers: {
@@ -24,7 +28,7 @@ export async function reportComplete(
     }
   } catch (e) {
     const data = `Error reporting a command completion... ${e.message} ${e.stack}`;
-    fs.appendFileSync(process.cwd() + "/error.log", data);
+    log(data);
   }
   fs.writeFileSync(logStreamPath + ".complete", Date.now().toString());
 }

@@ -6,7 +6,9 @@
   "scripts": {
     "db:migration:create": "yarn knex migrate:make -x ts",
     "db:migrate": "yarn ts-node ./node_modules/.bin/knex migrate:latest",
-    "db:reset": "rm -rf strapyard.sqlite && yarn db:migrate",
+    "db:drop": "ts-node scripts/dropDatabase.ts",
+    "db:create": "ts-node scripts/createDatabase.ts",
+    "db:reset": "yarn db:drop && yarn db:create && yarn db:migrate",
     "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web",
     "build:lambda": "netlify-lambda build -c webpack.functions.js src/lambda",
     "build:provisioner": "webpack-cli -c webpack.provisioner.js",

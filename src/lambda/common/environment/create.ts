@@ -18,10 +18,10 @@ export async function create(
   trx: ConnectionOrTransaction,
   input: CreateEnvironmentInput
 ): Promise<Environment> {
-  const createdIds = await trx<Environment>("environments").insert(input);
-  const id = createdIds[0];
-  const found = await trx<Environment>("environments")
-    .select()
-    .where("id", "=", id);
-  return found[0];
+  const created = await trx<Environment>("environments")
+    .insert(input)
+    .returning("*");
+  if (created.length > 0) {
+    return created[0];
+  }
 }

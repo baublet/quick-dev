@@ -4,6 +4,8 @@ module.exports = {
       name: "functions",
       script: "./node_modules/.bin/netlify",
       args: "dev",
+      node_args: "--max_old_space_size=2048",
+      max_memory_restart: '1024M',
       env: {
         DEBUG: "true",
       },

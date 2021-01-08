@@ -5,13 +5,13 @@ import { Environment } from "./index";
 
 function loadEnvironments(
   context: Context,
-  ids: readonly number[]
+  ids: readonly (string | number)[]
 ): Promise<Environment[]> {
   return context.db<Environment>("environments").select().whereIn("id", ids);
 }
 
 export function loader(context: Context) {
-  return new DataLoader<number, Environment>(async (ids) => {
+  return new DataLoader<number | string, Environment>(async (ids) => {
     const idsToNumbers = ids.map((id: string | number) =>
       parseInt(`${id}`, 10)
     );

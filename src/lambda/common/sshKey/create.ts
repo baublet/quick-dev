@@ -1,16 +1,18 @@
 import { SSHKey } from "./index";
 import { ConnectionOrTransaction } from "../db";
+import { log } from "../../../common/logger";
 
 type CreateSSHKeyInput = Pick<
   SSHKey,
-  "user" | "userSource" | "privateKey" | "publicKey" | "fingerprint">;
+  "user" | "userSource" | "privateKey" | "publicKey" | "fingerprint"
+>;
 
 export async function create(
   trx: ConnectionOrTransaction,
   input: CreateSSHKeyInput
 ): Promise<SSHKey> {
-  const createdIds = await trx<SSHKey>("sshKeys").insert(input);
-  const id = createdIds[0];
-  const found = await trx<SSHKey>("sshKeys").select().where("id", "=", id);
-  return found[0];
+  const created = await trx<SSHKey>("sshKeys").insert(input).returning("*");
+  if (created.length > 0) {
+    return created[0];
+  }
 }

@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import knex from "knex";
 import { log } from "../../common/logger";
 

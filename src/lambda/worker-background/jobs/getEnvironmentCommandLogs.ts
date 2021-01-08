@@ -1,18 +1,25 @@
-import { getByCommandId } from "../../common/environmentCommand";
+import { getByCommandId, update } from "../../common/environmentCommand";
 import { getById } from "../../common/environment";
 
-import { sendCommand as sendCommandToEnvironment } from "../../common/environmentPassthrough";
 import { ConnectionOrTransaction } from "../../common/db";
+import { getCommandLogs } from "../../common/environmentPassthrough";
 
-export const sendCommand = async (
+export const getEnvironmentCommandLogs = async (
   trx: ConnectionOrTransaction,
   payload: {
     environmentCommandId: string;
   }
 ) => {
   const environmentCommandId = payload.environmentCommandId;
+
   const environmentCommand = await getByCommandId(trx, environmentCommandId);
   const environment = await getById(trx, environmentCommand.environmentId);
 
-  await sendCommandToEnvironment(environment, environmentCommand);
+  const environmentCommandLogs = await getCommandLogs(
+    environment,
+    environmentCommandId
+  );
+  await update(trx, environmentCommandId, {
+    logs: environmentCommandLogs,
+  });
 };

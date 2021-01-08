@@ -9,7 +9,6 @@ export const destroyEnvironment: EnvironmentHandler["destroyEnvironment"] = asyn
 
   await digitalOceanApi({
     path: `droplets/${environment.sourceId}`,
-    method: "delete",
-    expectStatus: 204,
-  });
+    method: "delete"
+  })
 };

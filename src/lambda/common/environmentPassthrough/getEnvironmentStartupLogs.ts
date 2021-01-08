@@ -5,8 +5,7 @@ import { Environment, update } from "../environment";
 import { log } from "../../../common/logger";
 
 export async function getEnvironmentStartupLogs(
-  environment: Environment,
-  context?: Context
+  environment: Environment
 ): Promise<string> {
   // If the startup logs exist on the environment, send those
   if (environment.startupLogs !== undefined) {
@@ -31,8 +30,6 @@ export async function getEnvironmentStartupLogs(
     responseBodyFirst50: body.substr(0, 50),
     status: response.status,
   });
-
-  await update(context.db, environment.id, { startupLogs: body });
 
   return body;
 }

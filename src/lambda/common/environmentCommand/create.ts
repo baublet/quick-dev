@@ -10,16 +10,14 @@ export async function create(
   trx: ConnectionOrTransaction,
   input: CreateEnvironmentCommandInput
 ): Promise<EnvironmentCommand> {
-  const createdIds = await trx<EnvironmentCommand>(
-    "environmentCommands"
-  ).insert({
-    ...input,
-    commandId: ulid(),
-    status: "waiting",
-  });
-  const id = createdIds[0];
-  const found = await trx<EnvironmentCommand>("environmentCommands")
-    .select()
-    .where("id", "=", id);
-  return found[0];
+  const created = await trx<EnvironmentCommand>("environmentCommands")
+    .insert({
+      ...input,
+      commandId: ulid(),
+      status: "waiting",
+    })
+    .returning("*");
+  if (created.length > 0) {
+    return created[0];
+  }
 }

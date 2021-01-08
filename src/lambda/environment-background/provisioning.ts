@@ -1,24 +1,35 @@
-import { Environment, update as updateEnvironment } from "../common/environment";
+import {
+  Environment,
+  update as updateEnvironment,
+} from "../common/environment";
 import { getByEnvironmentId } from "../common/environmentCommand";
-import { getDatabaseConnection } from "../common/db";
+import { Transaction } from "../common/db";
 import { enqueueJob } from "../common/enqueueJob";
+import { log } from "../../common/logger";
 
-export async function processProvisioningEnvironment(environment: Environment) {
-  const db = getDatabaseConnection();
-  return db.transaction(async trx => {
-    const commands = await getByEnvironmentId(trx, environment.id);
-    
-    if(commands.some(command => command.status === "running")) {
-      return;
-    }
+export async function processProvisioningEnvironment(
+  trx: Transaction,
+  environment: Environment
+) {
+  const commands = await getByEnvironmentId(trx, environment.id);
+  log.info("Received commands", { commands });
 
-    if(!commands.some(command => command.status === "waiting")) {
-      await updateEnvironment(trx, environment.id, { lifecycleStatus: "starting" })
-      return;
-    }
+  if (commands.some((command) => command.status === "running")) {
+    return;
+  }
 
-    const commandToRunNext = commands.find(command => command.status === "waiting");
+  if (!commands.some((command) => command.status === "waiting")) {
+    await updateEnvironment(trx, environment.id, {
+      lifecycleStatus: "starting",
+    });
+    return;
+  }
 
-    await enqueueJob(trx, "sendCommand", { environmentCommandId: commandToRunNext.id })
-  })
+  const commandToRunNext = commands.find(
+    (command) => command.status === "waiting"
+  );
+
+  await enqueueJob(trx, "sendCommand", {
+    environmentCommandId: commandToRunNext.commandId,
+  });
 }

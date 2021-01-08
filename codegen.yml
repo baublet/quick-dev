@@ -5,6 +5,9 @@ generates:
   src/lambda/graphql/generated.ts:
     plugins:
       - "typescript"
+    config:
+      scalars:
+        ID: number | string
   src/web/generated.ts:
     plugins:
       - typescript

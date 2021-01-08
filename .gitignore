@@ -5,6 +5,7 @@ builtWeb
 tmp/*
 !tmp/.gitkeep
 generated.ts
+thing*.json
 
 # Logs
 logs

@@ -3,7 +3,6 @@ export interface EnvironmentCommand {
   command: string;
   commandId: string;
   created_at: Date;
-  environmentDeleted: boolean;
   environmentId: number | string;
   id: number | string;
   logs?: string;
@@ -17,4 +16,3 @@ export { getByEnvironmentId } from "./getByEnvironmentId";
 export { getByCommandId } from "./getByCommandId";
 export { update } from "./update";
 export { createMany } from "./createMany";
-export { environmentDeleted } from "./environmentDeleted";

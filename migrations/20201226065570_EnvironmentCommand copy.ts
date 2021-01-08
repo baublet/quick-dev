@@ -5,14 +5,13 @@ export async function up(knex: Knex): Promise<void> {
     table.increments();
     table.timestamps(undefined, true);
 
-    table.boolean("environmentDeleted").index().notNullable().defaultTo(false);
     table.boolean("adminOnly").index().notNullable().defaultTo(false);
     table.integer("environmentId").index().notNullable();
-    table.string("commandId").index().notNullable();
-    table.string("command").notNullable();
-    table.string("title").notNullable();
-    table.string("status").index().notNullable().defaultTo("not_ready");
-    table.string("logs");
+    table.text("commandId").index().notNullable();
+    table.text("command").notNullable();
+    table.text("title").notNullable();
+    table.text("status").index().notNullable().defaultTo("not_ready");
+    table.text("logs");
   });
 }
 

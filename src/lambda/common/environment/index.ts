@@ -14,11 +14,6 @@ export type EnvironmentLifecycleStatus =
   | "error_resizing"
   | "up";
 
-export type EnvironmentSubdomainStatus =
-  | "not_configured"
-  | "configured"
-  | "error_configuring";
-
 export type EnvironmentUserSource = "github";
 
 export type EnvironmentSource = "digital_ocean";
@@ -42,7 +37,6 @@ export interface Environment {
   startupLogs?: string;
   strapYardFile: string;
   subdomain: string;
-  subdomainStatus: EnvironmentSubdomainStatus;
   updated_at: Date;
   user: string;
   userSource: EnvironmentUserSource;

@@ -3,11 +3,11 @@ import { ConnectionOrTransaction } from "../db";
 
 export function getByEnvironmentId(
   trx: ConnectionOrTransaction,
-  environmentId: number | string,
+  environmentId: string,
   props: (keyof EnvironmentCommand)[] | "*" = "*"
 ): Promise<EnvironmentCommand[]> {
   return trx<EnvironmentCommand>("environmentCommands")
     .select(props)
     .where("environmentId", "=", environmentId)
-    .orderBy("created_at", "desc")
+    .orderBy("created_at", "desc");
 }

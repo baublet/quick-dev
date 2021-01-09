@@ -2,6 +2,7 @@ type Query {
   user: User
   environment(input: EnvironmentInput!): Environment
   ping: String!
+  jobs: JobConnection!
 }
 
 type Mutation {
@@ -77,14 +78,14 @@ type Repositories {
 
 type EnvironmentCommandLog {
   id: ID!
-  logs: String!
+  data: String!
 }
 
 type EnvironmentCommand {
   id: ID!
   title: String!
   status: String!
-  logs(after: Int = 0): [EnvironmentCommandLog!]!
+  logChunks(after: Int = 0): [EnvironmentCommandLog!]!
 }
 
 type EnvironmentLogsConnection {
@@ -114,4 +115,22 @@ type RepositoryConnection {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   nodes: [Repository!]!
+}
+
+type Job {
+  id: ID!
+  payload: String!
+  type: String!
+  status: String!
+  processor: String
+  history: String!
+}
+
+type JobEdge {
+  cursor: ID!
+  nodes: [Job!]!
+}
+
+type JobConnection {
+  edges: [JobEdge!]!
 }

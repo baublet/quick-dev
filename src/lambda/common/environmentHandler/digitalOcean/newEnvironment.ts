@@ -1,12 +1,13 @@
-import { log } from "../../../../../common/logger";
-import { digitalOceanApi } from "../digitalOceanApi";
-import { EnvironmentHandler } from "../../index";
-import { environmentToUniqueName } from "../../environmentToUniqueName";
-import { sizeToDOSize } from "../sizeToDOSize";
-import { getCurrentUrl } from "../../../getCurrentUrl";
-import { getSSHKeyOrThrow } from "../../../gitHub";
-import { getDatabaseConnection } from "../../../db";
-import { getBySSHKeyId } from "../../../providerSSHKey";
+import { log } from "../../../../common/logger";
+import { digitalOceanApi } from "./digitalOceanApi";
+import { EnvironmentHandler } from "../index";
+import { environmentToUniqueName } from "../environmentToUniqueName";
+import { sizeToDOSize } from "./sizeToDOSize";
+import { getCurrentUrl } from "../../getCurrentUrl";
+import { getSSHKeyOrThrow } from "../../gitHub";
+import { getDatabaseConnection } from "../../db";
+import { getBySSHKeyId } from "../../providerSSHKey";
+import { createInitialCommands } from "../createInitialCommands";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
@@ -99,6 +100,7 @@ echo "~fin~"
     }>({
       path: "droplets",
       body,
+      expectStatus: 202,
     });
 
     log.info({ createdDroplet });
@@ -108,6 +110,8 @@ echo "~fin~"
       throw new Error(`Error creating droplet`);
     }
     const droplet = createdDroplet.droplet;
+
+    await createInitialCommands(trx, { environment });
 
     return {
       id: droplet.id.toString(),

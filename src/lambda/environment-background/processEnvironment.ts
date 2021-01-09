@@ -1,6 +1,6 @@
 import {
   getEnvironmentThatNeedsWork,
-  resetEnvironmentId,
+  resetProcessorByEnvironmentId,
 } from "../common/environment";
 import { getDatabaseConnection } from "../common/db";
 import { log } from "../../common/logger";
@@ -17,7 +17,7 @@ import { processProvisioningEnvironment } from "./provisioning";
 export async function processEnvironment(currentProcessor: string) {
   const db = getDatabaseConnection();
   let subdomain: string = "unknown";
-  let id: number | string;
+  let id: string;
   try {
     const environment = await getEnvironmentThatNeedsWork(db, {
       currentProcessor,
@@ -46,11 +46,15 @@ export async function processEnvironment(currentProcessor: string) {
           break;
       }
     });
+
+    if (id) {
+      await resetProcessorByEnvironmentId(db, id);
+    }
   } catch (e) {
     let resettingToRetry = false;
     if (id !== undefined) {
       resettingToRetry = true;
-      await resetEnvironmentId(db, id);
+      await resetProcessorByEnvironmentId(db, id);
     }
     log.error(
       `Environment processor ${currentProcessor} threw an error while processing environment: ${subdomain}`,

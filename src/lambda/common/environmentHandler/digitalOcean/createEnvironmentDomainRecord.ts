@@ -13,7 +13,12 @@ export const createEnvironmentDomainRecord: EnvironmentHandler["createEnvironmen
     data,
   });
 
-  await digitalOceanApi({
+  const created = await digitalOceanApi<{
+    domain_record: {
+      id: number;
+    };
+  }>({
+    expectStatus: 201,
     path: `domains/${process.env.STRAPYARD_DOMAIN}/records`,
     method: "post",
     body: {
@@ -23,4 +28,8 @@ export const createEnvironmentDomainRecord: EnvironmentHandler["createEnvironmen
       ttl: 30,
     },
   });
+
+  return {
+    providerId: `${created.domain_record.id}`,
+  };
 };

@@ -5,19 +5,14 @@ import { Environment } from "./index";
 
 function loadEnvironments(
   context: Context,
-  ids: readonly (string | number)[]
+  ids: readonly string[]
 ): Promise<Environment[]> {
   return context.db<Environment>("environments").select().whereIn("id", ids);
 }
 
 export function loader(context: Context) {
-  return new DataLoader<number | string, Environment>(async (ids) => {
-    const idsToNumbers = ids.map((id: string | number) =>
-      parseInt(`${id}`, 10)
-    );
-    const foundEnvironments = await loadEnvironments(context, idsToNumbers);
-    return idsToNumbers.map((id) =>
-      foundEnvironments.find((env) => env.id === id)
-    );
+  return new DataLoader<string, Environment>(async (ids) => {
+    const foundEnvironments = await loadEnvironments(context, ids);
+    return ids.map((id) => foundEnvironments.find((env) => env.id === id));
   });
 }

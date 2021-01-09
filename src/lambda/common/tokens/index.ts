@@ -1,5 +1,5 @@
 export interface Token {
-  id: number;
+  id: string;
   token: string;
   created_at: Date;
   updated_at: Date;

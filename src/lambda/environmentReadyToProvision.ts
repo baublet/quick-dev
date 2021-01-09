@@ -6,6 +6,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
+import { enqueueJob } from "./common/enqueueJob";
 import { getBySecret, update } from "./common/environment";
 
 // Called by a box when it's up and starts running our provisioning scripts
@@ -47,6 +48,9 @@ export const handler = async (event: APIGatewayEvent) => {
   // Update the environment in the database
   try {
     await db.transaction(async (trx) => {
+      await enqueueJob(trx, "getEnvironmentStartupLogs", {
+        environmentId: environment.id,
+      });
       await update(trx, environment.id, {
         lifecycleStatus: "provisioning",
       });

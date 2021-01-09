@@ -9,6 +9,15 @@ query EnvironmentDetails($id: ID!) {
     }
     logs {
       startupLogs
+      commands {
+        id
+        title
+        status
+        logChunks {
+          id
+          data
+        }
+      }
     }
   }
 }

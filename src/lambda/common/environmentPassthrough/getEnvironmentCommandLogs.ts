@@ -1,15 +1,25 @@
-import fetch from "node-fetch";
-
-import { Environment, update } from "../environment";
+import { Environment } from "../environment";
 import { log } from "../../../common/logger";
 import { EnvironmentCommand } from "../environmentCommand";
+import { fetch } from "../fetch";
 
 export async function getEnvironmentCommandLogs(
   environment: Environment,
   environmentCommand: EnvironmentCommand
 ): Promise<string> {
   if (!environment.ipv4) {
+    log.warning(
+      "Tried to get environment command logs for an environment that doesn't have an IP!",
+      { environment, environmentCommand }
+    );
     return null;
+  }
+
+  if (
+    environmentCommand.status === "success" ||
+    environmentCommand.status === "failure"
+  ) {
+    return environmentCommand.logs;
   }
 
   const response = await fetch(
@@ -19,21 +29,16 @@ export async function getEnvironmentCommandLogs(
       headers: {
         authorization: environment.secret,
       },
+      expectStatus: 200,
+      timeoutMs: 5000,
     }
   );
 
-  if(response.status === 404) {
-    log.debug("Server has no log file yet. Command might not have produced output, yet");
-    return ""
-  }
-
-  const body = await response.text();
-
   log.debug("Log response from environment", {
     environment,
-    responseBodyFirst50: body.substr(0, 50),
+    responseBodyFirst50: response.bodyText.substr(0, 50),
     status: response.status,
   });
 
-  return body;
+  return response.bodyText;
 }

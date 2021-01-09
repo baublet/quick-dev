@@ -3,7 +3,7 @@ import { ConnectionOrTransaction } from "../db";
 
 export async function getByEnvironmentId(
   trx: ConnectionOrTransaction,
-  environmentId: string | number,
+  environmentId: string,
   props: (keyof EnvironmentDomainRecord)[] | "*" = "*"
 ): Promise<EnvironmentDomainRecord[]> {
   return trx<EnvironmentDomainRecord>("environmentDomainRecords")

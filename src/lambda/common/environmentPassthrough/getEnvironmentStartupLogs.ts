@@ -1,8 +1,6 @@
-import fetch from "node-fetch";
-
-import { Context } from "../context";
-import { Environment, update } from "../environment";
+import { Environment } from "../environment";
 import { log } from "../../../common/logger";
+import { fetch } from "../fetch";
 
 export async function getEnvironmentStartupLogs(
   environment: Environment
@@ -13,6 +11,10 @@ export async function getEnvironmentStartupLogs(
   }
 
   if (!environment.ipv4) {
+    log.warning(
+      "Tried to get environment startup logs for an environment that doesn't have an IP!",
+      { environment }
+    );
     return null;
   }
 
@@ -21,15 +23,15 @@ export async function getEnvironmentStartupLogs(
     headers: {
       authorization: environment.secret,
     },
+    expectStatus: 200,
+    timeoutMs: 500,
   });
-
-  const body = await response.text();
 
   log.debug("Log response from environment", {
     environment,
-    responseBodyFirst50: body.substr(0, 50),
+    responseBodyFirst50: response.bodyText.substr(0, 50),
     status: response.status,
   });
 
-  return body;
+  return response.bodyText;
 }

@@ -3,8 +3,8 @@ export interface EnvironmentCommand {
   command: string;
   commandId: string;
   created_at: Date;
-  environmentId: number | string;
-  id: number | string;
+  environmentId: string;
+  id: string;
   logs?: string;
   status: "waiting" | "running" | "failure" | "success";
   title: string;

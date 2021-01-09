@@ -1,5 +1,4 @@
-import fetch from "node-fetch";
-
+import { fetch } from "../../fetch";
 import { log } from "../../../../common/logger";
 
 export async function digitalOceanApi<T = any>({
@@ -11,7 +10,7 @@ export async function digitalOceanApi<T = any>({
   path: string;
   method?: "post" | "delete" | "get";
   body?: Record<string, any>;
-  expectStatus?: number;
+  expectStatus: number;
 }): Promise<T> {
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
     throw new Error("No DIGITAL_OCEAN_TOKEN found in path variables");
@@ -24,20 +23,16 @@ export async function digitalOceanApi<T = any>({
     url: `https://api.digitalocean.com/v2/${path}`,
   });
 
-  const options: fetch.RequestInit = {
-    method,
+  const response = await fetch(`https://api.digitalocean.com/v2/${path}`, {
+    expectStatus,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-  };
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
-  const response = await fetch(
-    `https://api.digitalocean.com/v2/${path}`,
-    options
-  );
+    method,
+    timeoutMs: 3000,
+    body,
+  });
 
   if (expectStatus) {
     if (response.status !== expectStatus) {
@@ -48,7 +43,7 @@ export async function digitalOceanApi<T = any>({
   }
 
   try {
-    return response.json() as Promise<T>;
+    return JSON.parse(response.bodyText) as Promise<T>;
   } catch (e) {
     log.error("Error with DigitalOcean request", {
       message: e.message,

@@ -7,7 +7,7 @@ generates:
       - "typescript"
     config:
       scalars:
-        ID: number | string
+        ID: string
   src/web/generated.ts:
     plugins:
       - typescript
@@ -15,4 +15,4 @@ generates:
       - typescript-react-apollo
     config:
       scalars:
-        ID: number | string
+        ID: string

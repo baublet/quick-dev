@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import { LogOutput } from "../../components/LogOutput";
 
 interface EnvironmentLogsRoutesProps {
-  environmentId: string | number;
+  environmentId: string;
   startupLogs: string;
 }
 

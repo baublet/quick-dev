@@ -1,6 +1,6 @@
 import { useEnvironmentDetailsQuery } from "../generated";
 
-export function useEnvironmentDetails(id: number | string) {
+export function useEnvironmentDetails(id: string) {
   const { loading, data } = useEnvironmentDetailsQuery({
     variables: {
       id,

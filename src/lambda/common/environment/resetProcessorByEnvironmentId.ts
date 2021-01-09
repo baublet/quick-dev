@@ -1,15 +1,15 @@
 import { Environment } from "./index";
 import { ConnectionOrTransaction } from "../db";
 
-export async function resetEnvironmentId(
+export async function resetProcessorByEnvironmentId(
   trx: ConnectionOrTransaction,
   id: Environment["id"]
 ): Promise<Environment> {
-  await trx<Environment>("environments")
+  const results = await trx<Environment>("environments")
     .update({ processor: null, updated_at: trx.fn.now() })
     .where({ id })
     .whereNotNull("processor")
-    .limit(1);
-  const freshRows = trx<Environment>("environments").select({ id }).limit(1);
-  return freshRows[0];
+    .limit(1)
+    .returning("*");
+  return results[0];
 }

@@ -1,8 +1,7 @@
-import fetch from "node-fetch";
-
 import { Environment } from "../environment";
 import { log } from "../../../common/logger";
 import { EnvironmentCommand } from "../environmentCommand";
+import { fetch } from "../fetch";
 
 export async function sendCommand(
   environment: Environment,
@@ -16,7 +15,7 @@ export async function sendCommand(
     throw new Error("Environment is not ready for commands");
   }
 
-  const response = await fetch(
+  await fetch(
     `http://${environment.ipv4}:8333/command/${environmentCommand.commandId}`,
     {
       method: "post",
@@ -25,20 +24,10 @@ export async function sendCommand(
         "Content-Type": "text/plain",
         authorization: environment.secret,
       },
+      expectStatus: 200,
+      timeoutMs: 3000,
     }
   );
-
-  const body = await response.text();
-
-  if (response.status !== 200) {
-    log.error("Unknown error sending a command", {
-      environment,
-      environmentCommand,
-      responseBodyFirst50: body.substr(0, 50),
-      status: response.status,
-    });
-    throw new Error("Error sending command");
-  }
 
   log.info("Environment received command OK", {
     environment,

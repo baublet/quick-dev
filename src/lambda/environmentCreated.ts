@@ -6,6 +6,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
+import { enqueueJob } from "./common/enqueueJob";
 import { getBySecret, update } from "./common/environment";
 
 // Called by a box when it's up and starts running our provisioning scripts
@@ -56,6 +57,10 @@ export const handler = async (event: APIGatewayEvent) => {
   // Update the environment in the database
   await update(db, environment.id, {
     ipv4,
+  });
+  // Now that we have an IP, we can setup its domain
+  await enqueueJob(db, "setupEnvironmentDomain", {
+    environmentId: environment.id,
   });
 
   log.debug("Updated environment IP", { environment, ipv4 });

@@ -2,37 +2,38 @@ import React from "react";
 
 import { H4 } from "../../components/H4";
 import { LogEntry } from "./LogEntry";
+import { EnvironmentDetailsQuery } from "../../generated";
 
 interface EnvironmentLogsProps {
-  environmentId: string | number;
+  environmentId: string;
   startupLogs: string;
+  commands: Required<
+    EnvironmentDetailsQuery["environment"]["logs"]["commands"]
+  >;
 }
 
 export function EnvironmentLogs({
   startupLogs,
   environmentId,
+  commands,
 }: EnvironmentLogsProps) {
-  const logs: {
-    logId: string;
-    title: string;
-    logText?: string;
-  }[] = [
-    {
-      logId: "startup",
-      title: "Startup Logs",
-      logText: startupLogs,
-    },
-  ];
   return (
     <div>
       <H4>Logs</H4>
-      {logs.map((log) => (
+      <LogEntry
+        environmentId={environmentId}
+        key={"startup"}
+        logId={"startup"}
+        title={"Startup Logs"}
+        logText={startupLogs}
+      />
+      {commands.map((command) => (
         <LogEntry
           environmentId={environmentId}
-          key={log.logId}
-          logId={log.logId}
-          title={log.title}
-          logText={log.logText}
+          key={command.id}
+          logId={command.id}
+          title={command.title}
+          logText={command.logChunks.map((chunk) => chunk.data).join("")}
         />
       ))}
     </div>

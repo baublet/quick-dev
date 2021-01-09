@@ -2,7 +2,7 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("environments", (table) => {
-    table.increments();
+    table.uuid("id").primary();
     table.timestamps(undefined, true);
 
     table.text("subdomain").unique().index();
@@ -20,6 +20,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("processor").index();
     table.text("size").notNullable().defaultTo("s");
     table.text("strapYardFile").notNullable();
+    table.text("startupLogs");
   });
 }
 

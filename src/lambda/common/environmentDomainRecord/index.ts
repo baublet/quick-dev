@@ -1,13 +1,13 @@
 import { Environment } from "../environment";
 
 export interface EnvironmentDomainRecord {
-  id: string | number;
-  environmentId: string | number;
+  id: string;
+  environmentId: string;
   type: "A";
   name: string;
   data: string;
   provider: Environment["source"];
-  providerId: string | number;
+  providerId: string;
   deleted: boolean;
 }
 

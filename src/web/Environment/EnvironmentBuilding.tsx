@@ -7,7 +7,7 @@ export function EnvironmentBuilding() {
   return (
     <>
       <Divider />
-      <div className="mt-6 opacity-75 flex flex-col items-center">
+      <div className="mt-6 opacity-10 flex flex-col items-center">
         <H2 className="mb-6">Reserving Machine...</H2>
         <svg
           style={{

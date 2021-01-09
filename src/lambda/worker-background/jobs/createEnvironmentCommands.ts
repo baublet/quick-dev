@@ -8,7 +8,7 @@ import { parseDefinition } from "../../common/strapYardFile";
 export const createEnvironmentCommands = async (
   trx: ConnectionOrTransaction,
   payload: {
-    environmentId: number;
+    environmentId: string;
   }
 ) => {
   const environmentId = payload.environmentId;

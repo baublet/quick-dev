@@ -22,5 +22,9 @@ export interface EnvironmentHandler {
     environment: Pick<Environment, "sourceId">,
     environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
   ) => Promise<void>;
-  createEnvironmentDomainRecord: (type: string, name: string, data: string) => Promise<void>
+  createEnvironmentDomainRecord: (
+    type: string,
+    name: string,
+    data: string
+  ) => Promise<{ providerId: string }>;
 }

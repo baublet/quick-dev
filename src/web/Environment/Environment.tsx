@@ -11,20 +11,14 @@ import { EnvironmentActions } from "./EnvironmentActions";
 import { EnvironmentBuilding } from "./EnvironmentBuilding";
 
 interface EnvironmentProps {
-  id: number | string;
-}
-
-function EnvironmentInitializing() {
-  return (
-    <div className="">
-      <Loader display={true} />
-    </div>
-  );
+  id: string;
 }
 
 export function Environment({ id }: EnvironmentProps) {
   const { loading, environment } = useEnvironmentDetails(id);
   const hasLogs = Boolean(environment && environment.logs);
+
+  console.log("environment.logs", environment?.logs);
 
   return (
     <div>
@@ -45,6 +39,7 @@ export function Environment({ id }: EnvironmentProps) {
         <EnvironmentLogs
           environmentId={environment.id}
           startupLogs={environment.logs.startupLogs}
+          commands={environment.logs.commands}
         />
       )}
     </div>

@@ -2,7 +2,7 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("tokens", (table) => {
-    table.increments();
+    table.uuid("id").primary();
     table.timestamps(undefined, true);
 
     table.uuid("token").notNullable().unique().index();

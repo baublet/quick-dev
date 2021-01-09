@@ -5,7 +5,7 @@ import { getById } from "./getById";
 export async function jobFailed(
   trx: ConnectionOrTransaction,
   processor: string,
-  jobId: number | string,
+  jobId: string,
   output: string
 ) {
   const historyItem: JobHistory = {

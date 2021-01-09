@@ -19,7 +19,7 @@ export const getEnvironmentCommandLogs = async (
     environment,
     environmentCommandId
   );
-  await update(trx, environmentCommandId, {
+  await update(trx, environmentCommand.id, {
     logs: environmentCommandLogs,
   });
 };

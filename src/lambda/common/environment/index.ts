@@ -23,7 +23,7 @@ export type EnvironmentSize = "s" | "m" | "l" | "xl" | "xxl";
 export interface Environment {
   created_at: Date;
   deleted: boolean;
-  id: string | number;
+  id: string;
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;
@@ -47,7 +47,7 @@ export { get } from "./get";
 export { update } from "./update";
 export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
-export { resetEnvironmentId } from "./resetEnvironmentId";
+export { resetProcessorByEnvironmentId } from "./resetProcessorByEnvironmentId";
 export { loader } from "./loader";
 export { getById } from "./getById";
 export { getBySubdomain } from "./getBySubdomain";

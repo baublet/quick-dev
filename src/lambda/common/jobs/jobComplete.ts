@@ -5,7 +5,7 @@ import { getById } from "./getById";
 export async function jobComplete(
   trx: ConnectionOrTransaction,
   processor: string,
-  jobId: number | string
+  jobId: string
 ) {
   const historyItem: JobHistory = {
     action: "endWork",

@@ -4,7 +4,7 @@ import { Route, Link } from "react-router-dom";
 import { LogOutput } from "../../components/LogOutput";
 
 interface LogEntryProps {
-  environmentId: string | number;
+  environmentId: string;
   title: string;
   logText?: string;
   logId: string;

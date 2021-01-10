@@ -58,7 +58,7 @@ module.exports = () => {
 
     resolve({
       entry: "./src/web/index.tsx",
-      devtool: process.env.NODE_ENV === "production" ? undefined : "eval",
+      devtool: "source-map",
       watchOptions: {
         ignored: /node_modules/,
       },

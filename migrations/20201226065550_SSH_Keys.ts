@@ -2,7 +2,7 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("sshKeys", (table) => {
-    table.uuid("id").primary();
+    table.text("id").primary();
     table.timestamps(undefined, true);
 
     table.text("userSource").notNullable();

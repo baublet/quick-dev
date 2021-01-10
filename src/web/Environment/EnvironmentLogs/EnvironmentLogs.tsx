@@ -1,6 +1,7 @@
 import React from "react";
 
 import { H4 } from "../../components/H4";
+import { StatusIndicator } from "../../components/StatusIndicator";
 import { LogEntry } from "./LogEntry";
 import { EnvironmentDetailsQuery } from "../../generated";
 
@@ -31,6 +32,7 @@ export function EnvironmentLogs({
         <LogEntry
           environmentId={environmentId}
           key={command.id}
+          status={command.status}
           logId={command.id}
           title={command.title}
           logText={command.logChunks.map((chunk) => chunk.data).join("")}

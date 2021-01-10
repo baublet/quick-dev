@@ -25,9 +25,13 @@ export async function processProvisioningEnvironment(
     return;
   }
 
-  const commandToRunNext = commands.find(
-    (command) => command.status === "waiting"
-  );
+  const commandToRunNext = (() => {
+    for (const command of commands) {
+      if (command.status === "waiting") {
+        return command;
+      }
+    }
+  })();
 
   await enqueueJob(trx, "sendCommand", {
     environmentCommandId: commandToRunNext.commandId,

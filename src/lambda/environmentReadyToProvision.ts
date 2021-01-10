@@ -1,6 +1,4 @@
-require("@babel/polyfill/noConflict");
-require("dotenv").config();
-require("source-map-support").install();
+require("./common/initialize");
 
 import { APIGatewayEvent } from "aws-lambda";
 

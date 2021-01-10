@@ -1,6 +1,4 @@
-require("@babel/polyfill/noConflict");
-require("dotenv").config();
-require('source-map-support').install();
+require("./common/initialize");
 
 import { APIGatewayEvent } from "aws-lambda";
 import FormData from "form-data";
@@ -43,7 +41,7 @@ export const handler = async (event: APIGatewayEvent) => {
       tokenType,
     }),
     headers: {
-      "Set-Cookie": `auth=${cookieValue}; Path=/; HttpOnly`
-    }
+      "Set-Cookie": `auth=${cookieValue}; Path=/; HttpOnly`,
+    },
   };
 };

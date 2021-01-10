@@ -9,5 +9,5 @@ export function getByEnvironmentId(
   return trx<EnvironmentCommand>("environmentCommands")
     .select(props)
     .where("environmentId", "=", environmentId)
-    .orderBy("created_at", "desc");
+    .orderBy("order", "asc");
 }

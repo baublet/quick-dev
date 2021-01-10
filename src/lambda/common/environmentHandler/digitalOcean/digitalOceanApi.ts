@@ -6,11 +6,13 @@ export async function digitalOceanApi<T = any>({
   path,
   method = "post",
   expectStatus,
+  timeout = 3000,
 }: {
   path: string;
   method?: "post" | "delete" | "get";
   body?: Record<string, any>;
   expectStatus: number;
+  timeout?: number;
 }): Promise<T> {
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
     throw new Error("No DIGITAL_OCEAN_TOKEN found in path variables");
@@ -30,7 +32,7 @@ export async function digitalOceanApi<T = any>({
       Authorization: `Bearer ${accessToken}`,
     },
     method,
-    timeoutMs: 3000,
+    timeoutMs: timeout,
     body,
   });
 

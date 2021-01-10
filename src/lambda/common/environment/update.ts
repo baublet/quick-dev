@@ -8,10 +8,11 @@ export async function update(
   id: Environment["id"],
   input: UpdateEnvironmentInput
 ): Promise<Environment> {
-  await trx<Environment>("environments")
+  const results = await trx<Environment>("environments")
     .update({ updated_at: trx.fn.now(), ...input })
     .where({ id })
-    .limit(1);
-  const freshRows = trx<Environment>("environments").select({ id }).limit(1);
-  return freshRows[0];
+    .limit(1)
+    .returning("*");
+
+  return results[0];
 }

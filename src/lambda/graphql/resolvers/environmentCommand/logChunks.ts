@@ -32,7 +32,7 @@ async function safelyGetData(
 
 export async function environmentCommandLogChunks(
   parent: EnvironmentCommand,
-  { after }: { after: number },
+  { after = 0 }: { after?: number },
   context: Context
 ): Promise<EnvironmentCommandLog[]> {
   const id = `${parent.id}-${after}`;

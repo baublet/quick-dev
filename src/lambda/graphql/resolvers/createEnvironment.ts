@@ -20,7 +20,7 @@ export async function createEnvironment(
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
   return context.db.transaction(async (trx) => {
-    let sshKeyId: number;
+    let sshKeyId: string;
     try {
       const providerKey = await getOrCreateSSHKey(trx, context, {
         user: context.user.email,

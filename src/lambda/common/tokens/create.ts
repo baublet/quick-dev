@@ -1,3 +1,5 @@
+import { ulid } from "ulid";
+
 import { Token } from "./index";
 import { Transaction } from "../db";
 
@@ -9,12 +11,14 @@ export async function create(
   expiresAfterMs: number = defaultExpiry
 ): Promise<Token> {
   const expires = new Date(Date.now() + expiresAfterMs);
-  const createdIds = await trx<Token>("tokens").insert({
-    expires,
-  });
 
-  const createdTokens = await trx<Token>("tokens")
-    .select()
-    .where({ id: createdIds[0] });
-  return createdTokens[0];
+  const result = await trx<Token>("tokens")
+    .insert({
+      id: ulid(),
+      token: ulid(),
+      expires,
+    })
+    .returning("*");
+
+  return result[0];
 }

@@ -9,6 +9,7 @@ export interface EnvironmentCommand {
   status: "waiting" | "running" | "failure" | "success";
   title: string;
   updated_at: Date;
+  order: number;
 }
 
 export { create } from "./create";

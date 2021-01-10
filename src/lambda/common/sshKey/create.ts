@@ -1,6 +1,7 @@
+import { ulid } from "ulid";
+
 import { SSHKey } from "./index";
 import { ConnectionOrTransaction } from "../db";
-import { log } from "../../../common/logger";
 
 type CreateSSHKeyInput = Pick<
   SSHKey,
@@ -11,7 +12,9 @@ export async function create(
   trx: ConnectionOrTransaction,
   input: CreateSSHKeyInput
 ): Promise<SSHKey> {
-  const created = await trx<SSHKey>("sshKeys").insert(input).returning("*");
+  const created = await trx<SSHKey>("sshKeys")
+    .insert({ ...input, id: ulid() })
+    .returning("*");
   if (created.length > 0) {
     return created[0];
   }

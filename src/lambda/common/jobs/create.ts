@@ -1,3 +1,5 @@
+import { ulid } from "ulid";
+
 import { IntermediateJob, Job } from "./index";
 import { ConnectionOrTransaction } from "../db";
 
@@ -17,6 +19,7 @@ export async function create<
   const created = await trx<IntermediateJob>("jobs")
     .insert({
       type,
+      id: ulid(),
       payload: payloadString,
       status: "ready",
       history: "[]",

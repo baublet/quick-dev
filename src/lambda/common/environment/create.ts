@@ -1,3 +1,5 @@
+import { ulid } from "ulid";
+
 import { Environment } from "./index";
 import { ConnectionOrTransaction } from "../db";
 
@@ -19,7 +21,7 @@ export async function create(
   input: CreateEnvironmentInput
 ): Promise<Environment> {
   const created = await trx<Environment>("environments")
-    .insert(input)
+    .insert({ ...input, id: ulid() })
     .returning("*");
   if (created.length > 0) {
     return created[0];

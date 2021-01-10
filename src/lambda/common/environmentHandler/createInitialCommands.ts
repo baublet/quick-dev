@@ -1,3 +1,4 @@
+import { log } from "../../../common/logger";
 import { Transaction } from "../db";
 import { Environment } from "../environment";
 import { create } from "../environmentCommand";

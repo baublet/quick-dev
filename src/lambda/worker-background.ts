@@ -1,6 +1,4 @@
-require("@babel/polyfill/noConflict");
-require("dotenv").config();
-require("source-map-support").install();
+require("./common/initialize");
 
 import { hri } from "human-readable-ids";
 

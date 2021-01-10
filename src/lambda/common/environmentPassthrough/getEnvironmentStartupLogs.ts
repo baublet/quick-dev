@@ -6,7 +6,7 @@ export async function getEnvironmentStartupLogs(
   environment: Environment
 ): Promise<string> {
   // If the startup logs exist on the environment, send those
-  if (environment.startupLogs !== undefined) {
+  if (typeof environment.startupLogs === "string") {
     return environment.startupLogs;
   }
 

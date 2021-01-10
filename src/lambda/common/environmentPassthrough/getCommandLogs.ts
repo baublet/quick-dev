@@ -11,7 +11,7 @@ export async function getCommandLogs(
   }
 
   const response = await fetch(
-    `http://${environment.ipv4}:8333/logs/${commandId}?after=${{ after }}`,
+    `http://${environment.ipv4}:8333/logs/${commandId}?after=${after}`,
     {
       method: "get",
       headers: {

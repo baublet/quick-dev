@@ -2,9 +2,9 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("environmentDomainRecords", (table) => {
-    table.uuid("id").primary();
+    table.text("id").primary();
 
-    table.integer("environmentId").notNullable().index();
+    table.text("environmentId").notNullable().index();
     table.text("type").notNullable();
     table.text("data").notNullable();
     table.boolean("deleted").notNullable().defaultTo(false);

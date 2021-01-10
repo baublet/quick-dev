@@ -7,7 +7,9 @@ export function useEnvironmentDetails(id: string) {
     },
   });
 
-  if (loading) {
+  console.log({ data });
+
+  if (loading || !data) {
     return {
       loading: true,
       environment: null,

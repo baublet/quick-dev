@@ -2,10 +2,10 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("tokens", (table) => {
-    table.uuid("id").primary();
+    table.text("id").primary();
     table.timestamps(undefined, true);
 
-    table.uuid("token").notNullable().unique().index();
+    table.text("token").notNullable().unique().index();
     table.boolean("used").defaultTo("false").index();
     table.dateTime("expires").notNullable().index();
   });

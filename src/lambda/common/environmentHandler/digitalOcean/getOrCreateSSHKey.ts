@@ -42,6 +42,7 @@ export async function getOrCreateSSHKey(
     };
   }>({
     path: "account/keys",
+    expectStatus: 201,
     method: "post",
     body: {
       name: keyTitle,
@@ -70,6 +71,7 @@ export async function getOrCreateSSHKey(
     }>({
       path: `account/keys/${sshKey.fingerprint}`,
       method: "get",
+      expectStatus: 200,
     });
     if (!digitalOceanFetchKeyResponse.ssh_key) {
       log.error("Couldn't find an extant key in DigitalOcean...", {

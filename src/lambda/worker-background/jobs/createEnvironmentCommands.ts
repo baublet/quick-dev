@@ -1,12 +1,13 @@
 import { createMany } from "../../common/environmentCommand";
 import { getById } from "../../common/environment";
 
-import { ConnectionOrTransaction } from "../../common/db";
+import { Transaction } from "../../common/db";
 import { log } from "../../../common/logger";
 import { parseDefinition } from "../../common/strapYardFile";
+import { createInitialCommands } from "../../common/environmentHandler/createInitialCommands";
 
 export const createEnvironmentCommands = async (
-  trx: ConnectionOrTransaction,
+  trx: Transaction,
   payload: {
     environmentId: string;
   }
@@ -16,7 +17,7 @@ export const createEnvironmentCommands = async (
 
   if (!environment) {
     log.error(
-      "CreateEnvironmentCommands was send an environment ID that doesn't exist",
+      "CreateEnvironmentCommands was sent an environment ID that doesn't exist",
       {
         environmentId,
       }
@@ -24,12 +25,13 @@ export const createEnvironmentCommands = async (
     throw new Error(`Environment not found`);
   }
 
+  await createInitialCommands(trx, { environment });
+
   const parsedFile = await parseDefinition(
     environment.repositoryUrl,
     environment.strapYardFile
   );
   const commandsToCreate = parsedFile.steps.map((step) => ({
-    environmentId: environment.id,
     command: step.command,
     title: step.name || step.command,
   }));
@@ -39,7 +41,11 @@ export const createEnvironmentCommands = async (
     commandsToCreate,
   });
 
-  const createdCommands = await createMany(trx, commandsToCreate);
+  const createdCommands = await createMany(
+    trx,
+    environment.id,
+    commandsToCreate
+  );
 
   log.debug("EnvironmentCommands created", { environment, createdCommands });
 };

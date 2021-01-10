@@ -15,7 +15,7 @@ export async function environmentLogs(
   | null
   | string
   | {
-      startupLogs: () => Promise<string>;
+      startupLogs: string | (() => Promise<string>);
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {
@@ -23,23 +23,19 @@ export async function environmentLogs(
     return null;
   }
 
-  if (parent.startupLogs) {
-    return parent.startupLogs;
-  }
-
   const startupLogs = async () => {
     try {
       const logs = await getEnvironmentStartupLogs(parent);
+      console.log("------------------------------------------------", logs);
       await update(context.db, parent.id, { startupLogs: logs });
+      return logs;
     } catch (e) {
       return "";
     }
   };
 
-  log.debug("Parent: ", { parent });
-
   return {
-    startupLogs,
+    startupLogs: parent.startupLogs || startupLogs,
     commands: () => getByEnvironmentId(context.db, parent.id),
   };
 }

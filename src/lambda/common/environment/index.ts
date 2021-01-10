@@ -33,7 +33,7 @@ export interface Environment {
   size: EnvironmentSize;
   source: EnvironmentSource;
   sourceId?: string;
-  sshKeyId: number;
+  sshKeyId: string;
   startupLogs?: string;
   strapYardFile: string;
   subdomain: string;

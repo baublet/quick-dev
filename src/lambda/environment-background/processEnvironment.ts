@@ -22,19 +22,16 @@ export async function processEnvironment(currentProcessor: string) {
     const environment = await getEnvironmentThatNeedsWork(db, {
       currentProcessor,
     });
+    if (!environment) {
+      log.debug("processEnvironment.ts: No environments need processing...");
+      return;
+    }
     await db.transaction(async (trx) => {
-      if (!environment) {
-        log.debug("processEnvironment.ts: No environments need processing...");
-        return;
-      }
-
-      if (environment) {
-        id = environment.id;
-        subdomain = environment.subdomain;
-        log.info(
-          `Environment processor ${currentProcessor} working on ${subdomain}`
-        );
-      }
+      id = environment.id;
+      subdomain = environment.subdomain;
+      log.info(
+        `Environment processor ${currentProcessor} working on ${subdomain}`
+      );
 
       switch (environment.lifecycleStatus) {
         case "new":
@@ -47,9 +44,8 @@ export async function processEnvironment(currentProcessor: string) {
       }
     });
 
-    if (id) {
-      await resetProcessorByEnvironmentId(db, id);
-    }
+    log.debug("Resetting processor for environment ID", environment.id);
+    await resetProcessorByEnvironmentId(db, environment.id);
   } catch (e) {
     let resettingToRetry = false;
     if (id !== undefined) {

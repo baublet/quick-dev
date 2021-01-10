@@ -7,7 +7,6 @@ import { getCurrentUrl } from "../../getCurrentUrl";
 import { getSSHKeyOrThrow } from "../../gitHub";
 import { getDatabaseConnection } from "../../db";
 import { getBySSHKeyId } from "../../providerSSHKey";
-import { createInitialCommands } from "../createInitialCommands";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
@@ -101,17 +100,14 @@ echo "~fin~"
       path: "droplets",
       body,
       expectStatus: 202,
+      timeout: 7500,
     });
-
-    log.info({ createdDroplet });
 
     if (!createdDroplet.droplet) {
       log.error("Error creating droplet", { environment, createdDroplet });
       throw new Error(`Error creating droplet`);
     }
     const droplet = createdDroplet.droplet;
-
-    await createInitialCommands(trx, { environment });
 
     return {
       id: droplet.id.toString(),

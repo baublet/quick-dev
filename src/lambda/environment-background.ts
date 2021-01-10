@@ -1,6 +1,4 @@
-require("@babel/polyfill/noConflict");
-require("dotenv").config();
-require('source-map-support').install();
+require("./common/initialize");
 
 import { APIGatewayEvent } from "aws-lambda";
 import { ulid } from "ulid";
@@ -19,7 +17,7 @@ export const handler = async (event: APIGatewayEvent) => {
       clearInterval(intervalNumber);
       return;
     }
-    log.debug("Environment Worker heartbeat")
+    log.debug("Environment Worker heartbeat");
     await processEnvironment(processor);
   }, 1000);
 };

@@ -36,8 +36,9 @@ export const getEnvironment: EnvironmentHandler["newEnvironment"] = async (
       };
     };
   }>({
-    method: "get",
     path: `droplets/${environment.sourceId}`,
+    method: "get",
+    expectStatus: 200,
   });
 
   if (!fetchedDroplet.droplet) {

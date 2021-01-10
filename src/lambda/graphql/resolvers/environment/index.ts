@@ -14,7 +14,7 @@ export async function environment(
   context: Context
 ): Promise<Environment> {
   const id = args.input.id;
-  const environment = await getById(context.db, parseInt(id, 10));
+  const environment = await getById(context.db, id);
 
   if (!environment) {
     throw new Error("Environment not found");

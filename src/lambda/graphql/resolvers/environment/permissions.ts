@@ -1,5 +1,5 @@
 import { Context } from "../../../common/context";
-import { Environment } from "../../../common/environment";
+import { Environment } from "../../../common/entities";
 import { canDelete } from "../../authorization/environment/canDelete";
 
 export async function environmentPermissions(

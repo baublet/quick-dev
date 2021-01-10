@@ -1,34 +1,17 @@
-import { JobKey } from "../../worker-background/jobs";
+import { sendCommand } from "./sendCommand";
+import { createEnvironmentCommands } from "./createEnvironmentCommands";
+import { deleteEnvironmentInProvider } from "./deleteEnvironmentInProvider";
+import { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";
+import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
+import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 
-export type JobType = JobKey;
+export const JOB_MAP = {
+  sendCommand,
+  createEnvironmentCommands,
+  deleteEnvironmentInProvider,
+  getEnvironmentCommandLogs,
+  setupEnvironmentDomain,
+  getEnvironmentStartupLogs,
+} as const;
 
-export type JobStatus = "ready" | "working" | "failed" | "done";
-
-export interface JobHistory {
-  action: "startWork" | "fail" | "endWork";
-  processor: string;
-  date: Date;
-  output?: string;
-}
-
-export interface Job {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  payload: Record<string, any>;
-  type: JobType;
-  status: JobStatus;
-  processor?: string;
-  history: JobHistory[];
-}
-
-export type IntermediateJob = Omit<Job, "payload" | "history"> & {
-  payload: string;
-  history: string;
-};
-
-export { create } from "./create";
-export { todo } from "./todo";
-export { jobComplete } from "./jobComplete";
-export { jobFailed } from "./jobFailed";
-export { get } from "./get";
+export type JobKey = keyof typeof JOB_MAP;

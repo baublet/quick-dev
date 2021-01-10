@@ -5,7 +5,7 @@ import { APIGatewayEvent } from "aws-lambda";
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
 import { enqueueJob } from "./common/enqueueJob";
-import { getBySecret, update } from "./common/environment";
+import { environment as envEntity } from "./common/entities";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
@@ -20,7 +20,7 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Check if the environment exists
-  const environment = await getBySecret(db, secret);
+  const environment = await envEntity.getBySecret(db, secret);
 
   if (!environment) {
     log.error(
@@ -49,7 +49,7 @@ export const handler = async (event: APIGatewayEvent) => {
       await enqueueJob(trx, "getEnvironmentStartupLogs", {
         environmentId: environment.id,
       });
-      await update(trx, environment.id, {
+      await envEntity.update(trx, environment.id, {
         lifecycleStatus: "provisioning",
       });
     });

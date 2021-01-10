@@ -1,11 +1,11 @@
-import { Environment, update } from "../../../common/environment";
+import {
+  environment as envEntity,
+  environmentCommand as envCommandEntity,
+  Environment,
+  EnvironmentCommand,
+} from "../../../common/entities";
 import { getEnvironmentStartupLogs } from "../../../common/environmentPassthrough";
 import { Context } from "../../../common/context";
-import {
-  EnvironmentCommand,
-  getByEnvironmentId,
-} from "../../../common/environmentCommand";
-import { log } from "../../../../common/logger";
 
 export async function environmentLogs(
   parent: Environment,
@@ -26,8 +26,7 @@ export async function environmentLogs(
   const startupLogs = async () => {
     try {
       const logs = await getEnvironmentStartupLogs(parent);
-      console.log("------------------------------------------------", logs);
-      await update(context.db, parent.id, { startupLogs: logs });
+      await envEntity.update(context.db, parent.id, { startupLogs: logs });
       return logs;
     } catch (e) {
       return "";
@@ -36,6 +35,6 @@ export async function environmentLogs(
 
   return {
     startupLogs: parent.startupLogs || startupLogs,
-    commands: () => getByEnvironmentId(context.db, parent.id),
+    commands: () => envCommandEntity.getByEnvironmentId(context.db, parent.id),
   };
 }

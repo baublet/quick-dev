@@ -1,12 +1,12 @@
 import { log } from "../../../common/logger";
 import { Context } from "../../common/context";
 import { enqueueJob } from "../../common/enqueueJob";
-import { del, Environment, loader } from "../../common/environment";
+import { Environment, environment as envEntity } from "../../common/entities";
 import { canDelete } from "../authorization/environment/canDelete";
 
 interface DeleteEnvironmentArguments {
   input: {
-    id: number;
+    id: string;
   };
 }
 
@@ -15,17 +15,19 @@ export async function deleteEnvironment(
   { input: { id } }: DeleteEnvironmentArguments,
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
-  const environment = await context.service(loader).load(id);
+  const environment = await context.service(envEntity.loader).load(id);
   return context.db.transaction(async (trx) => {
-
     if (!environment) {
-      log.error("Deletion request rejected: environment not found", { context, environment });
+      log.error("Deletion request rejected: environment not found", {
+        context,
+        environment,
+      });
       return {
         errors: ["Environment not found"],
       };
     }
 
-    if(!canDelete(context, environment)) {
+    if (!canDelete(context, environment)) {
       log.error("Deletion request unauthorized", { context, environment });
       return {
         errors: ["Environment not found"],
@@ -37,7 +39,7 @@ export async function deleteEnvironment(
         environment,
       });
       await Promise.all([
-        del(trx, id),
+        envEntity.del(trx, id),
         enqueueJob(trx, "deleteEnvironmentInProvider", {
           environmentId: id,
         }),

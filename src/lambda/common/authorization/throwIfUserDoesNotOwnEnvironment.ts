@@ -1,4 +1,4 @@
-import { Environment } from "../environment";
+import { Environment } from "../entities";
 import { ContextUser } from "../context";
 import { log } from "../../../common/logger";
 

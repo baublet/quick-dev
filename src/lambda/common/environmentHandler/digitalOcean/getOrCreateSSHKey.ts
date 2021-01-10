@@ -1,9 +1,4 @@
-import { Environment } from "../../environment";
-import {
-  ProviderSSHKey,
-  create as createProviderKey,
-  get,
-} from "../../providerSSHKey";
+import { Environment, ProviderSSHKey, providerSSHKey } from "../../entities";
 import { digitalOceanApi } from "./digitalOceanApi";
 import { getOrCreateSSHKey as getOrCreateGitHubKey } from "../../gitHub";
 import { Context } from "../../context";
@@ -22,7 +17,11 @@ export async function getOrCreateSSHKey(
 ): Promise<ProviderSSHKey> {
   const { user, userSource } = args;
 
-  const extant = await get(trx, { user, userSource, source: "digital_ocean" });
+  const extant = await providerSSHKey.get(trx, {
+    user,
+    userSource,
+    source: "digital_ocean",
+  });
   if (extant) {
     return extant;
   }
@@ -87,7 +86,7 @@ export async function getOrCreateSSHKey(
 
   // Save the provider SSH key to the StrapYard DB (so we don't do all of
   // the above junk more than once
-  return createProviderKey(trx, {
+  return providerSSHKey.create(trx, {
     user: context.user.email,
     userSource: context.user.source,
     source: "digital_ocean",

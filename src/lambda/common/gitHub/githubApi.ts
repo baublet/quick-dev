@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import { fetch } from "../fetch";
 import { log } from "../../../common/logger";
 
 export async function githubApi<T = any>({
@@ -31,7 +31,15 @@ export async function githubApi<T = any>({
     options,
   });
 
-  const response = await fetch(url, options);
+  const response = await fetch(url, {
+    method,
+    body,
+    expectStatus,
+    timeoutMs: 5000,
+    headers: {
+      authorization: `bearer ${accessToken}`,
+    },
+  });
 
   if (expectStatus) {
     if (response.status !== expectStatus) {
@@ -41,5 +49,5 @@ export async function githubApi<T = any>({
     }
   }
 
-  return response.json() as Promise<T>;
+  return JSON.parse(response.bodyText) as Promise<T>;
 }

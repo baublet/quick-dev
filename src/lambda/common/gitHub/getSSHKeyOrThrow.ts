@@ -1,5 +1,4 @@
-import { EnvironmentUserSource } from "../environment";
-import { SSHKey, getByUser } from "../sshKey";
+import { EnvironmentUserSource, sshKey, SSHKey } from "../entities";
 import { ConnectionOrTransaction } from "../../common/db";
 
 export async function getSSHKeyOrThrow(
@@ -7,7 +6,7 @@ export async function getSSHKeyOrThrow(
   user: string,
   userSource: EnvironmentUserSource
 ): Promise<SSHKey> {
-  const extant = await getByUser(trx, user, userSource);
+  const extant = await sshKey.getByUser(trx, user, userSource);
   if (extant) {
     return extant;
   }

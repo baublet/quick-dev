@@ -1,5 +1,5 @@
 import { Context } from "../../common/context";
-import { get as getJobs } from "../../common/jobs";
+import { job } from "../../common/entities";
 import { JobConnection } from "../generated";
 
 export async function jobs(
@@ -7,7 +7,7 @@ export async function jobs(
   _args: unknown,
   context: Context
 ): Promise<JobConnection> {
-  const jobs = await getJobs(context.db);
+  const jobs = await job.get(context.db);
 
   if (!jobs.length) {
     return {

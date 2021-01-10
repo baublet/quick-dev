@@ -1,8 +1,8 @@
 import {
+  environment as envEntity,
   Environment,
-  update as updateEnvironment,
-} from "../common/environment";
-import { getByEnvironmentId } from "../common/environmentCommand";
+  environmentCommand as envCommandEntity,
+} from "../common/entities";
 import { Transaction } from "../common/db";
 import { enqueueJob } from "../common/enqueueJob";
 import { log } from "../../common/logger";
@@ -11,7 +11,10 @@ export async function processProvisioningEnvironment(
   trx: Transaction,
   environment: Environment
 ) {
-  const commands = await getByEnvironmentId(trx, environment.id);
+  const commands = await envCommandEntity.getByEnvironmentId(
+    trx,
+    environment.id
+  );
   log.info("Received commands", { commands });
 
   if (commands.some((command) => command.status === "running")) {
@@ -19,7 +22,7 @@ export async function processProvisioningEnvironment(
   }
 
   if (!commands.some((command) => command.status === "waiting")) {
-    await updateEnvironment(trx, environment.id, {
+    await envEntity.update(trx, environment.id, {
       lifecycleStatus: "starting",
     });
     return;

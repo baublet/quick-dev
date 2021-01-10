@@ -5,12 +5,11 @@ import { APIGatewayEvent } from "aws-lambda";
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
 import { enqueueJob } from "./common/enqueueJob";
-import { getBySecret } from "./common/environment";
 import {
   EnvironmentCommand,
-  getByCommandId,
-  update,
-} from "./common/environmentCommand";
+  environment as envEntity,
+  environmentCommand as envCommandEntity,
+} from "./common/entities";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
@@ -39,7 +38,7 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Check if the environment exists
-  const environment = await getBySecret(db, secret);
+  const environment = await envEntity.getBySecret(db, secret);
 
   if (!environment) {
     log.error(
@@ -52,7 +51,10 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Make sure the environment command exists
-  const environmentCommand = await getByCommandId(db, commandId);
+  const environmentCommand = await envCommandEntity.getByCommandId(
+    db,
+    commandId
+  );
 
   if (!environmentCommand) {
     log.error("EnvironmentCommandComplete could not find command ID", {
@@ -65,9 +67,13 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   const statusToSet = status === "failure" ? "failure" : "success";
-  const updatedCommand = await update(db, environmentCommand.id, {
-    status: statusToSet,
-  });
+  const updatedCommand = await envCommandEntity.update(
+    db,
+    environmentCommand.id,
+    {
+      status: statusToSet,
+    }
+  );
   await enqueueJob(db, "getEnvironmentCommandLogs", {
     environmentCommandId: environmentCommand.commandId,
   });

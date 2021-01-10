@@ -1,4 +1,4 @@
-import { Environment } from "../environment";
+import { Environment } from "../entities";
 import { fetch } from "../fetch";
 
 export async function getCommandLogs(

@@ -1,5 +1,5 @@
-import { create } from "./jobs";
-import { JOB_MAP, JobKey } from "../worker-background/jobs";
+import { job } from "./entities";
+import { JOB_MAP, JobKey } from "./jobs";
 import { ConnectionOrTransaction } from "./db";
 import { log } from "../../common/logger";
 
@@ -14,7 +14,7 @@ export async function enqueueJob<T extends JobKey>(
     type,
     payload,
   });
-  await create(trx, {
+  await job.create(trx, {
     type,
     payload,
   });

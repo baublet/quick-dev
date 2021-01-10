@@ -1,4 +1,7 @@
-import { getById, Environment } from "../../../common/environment";
+import {
+  environment as envEntity,
+  Environment,
+} from "../../../common/entities";
 import { Context } from "../../../common/context";
 import { throwIfUserDoesNotOwnEnvironment } from "../../../common/authorization/throwIfUserDoesNotOwnEnvironment";
 
@@ -14,7 +17,7 @@ export async function environment(
   context: Context
 ): Promise<Environment> {
   const id = args.input.id;
-  const environment = await getById(context.db, id);
+  const environment = await envEntity.getById(context.db, id);
 
   if (!environment) {
     throw new Error("Environment not found");

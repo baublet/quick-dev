@@ -1,4 +1,4 @@
-import { Environment } from "../../../common/environment";
+import { Environment } from "../../../common/entities";
 
 type DigitalOceanSize =
   | "s-1vcpu-1gb"

@@ -1,8 +1,7 @@
 import {
-  get,
-  getEnvironmentCount,
+  environment as envEntity,
   Environment,
-} from "../../../common/environment";
+} from "../../../common/entities";
 import { Context } from "../../../common/context";
 
 interface Args {
@@ -28,7 +27,7 @@ export async function environments(
   const perPage = input?.perPage || 25;
   const currentPage = input?.page || 1;
 
-  const environments = await get(context.db, {
+  const environments = await envEntity.get(context.db, {
     user: context.user.email,
     page: currentPage,
     perPage: perPage + 1,
@@ -47,6 +46,6 @@ export async function environments(
     hasPreviousPage,
     nodes: environments,
     totalCount: () =>
-      getEnvironmentCount(context.db, { user: context.user.email }),
+      envEntity.getEnvironmentCount(context.db, { user: context.user.email }),
   };
 }

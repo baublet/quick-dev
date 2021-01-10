@@ -1,4 +1,4 @@
-import { Environment } from "../environment";
+import { Environment } from "../entities";
 import { log } from "../../../common/logger";
 import { fetch } from "../fetch";
 

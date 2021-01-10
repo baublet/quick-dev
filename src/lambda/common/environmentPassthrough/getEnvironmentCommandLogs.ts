@@ -1,6 +1,5 @@
-import { Environment } from "../environment";
+import { Environment, EnvironmentCommand } from "../entities";
 import { log } from "../../../common/logger";
-import { EnvironmentCommand } from "../environmentCommand";
 import { fetch } from "../fetch";
 
 export async function getEnvironmentCommandLogs(

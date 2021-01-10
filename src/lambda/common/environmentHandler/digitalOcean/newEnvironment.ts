@@ -6,7 +6,7 @@ import { sizeToDOSize } from "./sizeToDOSize";
 import { getCurrentUrl } from "../../getCurrentUrl";
 import { getSSHKeyOrThrow } from "../../gitHub";
 import { getDatabaseConnection } from "../../db";
-import { getBySSHKeyId } from "../../providerSSHKey";
+import { providerSSHKey } from "../../entities";
 
 export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
   environment
@@ -25,7 +25,7 @@ export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
       environment.user,
       environment.userSource
     );
-    const providerSshKey = await getBySSHKeyId(trx, sshKey.id);
+    const providerSshKey = await providerSSHKey.getBySSHKeyId(trx, sshKey.id);
 
     if (!providerSshKey) {
       log.error("Provider SSH key not found for extant SSH key", {

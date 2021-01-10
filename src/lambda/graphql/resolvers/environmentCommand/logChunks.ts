@@ -1,10 +1,12 @@
 import { Context } from "../../../common/context";
-import { Environment } from "../../../common/environment";
-import { EnvironmentCommand } from "../../../common/environmentCommand";
 import { EnvironmentCommandLog } from "../../generated";
 import { getCommandLogs } from "../../../common/environmentPassthrough";
-import { loader } from "../../../common/environment";
 import { log } from "../../../../common/logger";
+import {
+  environment as envEntity,
+  Environment,
+  EnvironmentCommand,
+} from "../../../common/entities";
 
 async function safelyGetData(
   environment: Environment,
@@ -41,7 +43,9 @@ export async function environmentCommandLogChunks(
     return [{ id, data: parent.logs.substr(after) }];
   }
 
-  const environment = await context.service(loader).load(parent.environmentId);
+  const environment = await context
+    .service(envEntity.loader)
+    .load(parent.environmentId);
   const data = await safelyGetData(environment, parent.commandId, after);
 
   return [

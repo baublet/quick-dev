@@ -1,7 +1,6 @@
-import { Environment, update } from "../common/environment";
+import { environment as envEntity, Environment } from "../common/entities";
 import { DigitalOceanHandler } from "../common/environmentHandler/digitalOcean";
 import { ConnectionOrTransaction } from "../common/db";
-import { log } from "../../common/logger";
 
 export async function processNewEnvironment(
   db: ConnectionOrTransaction,
@@ -10,14 +9,14 @@ export async function processNewEnvironment(
   let createdDropletId: string;
 
   try {
-    await update(db, environment.id, {
+    await envEntity.update(db, environment.id, {
       lifecycleStatus: "creating",
     });
     const createdDroplet = await DigitalOceanHandler.newEnvironment(
       environment
     );
     createdDropletId = createdDroplet.id;
-    await update(db, environment.id, {
+    await envEntity.update(db, environment.id, {
       processor: null,
       sourceId: createdDroplet.id,
     });

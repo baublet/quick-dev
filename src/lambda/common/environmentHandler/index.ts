@@ -1,5 +1,4 @@
-import { Environment } from "../../common/environment";
-import { EnvironmentDomainRecord } from "../../common/environmentDomainRecord";
+import { Environment, EnvironmentDomainRecord } from "../entities";
 
 interface ExternalEnvironment {
   id: string;

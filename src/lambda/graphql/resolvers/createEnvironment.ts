@@ -4,7 +4,7 @@ import { ulid } from "ulid";
 import { log } from "../../../common/logger";
 import { Context } from "../../common/context";
 import { enqueueJob } from "../../common/enqueueJob";
-import { create, Environment } from "../../common/environment";
+import { Environment, environment as envEntity } from "../../common/entities";
 import { getOrCreateSSHKey } from "../../common/environmentHandler/digitalOcean/getOrCreateSSHKey";
 import { getRepoStrapYardFile } from "../../common/gitHub";
 
@@ -44,7 +44,7 @@ export async function createEnvironment(
     }
 
     const subdomain = hri.random();
-    const environment = await create(trx, {
+    const environment = await envEntity.create(trx, {
       name: subdomain,
       repositoryUrl,
       secret: ulid(),

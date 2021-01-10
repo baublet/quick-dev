@@ -1,5 +1,5 @@
 import { Context } from "../../../common/context";
-import { Environment } from "../../../common/environment";
+import { Environment } from "../../../common/entities";
 
 export async function canDelete(context: Context, environment: Environment) {
   const userSource = context.user.source;

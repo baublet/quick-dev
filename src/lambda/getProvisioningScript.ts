@@ -4,7 +4,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
-import { getBySecret } from "./common/environment";
+import { environment as envEntity } from "./common/entities";
 import { getProvisionScript } from "../provisionerV1/getProvisionScript";
 
 // Called by a box when it's up and starts running our provisioning scripts
@@ -21,7 +21,7 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   // Check if the environment exists
-  const environment = await getBySecret(db, secret);
+  const environment = await envEntity.getBySecret(db, secret);
 
   if (!environment || environment.subdomain !== subdomain) {
     log.error(

@@ -1,4 +1,4 @@
-import { Environment } from "../../common/environment";
+import { Environment } from "../entities";
 
 export function environmentToUniqueName(
   environment: Pick<Environment, "id" | "subdomain">

@@ -3,7 +3,7 @@ import path from "path";
 
 import { log } from "../common/logger";
 import { getCurrentUrl } from "../lambda/common/getCurrentUrl";
-import { Environment } from "../lambda/common/environment";
+import type { Environment } from "../lambda/common/entities";
 
 function replace(
   haystack: string,

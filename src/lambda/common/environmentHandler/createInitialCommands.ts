@@ -1,7 +1,6 @@
-import { log } from "../../../common/logger";
 import { Transaction } from "../db";
-import { Environment } from "../environment";
-import { create } from "../environmentCommand";
+import { Environment } from "../entities";
+import { environmentCommand } from "../entities";
 
 interface AddSSHKeyArguments {
   environment: Environment;
@@ -11,7 +10,7 @@ export async function createInitialCommands(
   trx: Transaction,
   { environment }: AddSSHKeyArguments
 ): Promise<void> {
-  await create(trx, {
+  await environmentCommand.create(trx, {
     command: `mkdir -p ~/project \
 && (cd ~/project; git clone ${environment.repositoryUrl})`,
     environmentId: environment.id,
@@ -20,7 +19,7 @@ export async function createInitialCommands(
     status: "waiting",
   });
 
-  await create(trx, {
+  await environmentCommand.create(trx, {
     command: `(curl -fsSL https://code-server.dev/install.sh | sh) \
 && sudo systemctl enable --now code-server@$USER`,
     environmentId: environment.id,
@@ -29,7 +28,7 @@ export async function createInitialCommands(
     status: "waiting",
   });
 
-  await create(trx, {
+  await environmentCommand.create(trx, {
     command: `( \
   echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" \
     | sudo tee -a /etc/apt/sources.list.d/caddy-fury.list \
@@ -45,7 +44,7 @@ reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
     status: "waiting",
   });
 
-  await create(trx, {
+  await environmentCommand.create(trx, {
     command: `echo "bind-addr: 127.0.0.1:8080 \
 auth: password \
 password: aa82dd974de376d337fb0854 \

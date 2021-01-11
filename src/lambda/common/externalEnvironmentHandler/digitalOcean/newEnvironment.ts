@@ -1,6 +1,6 @@
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
-import { EnvironmentHandler } from "../index";
+import { ExternalEnvironmentHandler } from "../index";
 import { environmentToUniqueName } from "../environmentToUniqueName";
 import { sizeToDOSize } from "./sizeToDOSize";
 import { getCurrentUrl } from "../../getCurrentUrl";
@@ -8,7 +8,7 @@ import { getSSHKeyOrThrow } from "../../gitHub";
 import { getDatabaseConnection } from "../../db";
 import { providerSSHKey } from "../../entities";
 
-export const newEnvironment: EnvironmentHandler["newEnvironment"] = async (
+export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = async (
   environment
 ) => {
   log.info("Provisioning new DigitalOcean environment", {
@@ -81,6 +81,7 @@ echo "~fin~"
       image: "ubuntu-16-04-x64",
       user_data: provisionScript,
       ssh_keys: [providerSshKey.sourceId],
+      tags: [environment.id],
     };
 
     log.info("Creating a new DigitalOcean environment", { body, environment });

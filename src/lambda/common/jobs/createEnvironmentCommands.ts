@@ -3,7 +3,7 @@ import { environmentCommand, environment as env } from "../entities";
 import { Transaction } from "../db";
 import { log } from "../../../common/logger";
 import { parseDefinition } from "../strapYardFile";
-import { createInitialCommands } from "../environmentHandler/createInitialCommands";
+import { createInitialCommands } from "../externalEnvironmentHandler/createInitialCommands";
 
 export const createEnvironmentCommands = async (
   trx: Transaction,

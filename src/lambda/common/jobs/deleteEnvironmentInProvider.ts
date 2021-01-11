@@ -3,7 +3,7 @@ import { log } from "../../../common/logger";
 import { environmentDomainRecord, environment as env } from "../entities";
 
 import { ConnectionOrTransaction } from "../../common/db";
-import { destroyEnvironment } from "../../common/environmentHandler/digitalOcean/destroyEnvironment";
+import { destroyEnvironment } from "../../common/externalEnvironmentHandler/digitalOcean/destroyEnvironment";
 
 export const deleteEnvironmentInProvider = async (
   trx: ConnectionOrTransaction,

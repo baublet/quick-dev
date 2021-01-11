@@ -2,7 +2,7 @@ import {
   environment as envEntity,
   environmentDomainRecord as envDomainEntity,
 } from "../entities";
-import { DigitalOceanHandler } from "../../common/environmentHandler/digitalOcean";
+import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
 import { ConnectionOrTransaction } from "../../common/db";
 import { log } from "../../../common/logger";
 

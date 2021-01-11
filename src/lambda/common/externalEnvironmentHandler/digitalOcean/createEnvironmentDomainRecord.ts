@@ -1,8 +1,8 @@
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
-import { EnvironmentHandler } from "../index";
+import { ExternalEnvironmentHandler } from "../index";
 
-export const createEnvironmentDomainRecord: EnvironmentHandler["createEnvironmentDomainRecord"] = async (
+export const createEnvironmentDomainRecord: ExternalEnvironmentHandler["createEnvironmentDomainRecord"] = async (
   type,
   name,
   data

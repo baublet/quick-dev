@@ -1,5 +1,5 @@
 import { environment as envEntity, Environment } from "../common/entities";
-import { DigitalOceanHandler } from "../common/environmentHandler/digitalOcean";
+import { DigitalOceanHandler } from "../common/externalEnvironmentHandler/digitalOcean";
 import { ConnectionOrTransaction } from "../common/db";
 
 export async function processNewEnvironment(

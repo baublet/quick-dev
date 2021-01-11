@@ -13,9 +13,12 @@ interface ExternalEnvironment {
   ipv4?: string;
 }
 
-export interface EnvironmentHandler {
+export interface ExternalEnvironmentHandler {
   getEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
   newEnvironment: (environment: Environment) => Promise<ExternalEnvironment>;
+  environmentExists: (
+    environment: Environment
+  ) => Promise<false | ExternalEnvironment>;
   // Should always work. If something is wrong, it throws
   destroyEnvironment: (
     environment: Pick<Environment, "sourceId">,

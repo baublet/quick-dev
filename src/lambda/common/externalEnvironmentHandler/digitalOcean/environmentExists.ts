@@ -1,20 +1,12 @@
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
-import { EnvironmentHandler } from "../index";
+import { ExternalEnvironmentHandler } from "../index";
 
-export const getEnvironment: EnvironmentHandler["newEnvironment"] = async (
+export const environmentExists: ExternalEnvironmentHandler["environmentExists"] = async (
   environment
 ) => {
-  if (!environment.sourceId) {
-    throw new Error(
-      `Cannot get an external box correlating to environment ${environment.subdomain}. No SourceID exists for that environment. It was probably never created.`
-    );
-  }
-
-  log.info("Fetching a DigitalOcean environment", { environment });
-
-  const fetchedDroplet = await digitalOceanApi<{
-    droplet?: {
+  const taggedDroplets = await digitalOceanApi<{
+    droplets: {
       id: number;
       name: string;
       status: "new" | "active" | "off" | "archive";
@@ -34,18 +26,24 @@ export const getEnvironment: EnvironmentHandler["newEnvironment"] = async (
           type: string;
         }[];
       };
-    };
+    }[];
   }>({
-    path: `droplets/${environment.sourceId}`,
+    path: `droplets?tag_name=${environment.id}`,
     method: "get",
     expectStatus: 200,
   });
 
-  if (!fetchedDroplet.droplet) {
-    log.error("Error fetching droplet", { environment, fetchedDroplet });
-    throw new Error(`Error creating droplet`);
+  if (taggedDroplets.droplets.length === 0) {
+    return false;
   }
-  const droplet = fetchedDroplet.droplet;
+  const droplet = taggedDroplets.droplets[0];
+
+  if (taggedDroplets.droplets.length > 1) {
+    log.warning(
+      "Multiple droplets found for a single environment ID. FIND OUT WHY AND FIX THIS!",
+      { environment, taggedDroplets }
+    );
+  }
 
   return {
     id: droplet.id.toString(),

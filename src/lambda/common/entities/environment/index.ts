@@ -1,6 +1,7 @@
 export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
+  | "created"
   | "provisioning"
   | "error_provisioning"
   | "paused" // You can always pause (e.g., in DO, "shut down")

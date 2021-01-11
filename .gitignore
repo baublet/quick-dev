@@ -1,11 +1,12 @@
-builtFunctions
-builtWeb
+builtFunctions/*
+builtWeb/*
+builtProvisioner/*
 .env
 .ngrokDomain
 tmp/*
-!tmp/.gitkeep
 generated.ts
 thing*.json
+!**/.gitkeep
 
 # Logs
 logs

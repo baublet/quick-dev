@@ -1,5 +1,5 @@
 [build]
-  command = "yarn build:lambda"
+  command = "yarn build:netlify"
   functions = "builtFunctions"
   publish = "builtWeb"
 

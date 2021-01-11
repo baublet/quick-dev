@@ -4,7 +4,11 @@ import { APIGatewayEvent } from "aws-lambda";
 import path from "path";
 import fs from "fs";
 
-const PROVISIONER_PATH = path.resolve(process.cwd(), "dist", "provisioner.js");
+const PROVISIONER_PATH = path.resolve(
+  process.cwd(),
+  "builtProvisioner",
+  "provisioner.js"
+);
 
 async function getProvisionerScript(): Promise<string> {
   return new Promise<string>((resolve) => {

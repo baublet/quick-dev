@@ -1,29 +1,21 @@
-import { environment as envEntity, Environment } from "../common/entities";
-import { DigitalOceanHandler } from "../common/externalEnvironmentHandler/digitalOcean";
-import { ConnectionOrTransaction } from "../common/db";
+import { Environment } from "../common/entities";
+import { Transaction } from "../common/db";
+import { environmentStateMachine } from "../common/environmentStateMachine";
+import { log } from "../../common/logger";
 
 export async function processNewEnvironment(
-  db: ConnectionOrTransaction,
+  trx: Transaction,
   environment: Environment
 ) {
-  let createdDropletId: string;
-
-  try {
-    await envEntity.update(db, environment.id, {
-      lifecycleStatus: "creating",
-    });
-    const createdDroplet = await DigitalOceanHandler.newEnvironment(
-      environment
+  const canCreate = await environmentStateMachine.canSetCreating({
+    trx,
+    environment,
+  });
+  if (!canCreate.operationSuccess) {
+    log.error(
+      "Environment ready to create, but blocked by the state machine!",
+      { canCreate, environment }
     );
-    createdDropletId = createdDroplet.id;
-    await envEntity.update(db, environment.id, {
-      processor: null,
-      sourceId: createdDroplet.id,
-    });
-  } catch (e) {
-    if (createdDropletId) {
-      await DigitalOceanHandler.destroyEnvironment(environment, []);
-    }
-    throw e;
   }
+  await environmentStateMachine.setCreating({ trx, environment });
 }

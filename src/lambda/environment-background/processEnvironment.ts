@@ -39,9 +39,6 @@ export async function processEnvironment(currentProcessor: string) {
           break;
       }
     });
-
-    log.debug("Resetting processor for environment ID", environment.id);
-    await envEntity.resetProcessorByEnvironmentId(db, environment.id);
   } catch (e) {
     let resettingToRetry = false;
     if (id !== undefined) {

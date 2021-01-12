@@ -2,6 +2,7 @@ import { Environment } from "../entities";
 import { setNew, canSetNew } from "./setNew";
 import { setCreating, canSetCreating } from "./setCreating";
 import { canSetProvisioning, setProvisioning } from "./setProvisioning";
+import { canSetDeleted, setDeleted } from "./setDeleted";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -18,4 +19,7 @@ export const environmentStateMachine = {
 
   canSetProvisioning,
   setProvisioning,
+
+  canSetDeleted,
+  setDeleted,
 };

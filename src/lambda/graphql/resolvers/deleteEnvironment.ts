@@ -1,8 +1,7 @@
 import { log } from "../../../common/logger";
 import { Context } from "../../common/context";
-import { enqueueJob } from "../../common/enqueueJob";
 import { Environment, environment as envEntity } from "../../common/entities";
-import { canDelete } from "../authorization/environment/canDelete";
+import { environmentStateMachine } from "../../common/environmentStateMachine";
 
 interface DeleteEnvironmentArguments {
   input: {
@@ -27,7 +26,7 @@ export async function deleteEnvironment(
       };
     }
 
-    if (!canDelete(context, environment)) {
+    if (!environmentStateMachine.canSetDeleted({ context, environment })) {
       log.error("Deletion request unauthorized", { context, environment });
       return {
         errors: ["Environment not found"],
@@ -35,15 +34,7 @@ export async function deleteEnvironment(
     }
 
     try {
-      log.info("Attempting to delete environment", {
-        environment,
-      });
-      await Promise.all([
-        envEntity.del(trx, id),
-        enqueueJob(trx, "deleteEnvironmentInProvider", {
-          environmentId: id,
-        }),
-      ]);
+      await environmentStateMachine.setDeleted({ context, environment });
     } catch (e) {
       log.error("Deletion request failed", {
         context,

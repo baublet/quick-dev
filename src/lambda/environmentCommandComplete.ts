@@ -84,6 +84,12 @@ export const handler = async (event: APIGatewayEvent) => {
     updatedCommand,
   });
 
+  log.debug(
+    "Command complete: resetting processor for environment ID",
+    environment.id
+  );
+  await envEntity.resetProcessorByEnvironmentId(db, environment.id);
+
   return {
     statusCode: 200,
   };

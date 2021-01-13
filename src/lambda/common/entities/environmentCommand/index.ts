@@ -6,7 +6,7 @@ export interface EnvironmentCommand {
   environmentId: string;
   id: string;
   logs?: string;
-  status: "waiting" | "running" | "failure" | "success";
+  status: "waiting" | "running" | "failed" | "success";
   title: string;
   updated_at: Date;
   order: number;

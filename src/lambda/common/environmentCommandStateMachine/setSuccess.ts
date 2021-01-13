@@ -48,7 +48,7 @@ export async function setSuccess({
   });
 
   log.debug(
-    "Command complete: resetting processor for environment ID",
+    "Command success: resetting processor for environment ID",
     environment.id
   );
   await envEntity.resetProcessorByEnvironmentId(trx, environment.id);

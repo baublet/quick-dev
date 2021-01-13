@@ -40,17 +40,11 @@ export async function processEnvironment(currentProcessor: string) {
       }
     });
   } catch (e) {
-    let resettingToRetry = false;
-    if (id !== undefined) {
-      resettingToRetry = true;
-      await envEntity.resetProcessorByEnvironmentId(db, id);
-    }
     log.error(
       `Environment processor ${currentProcessor} threw an error while processing environment: ${subdomain}`,
       {
         message: e.message,
         stack: e.stack,
-        resettingToRetry,
       }
     );
   }

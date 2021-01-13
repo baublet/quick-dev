@@ -4,8 +4,8 @@ import {
   environmentCommand as envCommandEntity,
 } from "../common/entities";
 import { Transaction } from "../common/db";
-import { enqueueJob } from "../common/enqueueJob";
 import { log } from "../../common/logger";
+import { environmentCommander } from "../common/environmentCommander";
 
 export async function processProvisioningEnvironment(
   trx: Transaction,
@@ -15,28 +15,46 @@ export async function processProvisioningEnvironment(
     trx,
     environment.id
   );
-  log.info("Received commands", { commands });
 
-  if (commands.some((command) => command.status === "running")) {
-    return;
-  }
+  const isComplete = await environmentCommander.isComplete({
+    trx,
+    environment,
+    environmentCommands: commands,
+  });
 
-  if (!commands.some((command) => command.status === "waiting")) {
+  if (!isComplete.operationSuccess) {
+    // TODO: State machine needs to be used here
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "starting",
     });
     return;
   }
 
-  const commandToRunNext = (() => {
-    for (const command of commands) {
-      if (command.status === "waiting") {
-        return command;
-      }
-    }
-  })();
-
-  await enqueueJob(trx, "sendCommand", {
-    environmentCommandId: commandToRunNext.commandId,
+  const canSendNext = await environmentCommander.canSendNextCommand({
+    trx,
+    environment,
+    environmentCommands: commands,
   });
+
+  if (!canSendNext.operationSuccess) {
+    log.debug(
+      "The environment is provisioning, is not complete, yet cannot send commands. Environment command on this environment must be working",
+      {
+        environment,
+      }
+    );
+    return;
+  }
+
+  const result = await environmentCommander.sendNextCommand({
+    trx,
+    environment,
+  });
+
+  if (!result.operationSuccess) {
+    log.error("Unexpected error sending a command", {
+      error: result.errors,
+      environment,
+    });
+  }
 }

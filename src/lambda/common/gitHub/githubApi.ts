@@ -6,7 +6,7 @@ export async function githubApi<T = any>({
   path,
   body,
   method = "get",
-  expectStatus,
+  expectStatus = 200,
 }: {
   accessToken: string;
   path: string;

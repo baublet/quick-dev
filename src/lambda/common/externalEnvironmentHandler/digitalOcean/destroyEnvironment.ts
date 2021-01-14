@@ -15,6 +15,7 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
     path: `droplets/${environment.sourceId}`,
     method: "delete",
     expectStatus: 204,
+    expectJson: false,
   });
 
   await Promise.all(
@@ -23,6 +24,7 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
         path: `domains/${process.env.STRAPYARD_DOMAIN}/records/${record.providerId}`,
         method: "delete",
         expectStatus: 204,
+        expectJson: false,
       })
     )
   );

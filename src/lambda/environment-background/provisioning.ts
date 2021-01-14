@@ -22,8 +22,9 @@ export async function processProvisioningEnvironment(
     environmentCommands: commands,
   });
 
-  if (!isComplete.operationSuccess) {
+  if (isComplete.operationSuccess) {
     // TODO: State machine needs to be used here
+    log.scream("Environment provisioning is complete", { isComplete });
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "starting",
     });
@@ -37,7 +38,7 @@ export async function processProvisioningEnvironment(
   });
 
   if (!canSendNext.operationSuccess) {
-    log.debug(
+    log.scream(
       "The environment is provisioning, is not complete, yet cannot send commands. Environment command on this environment must be working",
       {
         environment,

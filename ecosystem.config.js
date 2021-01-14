@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "server",
       script: "./node_modules/.bin/netlify",
-      args: "dev",
+      args: "dev --watch",
       node_args: "--max_old_space_size=2048",
       max_memory_restart: "1024M",
       env: {

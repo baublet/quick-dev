@@ -6,12 +6,14 @@ export async function digitalOceanApi<T = any>({
   path,
   method = "post",
   expectStatus,
+  expectJson = true,
   timeout = 3000,
 }: {
   path: string;
   method?: "post" | "delete" | "get";
   body?: Record<string, any>;
   expectStatus: number;
+  expectJson?: boolean;
   timeout?: number;
 }): Promise<T> {
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
@@ -45,7 +47,10 @@ export async function digitalOceanApi<T = any>({
   }
 
   try {
-    return JSON.parse(response.bodyText) as Promise<T>;
+    if (expectJson) {
+      return JSON.parse(response.bodyText) as Promise<T>;
+    }
+    return (response.bodyText as unknown) as Promise<T>;
   } catch (e) {
     log.error("Error with DigitalOcean request", {
       message: e.message,

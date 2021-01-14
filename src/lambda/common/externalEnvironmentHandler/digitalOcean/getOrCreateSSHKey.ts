@@ -22,9 +22,12 @@ export async function getOrCreateSSHKey(
     userSource,
     source: "digital_ocean",
   });
+
   if (extant) {
     return extant;
   }
+
+  log.scream("No provider key for ", { user, userSource });
 
   // Get/create an SSH key for this context
   const sshKey = await getOrCreateGitHubKey(trx, context);

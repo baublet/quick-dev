@@ -1,6 +1,6 @@
 import { Context } from "../../../common/context";
 import { Environment } from "../../../common/entities";
-import { canDelete } from "../../authorization/environment/canDelete";
+import { environmentStateMachine } from "../../../common/environmentStateMachine";
 
 export async function environmentPermissions(
   parent: Environment,
@@ -8,6 +8,12 @@ export async function environmentPermissions(
   context: Context
 ) {
   return {
-    canDelete: () => canDelete(context, parent),
+    canDelete: async () =>
+      (
+        await environmentStateMachine.canSetDeleted({
+          context,
+          environment: parent,
+        })
+      ).operationSuccess,
   };
 }

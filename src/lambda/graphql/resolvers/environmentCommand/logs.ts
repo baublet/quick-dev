@@ -6,6 +6,7 @@ import {
   Environment,
   EnvironmentCommand,
 } from "../../../common/entities";
+import { EnvironmentCommandLogsNodeInput } from "../../generated";
 
 async function safelyGetData(
   environment: Environment,
@@ -33,10 +34,11 @@ async function safelyGetData(
 
 export async function environmentCommandLogs(
   parent: EnvironmentCommand,
-  { after = 0 }: { after?: number },
+  { input }: { input: EnvironmentCommandLogsNodeInput },
   context: Context
 ): Promise<string | null> {
-  if (parent.logs) {
+  const after = input?.after || 0;
+  if (parent?.logs) {
     return parent.logs.substr(after);
   }
 

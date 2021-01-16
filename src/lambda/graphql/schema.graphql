@@ -83,11 +83,15 @@ type Repositories {
   gitHub(input: PaginationInput): RepositoryConnection!
 }
 
+input EnvironmentCommandLogsNodeInput {
+  after: Float
+}
+
 type EnvironmentCommand {
   id: ID!
   title: String!
   status: String!
-  logs(input: EnvironmentCommandLogsInput): String
+  logs(input: EnvironmentCommandLogsNodeInput): String
 }
 
 type EnvironmentLogsConnection {

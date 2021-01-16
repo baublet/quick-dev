@@ -5,7 +5,7 @@ import { environmentCommand } from "../../entities";
 import { hasCommandInStatus } from "../../hasCommandInStatus";
 
 // Called by a box when it's up and starts running our provisioning scripts
-export async function canSetProvisioning({
+export async function canSetErrorProvisioning({
   trx,
   environment,
 }: SetProvisioningArguments): Promise<StateMachineReturnValue> {

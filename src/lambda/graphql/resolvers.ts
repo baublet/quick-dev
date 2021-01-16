@@ -8,6 +8,8 @@ import { environmentLogs } from "./resolvers/environment/logs";
 import { environmentPermissions } from "./resolvers/environment/permissions";
 import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 
+import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolvers/environmentCommandLogs";
+
 import { jobs } from "./resolvers/jobs";
 
 // Mutations
@@ -21,6 +23,7 @@ export const resolvers = {
     ping: () => "pong",
     user,
     jobs,
+    environmentCommandLogs: environmentCommandLogsQuery,
   },
   Mutation: {
     createEnvironment,

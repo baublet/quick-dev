@@ -17,3 +17,4 @@ export { getByEnvironmentId } from "./getByEnvironmentId";
 export { getByCommandId } from "./getByCommandId";
 export { update } from "./update";
 export { createMany } from "./createMany";
+export { loader } from "./loader";

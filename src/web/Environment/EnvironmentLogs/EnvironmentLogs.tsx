@@ -28,6 +28,8 @@ export function EnvironmentLogs({
         title={"Startup Logs"}
         logText={startupLogs}
         status={startupLogs ? "success" : "waiting"}
+        dynamic={false}
+        poll={false}
       />
       {commands.map((command) => (
         <LogEntry
@@ -36,6 +38,8 @@ export function EnvironmentLogs({
           status={command.status}
           commandId={command.id}
           title={command.title}
+          dynamic={true}
+          poll={true}
         />
       ))}
     </div>

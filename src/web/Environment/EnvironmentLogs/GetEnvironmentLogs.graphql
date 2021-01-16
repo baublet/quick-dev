@@ -1,0 +1,8 @@
+query getEnvironmentCommandLogs($commandId: ID!, $after: Float!) {
+  environmentCommandLogs(
+    input: { environmentCommandId: $commandId, after: $after }
+  ) {
+    id
+    logs
+  }
+}

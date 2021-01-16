@@ -1,5 +1,4 @@
 import { Context } from "../../../common/context";
-import { EnvironmentCommandLog } from "../../generated";
 import { getCommandLogs } from "../../../common/environmentPassthrough";
 import { log } from "../../../../common/logger";
 import {
@@ -32,26 +31,32 @@ async function safelyGetData(
   }
 }
 
-export async function environmentCommandLogChunks(
+export async function environmentCommandLogs(
   parent: EnvironmentCommand,
   { after = 0 }: { after?: number },
   context: Context
-): Promise<EnvironmentCommandLog[]> {
-  const id = `${parent.id}-${after}`;
-
+): Promise<string | null> {
   if (parent.logs) {
-    return [{ id, data: parent.logs.substr(after) }];
+    return parent.logs.substr(after);
   }
 
   const environment = await context
     .service(envEntity.loader)
     .load(parent.environmentId);
+
+  if (parent.status === "waiting") {
+    return null;
+  }
+
+  if (parent.status === "cancelled") {
+    return null;
+  }
+
+  if (parent.logs) {
+    return parent.logs;
+  }
+
   const data = await safelyGetData(environment, parent.commandId, after);
 
-  return [
-    {
-      id,
-      data,
-    },
-  ];
+  return data;
 }

@@ -2,11 +2,13 @@ import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
 } from "../entities";
+import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
-import { ConnectionOrTransaction } from "../db";
+import { Transaction } from "../db";
+import { log } from "../../../common/logger";
 
 export const sendCommand = async (
-  trx: ConnectionOrTransaction,
+  trx: Transaction,
   payload: {
     environmentCommandId: string;
   }

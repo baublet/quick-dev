@@ -1,6 +1,5 @@
 import React from "react";
 
-import type { Environment } from "../../lambda/common/environment";
 import { useEnvironmentDetails } from "./useEnvironmentDetails";
 import { EnvironmentLogs } from "./EnvironmentLogs";
 
@@ -18,7 +17,7 @@ export function Environment({ id }: EnvironmentProps) {
   const { loading, environment } = useEnvironmentDetails(id);
   const hasLogs = Boolean(environment && environment.logs);
 
-  console.log("environment.logs", environment?.logs);
+  console.log("DEETS: ", environment);
 
   return (
     <div>

@@ -35,20 +35,28 @@ export async function setFailed({
     }
   );
 
+  // Here, we might only set subsequent jobs to cancelled conditionally when
+  // we support that feature.
+  const commands = await envCommandEntity.getByEnvironmentId(
+    trx,
+    environment.id
+  );
+  await Promise.all(
+    commands.map((command) => {
+      return envCommandEntity.update(trx, command.id, { status: "cancelled" });
+    })
+  );
+
   await enqueueJob(trx, "getEnvironmentCommandLogs", {
     environmentCommandId: environmentCommand.commandId,
   });
 
   log.debug("Updated environment command to failed", {
-    environment,
-    status,
+    environment: environment.name,
+    status: environment.lifecycleStatus,
     updatedCommand,
   });
 
-  log.debug(
-    "Command failed: resetting processor for environment ID",
-    environment.id
-  );
   await envEntity.resetProcessorByEnvironmentId(trx, environment.id);
 
   return {

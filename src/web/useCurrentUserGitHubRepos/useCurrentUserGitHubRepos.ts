@@ -20,8 +20,8 @@ export function useCurrentUserGitHubRepos(
     };
   }
 
-  const gitHubData = data?.user?.repositories?.gitHub || ({} as any);
-  const nodes = gitHubData.nodes || [];
+  const gitHubData = data?.user?.repositories?.gitHub;
+  const nodes = gitHubData?.nodes || [];
   const hasNextPage = Boolean(gitHubData.hasNextPage);
   const hasPreviousPage = Boolean(gitHubData.hasPreviousPage);
 

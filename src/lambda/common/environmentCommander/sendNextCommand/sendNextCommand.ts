@@ -5,6 +5,7 @@ import {
   Environment,
   environmentCommand as envCommandEntity,
 } from "../../entities";
+import { environmentCommandStateMachine } from "../../environmentCommandStateMachine";
 import { canSendNextCommand } from "./canSendNextCommand";
 
 export async function sendNextCommand({
@@ -40,8 +41,10 @@ export async function sendNextCommand({
     }
   })();
 
-  await enqueueJob(trx, "sendCommand", {
-    environmentCommandId: commandToRunNext.commandId,
+  await environmentCommandStateMachine.setRunning({
+    trx,
+    environment,
+    environmentCommand: commandToRunNext,
   });
 
   return {

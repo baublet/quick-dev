@@ -1,3 +1,4 @@
+import { log } from "../../../common/logger";
 import { Environment } from "../entities";
 import { fetch } from "../fetch";
 
@@ -7,6 +8,10 @@ export async function getCommandLogs(
   after: number = 0
 ): Promise<string> {
   if (!environment.ipv4) {
+    log.error(
+      "Tried to get environment command logs, but the environment isn't provisioned!",
+      { environment: environment.subdomain }
+    );
     return null;
   }
 

@@ -24,6 +24,7 @@ export async function fetch(
   const controller = new AbortController();
   const timeout = setTimeout(() => {
     controller.abort();
+    log.error("Fetch command timeout", { url, method: options.method });
   }, options.timeoutMs);
 
   const fetchOptions: _fetch.RequestInit = {

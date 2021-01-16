@@ -5,6 +5,7 @@ import {
   environmentCommand as envCommandEntity,
   EnvironmentCommand,
 } from "../../entities";
+import { hasCommandInStatus } from "../../hasCommandInStatus";
 
 export async function canSendNextCommand({
   trx,
@@ -28,14 +29,14 @@ export async function canSendNextCommand({
     environmentCommands ||
     (await (() => envCommandEntity.getByEnvironmentId(trx, environment.id))());
 
-  if (commands.some((command) => command.status === "running")) {
+  if (hasCommandInStatus(commands, "running")) {
     return {
-      errors: ["One or more command already running already running"],
+      errors: ["One or more commands already running"],
       operationSuccess: false,
     };
   }
 
-  if (!commands.some((command) => command.status === "waiting")) {
+  if (!hasCommandInStatus(commands, "waiting")) {
     return {
       errors: ["No commands left waiting to be sent"],
       operationSuccess: false,

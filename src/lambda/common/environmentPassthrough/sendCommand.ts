@@ -24,12 +24,12 @@ export async function sendCommand(
         authorization: environment.secret,
       },
       expectStatus: 200,
-      timeoutMs: 3000,
+      timeoutMs: 10000,
     }
   );
 
   log.info("Environment received command OK", {
-    environment,
+    environment: environment.name,
     environmentCommand,
   });
 }

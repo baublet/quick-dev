@@ -22,11 +22,12 @@ export function RepositoryPicker({ formState }: { formState: FormState }) {
         <Loader display={loading} />
         <ul className="space-y-1.5">
           {repositories.map((repo) => (
-            <li>
+            <li key={repo.gitUrl}>
               <input
+                name="repo"
                 id={repo.gitUrl}
                 type="radio"
-                checked={formState.repository?.gitUrl === repo.gitUrl}
+                defaultChecked={formState.repository?.gitUrl === repo.gitUrl}
                 className="mr-2"
               />
               <label

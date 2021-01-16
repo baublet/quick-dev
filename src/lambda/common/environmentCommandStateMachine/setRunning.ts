@@ -1,7 +1,11 @@
 import { EnvironmentCommandStateMachineReturn } from ".";
 import { Transaction } from "../db";
 import { enqueueJob } from "../enqueueJob";
-import { Environment, EnvironmentCommand } from "../entities";
+import {
+  Environment,
+  EnvironmentCommand,
+  environmentCommand as envCommandEntity,
+} from "../entities";
 
 interface SetRunningArguments {
   trx: Transaction;
@@ -29,6 +33,10 @@ export async function setRunning({
       operationSuccess: false,
     };
   }
+
+  await envCommandEntity.update(trx, environmentCommand.id, {
+    status: "running",
+  });
 
   await enqueueJob(trx, "sendCommand", {
     environmentCommandId: environmentCommand.commandId,

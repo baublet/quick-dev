@@ -9,14 +9,14 @@ export function Environment() {
   const { loading, environments } = useCurrentUserEnvironments();
 
   return (
-    <div>
+    <>
       <H3>Environments</H3>
       <Loader display={loading} />
       <ul>
         {environments.map((env) => (
-          <EnvironmentCard environment={env} />
+          <EnvironmentCard key={env.id} environment={env} />
         ))}
       </ul>
-    </div>
+    </>
   );
 }

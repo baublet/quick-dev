@@ -16,7 +16,7 @@ export async function getEnvironmentCommandLogs(
 
   if (
     environmentCommand.status === "success" ||
-    environmentCommand.status === "failure"
+    environmentCommand.status === "failed"
   ) {
     return environmentCommand.logs;
   }

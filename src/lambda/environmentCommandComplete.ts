@@ -61,7 +61,7 @@ export const handler = (event: APIGatewayEvent) => {
     if (!environmentCommand) {
       log.error("EnvironmentCommandComplete could not find command ID", {
         commandId,
-        environment,
+        environment: environment.name,
       });
       return {
         statusCode: 404,

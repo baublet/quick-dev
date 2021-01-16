@@ -4,6 +4,7 @@ query EnvironmentDetails($id: ID!) {
     name
     subdomain
     ipv4
+    lifecycleStatus
     permissions {
       canDelete
     }
@@ -13,10 +14,6 @@ query EnvironmentDetails($id: ID!) {
         id
         title
         status
-        logChunks {
-          id
-          data
-        }
       }
     }
   }

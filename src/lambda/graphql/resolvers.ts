@@ -6,7 +6,7 @@ import { environments } from "./resolvers/user/environments";
 import { environment } from "./resolvers/environment";
 import { environmentLogs } from "./resolvers/environment/logs";
 import { environmentPermissions } from "./resolvers/environment/permissions";
-import { environmentCommandLogChunks } from "./resolvers/environmentCommand/logChunks";
+import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 
 import { jobs } from "./resolvers/jobs";
 
@@ -27,7 +27,7 @@ export const resolvers = {
     deleteEnvironment,
   },
   EnvironmentCommand: {
-    logChunks: environmentCommandLogChunks,
+    logs: environmentCommandLogs,
   },
   Environment: {
     logs: environmentLogs,

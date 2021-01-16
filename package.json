@@ -11,13 +11,12 @@
     "db:reset": "yarn db:drop && yarn db:create && yarn db:migrate",
     "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web npm:build:provisioner",
     "build:lambda": "node scripts/buildLambda.js",
-    "build:provisioner": "yarn esbuild src/provisionerV1/provisioner/index.ts --outfile=builtProvisioner/provisioner.js --bundle  --platform=node",
+    "build:provisioner": "node scripts/buildProvisioner.js",
     "build:web": "node ./scripts/buildWeb.js",
     "build:graphql": "graphql-codegen",
-    "develop": "yarn pm2 start ./ecosystem.config.js",
-    "develop:stop": "yarn pm2 stop ./ecosystem.config.js",
-    "test": "jest",
-    "n": "graphql-codegen --config codegen.yml"
+    "develop": "yarn pm2 delete all; rm -rf ~/.pm2 && yarn pm2 start ./ecosystem.config.js",
+    "develop:stop": "yarn pm2 stop ./ecosystem.config.js && yarn pm2 delete all && rm -rf ~/.pm2",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -50,6 +49,7 @@
     "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-hook-inview": "^4.3.7",
     "react-router-dom": "^5.2.0",
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.0",

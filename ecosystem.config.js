@@ -4,11 +4,15 @@ module.exports = {
       name: "server",
       script: "./node_modules/.bin/netlify",
       args: "dev --watch",
-      node_args: "--max_old_space_size=2048",
-      max_memory_restart: "1024M",
       env: {
         DEBUG: "true",
       },
+    },
+    {
+      name: "build-provisioner",
+      script: "./scripts/buildProvisioner.js",
+      watch: ["src/provisionerV1", "src/common"],
+      autorestart: false,
     },
     {
       name: "build-lambda",

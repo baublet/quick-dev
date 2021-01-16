@@ -1,8 +1,9 @@
 import React from "react";
 import { Route, Link } from "react-router-dom";
 import cx from "classnames";
+import { useInView } from "react-hook-inview";
 
-import type { EnvironmentCommand } from "../../../lambda/common/environmentCommand";
+import type { EnvironmentCommand } from "../../../lambda/common/entities";
 import { LogOutput } from "../../components/LogOutput";
 import { StatusIndicator } from "../../components/StatusIndicator";
 
@@ -10,7 +11,7 @@ interface LogEntryProps {
   environmentId: string;
   title: string;
   logText?: string;
-  logId: string;
+  commandId: string;
   status?: string;
 }
 
@@ -19,7 +20,7 @@ const baseClassNames =
 
 const boxClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
   waiting: baseClassNames,
-  failure: cx(baseClassNames, "border-red-500"),
+  failed: cx(baseClassNames, "border-red-500"),
   running: cx(baseClassNames, "border-yellow-600"),
   success: cx(baseClassNames, "border-green-600"),
 };
@@ -28,14 +29,14 @@ const baseTextClassNames = "";
 
 const textClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
   waiting: baseTextClassNames,
-  failure: cx(baseTextClassNames, "text-red-500"),
+  failed: cx(baseTextClassNames, "text-red-500"),
   running: cx(baseTextClassNames, "text-yellow-600"),
   success: cx(baseTextClassNames, "text-green-600"),
 };
 
 function Status({ status }: { status: EnvironmentCommand["status"] }) {
   switch (status) {
-    case "failure":
+    case "failed":
       return <StatusIndicator status="red" alt="status" />;
     case "running":
       return <StatusIndicator status="yellow" alt="status" />;
@@ -50,10 +51,11 @@ export function LogEntry({
   environmentId,
   title,
   logText,
-  logId,
+  commandId,
   status = "waiting",
 }: LogEntryProps) {
-  const logExpandedPath = `/environment/${environmentId}/logs/${logId}`;
+  const logExpandedPath = `/environment/${environmentId}/logs/${commandId}`;
+  const [ref, inView] = useInView();
   return (
     <div className="mt-4">
       <div className={boxClassNamesByStatus[status]}>

@@ -3,6 +3,7 @@ type Query {
   environment(input: EnvironmentInput!): Environment
   ping: String!
   jobs: JobConnection!
+  environmentCommandLogs(input: EnvironmentCommandLogsInput): EnvironmentCommand
 }
 
 type Mutation {
@@ -16,6 +17,11 @@ type Mutation {
 
 scalar Date
 scalar ID
+
+input EnvironmentCommandLogsInput {
+  environmentCommandId: ID!
+  after: Float = 0
+}
 
 input CreateEnvironmentMutationInput {
   repositoryUrl: String!
@@ -31,17 +37,18 @@ type EnvironmentMutationPayload {
 }
 
 type Environment {
-  id: ID!
   created: Date!
-  updated: Date!
   deleted: Boolean!
+  id: ID!
   ipv4: String
-  name: String!
-  subdomain: String!
-  size: String!
   lifecycleStatus: String!
   logs: EnvironmentLogsConnection
+  name: String!
   permissions: EnvironmentPermissions!
+  processor: String
+  size: String!
+  subdomain: String!
+  updated: Date!
 }
 
 type EnvironmentPermissions {
@@ -76,16 +83,11 @@ type Repositories {
   gitHub(input: PaginationInput): RepositoryConnection!
 }
 
-type EnvironmentCommandLog {
-  id: ID!
-  data: String!
-}
-
 type EnvironmentCommand {
   id: ID!
   title: String!
   status: String!
-  logChunks(after: Int = 0): [EnvironmentCommandLog!]!
+  logs(input: EnvironmentCommandLogsInput): String
 }
 
 type EnvironmentLogsConnection {

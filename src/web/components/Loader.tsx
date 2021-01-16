@@ -14,11 +14,11 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
       >
         <g
           fill="none"
-          fill-rule="evenodd"
+          fillRule="evenodd"
           transform="translate(1 1)"
-          stroke-width="2"
+          strokeWidth="2"
         >
-          <circle cx="22" cy="22" r="6" stroke-opacity="0">
+          <circle cx="22" cy="22" r="6" strokeOpacity="0">
             <animate
               attributeName="r"
               begin="1.5s"
@@ -28,7 +28,7 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
               repeatCount="indefinite"
             />
             <animate
-              attributeName="stroke-opacity"
+              attributeName="strokeOpacity"
               begin="1.5s"
               dur="3s"
               values="1;0"
@@ -36,7 +36,7 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
               repeatCount="indefinite"
             />
             <animate
-              attributeName="stroke-width"
+              attributeName="strokeWidth"
               begin="1.5s"
               dur="3s"
               values="2;0"
@@ -44,7 +44,7 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
               repeatCount="indefinite"
             />
           </circle>
-          <circle cx="22" cy="22" r="6" stroke-opacity="0">
+          <circle cx="22" cy="22" r="6" strokeOpacity="0">
             <animate
               attributeName="r"
               begin="3s"
@@ -54,7 +54,7 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
               repeatCount="indefinite"
             />
             <animate
-              attributeName="stroke-opacity"
+              attributeName="strokeOpacity"
               begin="3s"
               dur="3s"
               values="1;0"
@@ -62,7 +62,7 @@ export const Loader = React.memo(function ({ display }: { display: boolean }) {
               repeatCount="indefinite"
             />
             <animate
-              attributeName="stroke-width"
+              attributeName="strokeWidth"
               begin="3s"
               dur="3s"
               values="2;0"

@@ -14,7 +14,7 @@ export async function reportComplete(
   exitCode: number
 ): Promise<void> {
   try {
-    const status = exitCode === 0 ? "success" : "failure";
+    const status = exitCode === 0 ? "success" : "failed";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;
     log(`Notifying command complete: ${url}`);
     const response = await fetch(url, {

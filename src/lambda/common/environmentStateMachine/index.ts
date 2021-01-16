@@ -3,6 +3,10 @@ import { setNew, canSetNew } from "./setNew";
 import { setCreating, canSetCreating } from "./setCreating";
 import { canSetProvisioning, setProvisioning } from "./setProvisioning";
 import { canSetDeleted, setDeleted } from "./setDeleted";
+import {
+  canSetErrorProvisioning,
+  setErrorProvisioning,
+} from "./setErrorProvisioning";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -19,6 +23,9 @@ export const environmentStateMachine = {
 
   canSetProvisioning,
   setProvisioning,
+
+  canSetErrorProvisioning,
+  setErrorProvisioning,
 
   canSetDeleted,
   setDeleted,

@@ -24,18 +24,18 @@ export function EnvironmentLogs({
       <LogEntry
         environmentId={environmentId}
         key={"startup"}
-        logId={"startup"}
+        commandId={"startup"}
         title={"Startup Logs"}
         logText={startupLogs}
+        status={startupLogs ? "success" : "waiting"}
       />
       {commands.map((command) => (
         <LogEntry
           environmentId={environmentId}
           key={command.id}
           status={command.status}
-          logId={command.id}
+          commandId={command.id}
           title={command.title}
-          logText={command.logChunks.map((chunk) => chunk.data).join("")}
         />
       ))}
     </div>

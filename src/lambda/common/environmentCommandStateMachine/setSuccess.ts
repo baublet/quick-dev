@@ -42,15 +42,11 @@ export async function setSuccess({
   });
 
   log.debug("Updated environment command to complete", {
-    environment,
-    status,
+    environment: environment.name,
+    status: environment.lifecycleStatus,
     updatedCommand,
   });
 
-  log.debug(
-    "Command success: resetting processor for environment ID",
-    environment.id
-  );
   await envEntity.resetProcessorByEnvironmentId(trx, environment.id);
 
   return {

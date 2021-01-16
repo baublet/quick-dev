@@ -21,7 +21,7 @@ export interface ExternalEnvironmentHandler {
   ) => Promise<false | ExternalEnvironment>;
   // Should always work. If something is wrong, it throws
   destroyEnvironment: (
-    environment: Pick<Environment, "sourceId">,
+    environment: Pick<Environment, "sourceId" | "name">,
     environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
   ) => Promise<void>;
   createEnvironmentDomainRecord: (

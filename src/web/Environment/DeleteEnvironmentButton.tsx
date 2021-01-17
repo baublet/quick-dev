@@ -20,7 +20,7 @@ export function DeleteEnvironmentButton({
   const deleteEnvironment = () =>
     deleteMutation({
       variables: {
-        id: environment.id,
+        id: environment?.id || "",
       },
     });
 

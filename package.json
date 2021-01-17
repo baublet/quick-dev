@@ -16,6 +16,7 @@
     "build:graphql": "graphql-codegen",
     "develop": "yarn pm2 delete all; rm -rf ~/.pm2 && yarn pm2 start ./ecosystem.config.js",
     "develop:stop": "yarn pm2 stop ./ecosystem.config.js && yarn pm2 delete all && rm -rf ~/.pm2",
+    "develop:reload": "yarn develop:stop; yarn develop",
     "test": "jest"
   },
   "repository": {
@@ -64,9 +65,11 @@
     "@graphql-codegen/typescript": "1.20.0",
     "@graphql-codegen/typescript-operations": "1.17.13",
     "@graphql-codegen/typescript-react-apollo": "2.2.1",
+    "@types/classnames": "^2.2.11",
     "@types/jest": "^26.0.19",
     "@types/js-yaml": "^3.12.5",
     "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
     "esbuild": "^0.8.31",
     "html-webpack-plugin": "^4.5.0",

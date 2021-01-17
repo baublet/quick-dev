@@ -1,10 +1,15 @@
 {
   "exclude": ["./builtWeb", "./builtFunctions", "./dist"],
+  "include": ["src"],
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "jsx": "react"
-  }
+    "strict": true,
+    "jsx": "react",
+    "forceConsistentCasingInFileNames": true
+  },
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Recommended"
 }

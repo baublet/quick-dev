@@ -9,7 +9,9 @@ import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
 } from "./common/entities";
+import { environmentCommander } from "./common/environmentCommander";
 import { environmentCommandStateMachine } from "./common/environmentCommandStateMachine";
+import { environmentStateMachine } from "./common/environmentStateMachine";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = (event: APIGatewayEvent) => {
@@ -17,9 +19,9 @@ export const handler = (event: APIGatewayEvent) => {
 
   return db.transaction(async (trx) => {
     const secret = event.headers.authorization;
-    const commandId = event.queryStringParameters.commandId;
-    const status = event.queryStringParameters
-      .status as EnvironmentCommand["status"];
+    const commandId = event?.queryStringParameters?.commandId;
+    const status = event?.queryStringParameters
+      ?.status as EnvironmentCommand["status"];
 
     if (!commandId) {
       log.error("EnvironmentCommandComplete did not receive a commandId", {
@@ -68,30 +70,12 @@ export const handler = (event: APIGatewayEvent) => {
       };
     }
 
-    if (status === "failed") {
-      await environmentCommandStateMachine.setFailed({
-        trx,
-        environment,
-        environmentCommand,
-      });
-    } else if (status === "success") {
-      await environmentCommandStateMachine.setSuccess({
-        trx,
-        environment,
-        environmentCommand,
-      });
-    } else {
-      log.error(
-        `Unknown or invalid environment command status type when environment reports back a command status: ${status}`,
-        {
-          environment,
-          environmentCommand,
-        }
-      );
-      return {
-        statusCode: 422,
-      };
-    }
+    await environmentCommander.handleCommandComplete({
+      trx,
+      environment,
+      environmentCommand,
+      newStatus: status,
+    });
 
     return {
       statusCode: 200,

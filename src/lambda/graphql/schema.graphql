@@ -36,12 +36,27 @@ type EnvironmentMutationPayload {
   environment: Environment
 }
 
+enum EnvironmentCommandStatus {
+  cancelled
+  waiting
+  running
+  failed
+}
+
+enum EnvironmentLifecycleStatus {
+  new
+  creating
+  provisioning
+  error_provisioning
+  starting
+}
+
 type Environment {
   created: Date!
   deleted: Boolean!
   id: ID!
   ipv4: String
-  lifecycleStatus: String!
+  lifecycleStatus: EnvironmentLifecycleStatus!
   logs: EnvironmentLogsConnection
   name: String!
   permissions: EnvironmentPermissions!
@@ -90,7 +105,7 @@ input EnvironmentCommandLogsNodeInput {
 type EnvironmentCommand {
   id: ID!
   title: String!
-  status: String!
+  status: EnvironmentCommandStatus!
   logs(input: EnvironmentCommandLogsNodeInput): String
 }
 

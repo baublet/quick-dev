@@ -25,10 +25,10 @@ const getDefaultAuthData = (): AuthData => ({
   user: null,
   loading: false,
   githubState: {
-    clientId: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    proxyUrl: process.env.GITHUB_CLIENT_PROXY_URL,
-    redirectUri: process.env.GITHUB_CLIENT_REDIRECT_URI,
+    clientId: process.env.GITHUB_CLIENT_ID || "",
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+    proxyUrl: process.env.GITHUB_CLIENT_PROXY_URL || "",
+    redirectUri: process.env.GITHUB_CLIENT_REDIRECT_URI || "",
   },
 });
 

@@ -1,16 +1,13 @@
 import React from "react";
 
 import { H4 } from "../../components/H4";
-import { StatusIndicator } from "../../components/StatusIndicator";
 import { LogEntry } from "./LogEntry";
-import { EnvironmentDetailsQuery } from "../../generated";
+import type { EnvironmentCommand } from "../../../lambda/graphql/generated";
 
 interface EnvironmentLogsProps {
   environmentId: string;
   startupLogs: string;
-  commands: Required<
-    EnvironmentDetailsQuery["environment"]["logs"]["commands"]
-  >;
+  commands: EnvironmentCommand[];
 }
 
 export function EnvironmentLogs({

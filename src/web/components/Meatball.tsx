@@ -6,7 +6,7 @@ import { Meatball as MeatballIcon } from "./svg/Meatball";
 
 export function Meatball({ children }: React.PropsWithChildren<{}>) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef();
+  const ref = React.useRef<HTMLDivElement>(null);
 
   useOnClickOutside(ref, () => setOpen(false));
 

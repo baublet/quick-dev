@@ -1,4 +1,5 @@
 import React from "react";
+import { log } from "../../common/logger";
 
 import { AuthData } from "./authContext";
 
@@ -15,8 +16,13 @@ export function useGitHubAuth(
 
     // If Github API returns the code parameter
     if (hasCode && !authData.loading) {
+      if (!githubState) {
+        log.error("GitHub state is null!", { authData });
+        return;
+      }
+
       const newUrl = url.split("?code=");
-      window.history.pushState({}, null, newUrl[0]);
+      window.history.pushState({}, "", newUrl[0]);
       setAuthData({ ...authData, loading: true });
 
       const requestData = {

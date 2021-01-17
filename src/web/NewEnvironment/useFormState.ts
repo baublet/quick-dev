@@ -1,10 +1,10 @@
 import React from "react";
 
-import type { Repository } from "../../lambda/common/repository";
-import type { EnvironmentSize } from "../../lambda/common/environment";
+import type { Repository } from "../../lambda/graphql/generated";
+import type { EnvironmentSize } from "../../lambda/common/entities";
 
 export function useFormState() {
-  const [repository, setRepository] = React.useState<Repository>(null);
+  const [repository, setRepository] = React.useState<Repository>();
   const [environmentSize, setEnvironmentSize] = React.useState<EnvironmentSize>(
     "s"
   );

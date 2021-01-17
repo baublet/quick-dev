@@ -9,7 +9,7 @@ export function useAuth() {
   const authData = value.authData;
   const setAuthData = value.setAuthData;
   const scopes = process.env.GITHUB_CLIENT_SCOPE;
-  const gitHubLink = `https://github.com/login/oauth/authorize?scope=${scopes}&client_id=${authData.githubState.clientId}&redirect_uri=${authData.githubState.redirectUri}`;
+  const gitHubLink = `https://github.com/login/oauth/authorize?scope=${scopes}&client_id=${authData.githubState?.clientId}&redirect_uri=${authData.githubState?.redirectUri}`;
 
   useGitHubAuth(authData, setAuthData);
 

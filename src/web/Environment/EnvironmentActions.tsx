@@ -14,7 +14,7 @@ export function EnvironmentActions({ environment }: EnvironmentActionsProps) {
   }[] = [
     {
       element: <DeleteEnvironmentButton environment={environment} />,
-      show: Boolean(environment.permissions.canDelete),
+      show: Boolean(environment?.permissions?.canDelete),
     },
   ];
 

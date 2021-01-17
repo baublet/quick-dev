@@ -17,8 +17,6 @@ export function Environment({ id }: EnvironmentProps) {
   const { loading, environment } = useEnvironmentDetails(id);
   const hasLogs = Boolean(environment && environment.logs);
 
-  console.log("DEETS: ", environment);
-
   return (
     <div>
       <RightNavigationLayout
@@ -32,13 +30,13 @@ export function Environment({ id }: EnvironmentProps) {
           </>
         }
       />
-      {loading ? null : !hasLogs ? (
+      {!environment ? null : !hasLogs ? (
         <EnvironmentBuilding />
       ) : (
         <EnvironmentLogs
-          environmentId={environment.id}
-          startupLogs={environment.logs.startupLogs}
-          commands={environment.logs.commands}
+          environmentId={environment?.id}
+          startupLogs={environment?.logs?.startupLogs || ""}
+          commands={environment?.logs?.commands || []}
         />
       )}
     </div>

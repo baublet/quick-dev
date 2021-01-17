@@ -1,19 +1,9 @@
 export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
-  | "created"
   | "provisioning"
   | "error_provisioning"
-  | "paused" // You can always pause (e.g., in DO, "shut down")
-  | "pausing"
-  | "stopped" // You can always stop (e.g., in DO, "shut down", snapshot, delete)
-  | "stopping"
-  | "saving_snapshot"
-  | "starting"
-  | "error_starting"
-  | "resizing"
-  | "error_resizing"
-  | "up";
+  | "starting";
 
 export type EnvironmentUserSource = "github";
 

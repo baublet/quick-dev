@@ -1,8 +1,8 @@
 import React from "react";
 
 interface LeftNavigationLayoutProps {
-  navigation: React.ReactElement;
-  content: React.ReactElement;
+  navigation: React.ReactElement<any, any> | null;
+  content: React.ReactElement<any, any> | null;
 }
 
 export function RightNavigationLayout({

@@ -22,8 +22,8 @@ export function useCurrentUserGitHubRepos(
 
   const gitHubData = data?.user?.repositories?.gitHub;
   const nodes = gitHubData?.nodes || [];
-  const hasNextPage = Boolean(gitHubData.hasNextPage);
-  const hasPreviousPage = Boolean(gitHubData.hasPreviousPage);
+  const hasNextPage = Boolean(gitHubData?.hasNextPage);
+  const hasPreviousPage = Boolean(gitHubData?.hasPreviousPage);
 
   return {
     loading: false,

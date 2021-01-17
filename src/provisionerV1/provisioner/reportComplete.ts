@@ -20,7 +20,7 @@ export async function reportComplete(
     const response = await fetch(url, {
       method: "post",
       headers: {
-        authorization: secret,
+        authorization: secret || "",
       },
     });
     if (response.status !== 200) {

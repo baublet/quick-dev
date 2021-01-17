@@ -14,7 +14,7 @@ interface LogEntryProps {
   environmentId: string;
   logText?: string;
   poll: boolean;
-  status: string;
+  status: EnvironmentCommand["status"];
   title: string;
 }
 
@@ -70,7 +70,7 @@ export function LogEntry({
       setPolling(false);
       if (!data?.environmentCommandLogs?.logs) return;
       setLogOutput(
-        (previousOutput) => previousOutput + data.environmentCommandLogs.logs
+        (previousOutput) => previousOutput + data.environmentCommandLogs?.logs
       );
     },
     onError: (error) => {

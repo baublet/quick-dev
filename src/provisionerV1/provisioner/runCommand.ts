@@ -35,8 +35,8 @@ export async function runCommand(
     });
 
     process.on("exit", (code) => {
-      console.log("Reporting completion")
-      reportComplete(commandId, logStreamPath, code);
+      console.log("Reporting completion");
+      reportComplete(commandId, logStreamPath, code === null ? 0 : code);
     });
 
     resolve();

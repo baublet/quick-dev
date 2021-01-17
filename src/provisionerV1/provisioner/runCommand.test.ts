@@ -13,7 +13,7 @@ function wait(ms: number): Promise<void> {
 fs.writeFileSync(logPath, "");
 
 it("writes the file", async () => {
-  await runCommand("echo 'hi'; sleep 1; echo 'hi2'", logPath);
+  await runCommand("runCommand", "echo 'hi'; sleep 1; echo 'hi2'", logPath);
   await wait(100);
   expect(fs.readFileSync(logPath).toString()).toEqual("hi\n");
   await wait(1000);

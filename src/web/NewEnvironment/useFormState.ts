@@ -8,12 +8,15 @@ export function useFormState() {
   const [environmentSize, setEnvironmentSize] = React.useState<EnvironmentSize>(
     "s"
   );
+  const [size, setSize] = React.useState<EnvironmentSize>("s");
 
   return {
     environmentSize,
     setEnvironmentSize,
     repository,
     setRepository,
+    size,
+    setSize,
   };
 }
 

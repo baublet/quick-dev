@@ -43,7 +43,15 @@ export async function setFailed({
   );
   await Promise.all(
     commands.map((command) => {
-      return envCommandEntity.update(trx, command.id, { status: "cancelled" });
+      if (command.order <= updatedCommand.order) {
+        // Don't update commands _prior_ to this one
+        return;
+      }
+      if (command.status === "waiting") {
+        return envCommandEntity.update(trx, command.id, {
+          status: "cancelled",
+        });
+      }
     })
   );
 

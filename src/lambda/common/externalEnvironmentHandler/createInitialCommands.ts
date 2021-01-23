@@ -20,8 +20,8 @@ export async function createInitialCommands(
   });
 
   await environmentCommand.create(trx, {
-    command: `(curl -fsSL https://code-server.dev/install.sh | sh) \
-&& sudo systemctl enable --now code-server@$USER`,
+    command: `source ~/.bashrc && (curl -fsSL https://code-server.dev/install.sh | sh) \
+&& sudo systemctl enable --now code-server@root`,
     environmentId: environment.id,
     title: "Install VS Code Server",
     adminOnly: true,

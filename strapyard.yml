@@ -1,4 +1,4 @@
 name: StrapYard
 description: Yo dawg 8)
 steps:
-  - command: whoami
+  - command: whoami && sleep 2 && echo "\n\nyo\n\n" && sleep 1 && echo "testing 123"

@@ -10,7 +10,7 @@ const sizes: Record<EnvironmentSize, string> = {
   m: "Power",
   l: "Professional",
   xl: "Advanced",
-  xxl: "Godlike",
+  xxl: "Elite",
 };
 
 function SizeButton({
@@ -51,7 +51,6 @@ function SizeButton({
 export function SizePicker({ formState }: { formState: FormState }) {
   const checked = (size: EnvironmentSize) => formState.size === size;
   const setSize = formState.setSize;
-  console.log({ "formstate.size": formState.size });
 
   return (
     <>

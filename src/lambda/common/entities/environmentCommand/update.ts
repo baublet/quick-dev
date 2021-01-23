@@ -15,8 +15,8 @@ export async function update(
     })
     .where({ id })
     .limit(1);
-  const freshRows = trx<EnvironmentCommand>("environmentCommands")
-    .select({ id })
+  const freshRows = await trx<EnvironmentCommand>("environmentCommands")
+    .select("*")
     .limit(1);
   return freshRows[0];
 }

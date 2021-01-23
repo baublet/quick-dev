@@ -48,6 +48,7 @@ export async function setFailed({
         return;
       }
       if (command.status === "waiting") {
+        log.debug("Cancelling command ", command);
         return envCommandEntity.update(trx, command.id, {
           status: "cancelled",
         });

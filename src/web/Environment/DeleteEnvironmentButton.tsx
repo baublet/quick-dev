@@ -13,19 +13,29 @@ export function DeleteEnvironmentButton({
   environment,
 }: EnvironmentActionsProps) {
   const history = useHistory();
+  const [loading, setLoading] = React.useState(false);
   const [deleteMutation] = useDeleteEnvironmentMutation({
-    onCompleted: () => history.push("/environments"),
+    onCompleted: () => {
+      history.push("/environments");
+      setLoading(false);
+    },
   });
 
-  const deleteEnvironment = () =>
+  const deleteEnvironment = () => {
+    setLoading(true);
     deleteMutation({
       variables: {
         id: environment?.id || "",
       },
     });
+  };
 
   return (
-    <DestructiveActionButton full={true} onClick={deleteEnvironment}>
+    <DestructiveActionButton
+      full={true}
+      onClick={deleteEnvironment}
+      loading={loading}
+    >
       Delete
     </DestructiveActionButton>
   );

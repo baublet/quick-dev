@@ -11,7 +11,7 @@ export async function createInitialCommands(
   { environment }: AddSSHKeyArguments
 ): Promise<void> {
   await environmentCommand.create(trx, {
-    command: `mkdir -p ~/project \
+    command: `mkdir -p /root/project \
 && (cd ~/project; git clone ${environment.repositoryUrl})`,
     environmentId: environment.id,
     title: "Clone Repository",
@@ -20,8 +20,8 @@ export async function createInitialCommands(
   });
 
   await environmentCommand.create(trx, {
-    command: `source ~/.bashrc && (curl -fsSL https://code-server.dev/install.sh | sh) \
-&& sudo systemctl enable --now code-server@root`,
+    command: `(HOME="/root/" curl -fsSL https://code-server.dev/install.sh | sh) \
+&& sudo systemctl enable --now code-server@$USER`,
     environmentId: environment.id,
     title: "Install VS Code Server",
     adminOnly: true,
@@ -49,7 +49,7 @@ reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
 auth: password \
 password: aa82dd974de376d337fb0854 \
 home: ${process.env.STRAPYARD_URL}/environment/${environment.subdomain} \
-cert: false" > ~/.config/code-server/config.yaml \
+cert: false" > /root/.config/code-server/config.yaml \
 && sudo systemctl restart code-server@$USER`,
     environmentId: environment.id,
     title: "Configure Code Server",

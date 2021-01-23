@@ -41,6 +41,7 @@ enum EnvironmentCommandStatus {
   waiting
   running
   failed
+  success
 }
 
 enum EnvironmentLifecycleStatus {

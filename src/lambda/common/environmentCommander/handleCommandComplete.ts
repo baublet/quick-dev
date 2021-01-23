@@ -1,5 +1,3 @@
-require("./common/initialize");
-
 import { log } from "../../../common/logger";
 import { Transaction } from "../db";
 import { EnvironmentCommand, Environment } from "../entities";
@@ -35,12 +33,14 @@ export const handleCommandComplete = async ({
         environment,
       });
     }
+    return;
   } else if (newStatus === "success") {
     await environmentCommandStateMachine.setSuccess({
       trx,
       environment,
       environmentCommand,
     });
+    return;
   }
 
   log.error(

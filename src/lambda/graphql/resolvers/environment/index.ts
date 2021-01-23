@@ -22,6 +22,7 @@ export async function environment(
   if (!environment) {
     throw new Error("Environment not found");
   }
+
   throwIfUserDoesNotOwnEnvironment(context.user, environment);
 
   return environment;

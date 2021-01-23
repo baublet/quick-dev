@@ -19,7 +19,8 @@ export function setDeleted({
     }
     try {
       log.info("Attempting to delete environment", {
-        environment,
+        id: environment.id,
+        environmentName: environment.name,
       });
       await Promise.all([
         envEntity.del(trx, environment.id),

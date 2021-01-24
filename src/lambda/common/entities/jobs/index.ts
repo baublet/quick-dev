@@ -15,6 +15,7 @@ export interface Job {
   id: string;
   created_at: Date;
   updated_at: Date;
+  after: number;
   payload: Record<string, any>;
   type: JobType;
   status: JobStatus;

@@ -30,7 +30,9 @@ export async function setProvisioning({
     };
   }
 
-  log.debug("Updated environment to provisioning", { environment });
+  log.debug("Updated environment to provisioning", {
+    environment: environment.name,
+  });
 
   return {
     operationSuccess: true,

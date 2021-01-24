@@ -25,7 +25,7 @@ export interface Environment {
   source: EnvironmentSource;
   sourceId?: string;
   sshKeyId: string;
-  startupLogs?: string;
+  startupLogs?: string | null;
   strapYardFile: string;
   subdomain: string;
   updated_at: Date;

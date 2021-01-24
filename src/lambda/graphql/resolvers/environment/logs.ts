@@ -15,7 +15,7 @@ export async function environmentLogs(
   | null
   | string
   | {
-      startupLogs: string | (() => Promise<string>);
+      startupLogs: string | (() => Promise<string | null>);
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {

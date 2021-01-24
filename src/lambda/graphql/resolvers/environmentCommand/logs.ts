@@ -16,6 +16,10 @@ async function safelyGetData(
   try {
     return await getCommandLogs(environment, commandId, after);
   } catch (e) {
+    // We already log this error, and the stack trace here isn't useful
+    if (e.message.includes("AbortError: The operation was aborted")) {
+      return "";
+    }
     log.error(
       "Error getting command data. Sending through a blank string, but FIX THIS!",
       {

@@ -32,6 +32,9 @@ export async function canSetErrorProvisioning({
   );
 
   if (hasCommandInStatus(commands, "waiting")) {
+    log.debug(
+      "Environment has a command waiting, can't set error provisioning"
+    );
     return {
       operationSuccess: false,
       errors: [],
@@ -39,6 +42,9 @@ export async function canSetErrorProvisioning({
   }
 
   if (hasCommandInStatus(commands, "running")) {
+    log.debug(
+      "Environment has a command running, can't set error provisioning"
+    );
     return {
       operationSuccess: false,
       errors: [],

@@ -41,6 +41,10 @@ export async function setFailed({
     trx,
     environment.id
   );
+  log.debug("Scanning through environment commands to close after one fails", {
+    commands: commands.map((c) => c.title),
+    updatedCommand: updatedCommand.title,
+  });
   await Promise.all(
     commands.map((command) => {
       if (command.order <= updatedCommand.order) {

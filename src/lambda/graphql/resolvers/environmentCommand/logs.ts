@@ -12,14 +12,16 @@ async function safelyGetData(
   environment: Environment,
   commandId: string,
   after: number
-): Promise<string> {
+): Promise<string | null> {
   try {
     return await getCommandLogs(environment, commandId, after);
   } catch (e) {
     log.error(
       "Error getting command data. Sending through a blank string, but FIX THIS!",
       {
-        environment,
+        environment: {
+          name: environment.name,
+        },
         commandId,
         after,
         error: {

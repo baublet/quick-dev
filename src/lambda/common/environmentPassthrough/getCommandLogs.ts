@@ -6,7 +6,7 @@ export async function getCommandLogs(
   environment: Environment,
   commandId: string,
   after: number = 0
-): Promise<string> {
+): Promise<string | null> {
   if (!environment.ipv4) {
     log.error(
       "Tried to get environment command logs, but the environment isn't provisioned!",

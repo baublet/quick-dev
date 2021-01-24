@@ -5,7 +5,7 @@ import { fetch } from "../fetch";
 export async function getEnvironmentCommandLogs(
   environment: Environment,
   environmentCommand: EnvironmentCommand
-): Promise<string> {
+): Promise<string | null> {
   if (!environment.ipv4) {
     log.warning(
       "Tried to get environment command logs for an environment that doesn't have an IP!",
@@ -18,7 +18,7 @@ export async function getEnvironmentCommandLogs(
     environmentCommand.status === "success" ||
     environmentCommand.status === "failed"
   ) {
-    return environmentCommand.logs;
+    return environmentCommand.logs || null;
   }
 
   const response = await fetch(

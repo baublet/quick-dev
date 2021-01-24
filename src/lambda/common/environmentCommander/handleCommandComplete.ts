@@ -19,11 +19,18 @@ export const handleCommandComplete = async ({
   newStatus,
 }: HandleCommandCompleteArguments) => {
   if (newStatus === "failed") {
-    await environmentCommandStateMachine.setFailed({
+    const commandSetFailed = await environmentCommandStateMachine.setFailed({
       trx,
       environment,
       environmentCommand,
     });
+    if (!commandSetFailed.operationSuccess) {
+      log.error("handleCommandComplete failed unexpectedly", {
+        commandSetFailed,
+        environmentCommand,
+      });
+      throw new Error("handleCommandComplete failed unexpectedly");
+    }
     const shouldSetFailed = await environmentStateMachine.canSetErrorProvisioning(
       { trx, environment }
     );

@@ -13,7 +13,7 @@ export const log = {
   },
   error: (...data: any[]) => logger("error", ...data),
   debug: (...data: any[]) => {
-    if (!debug) return;
+    // if (!debug) return;
     logger("log", ...data);
   },
   info: (...data: any[]) => logger("log", ...data),

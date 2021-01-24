@@ -42,8 +42,9 @@ export async function setFailed({
     environment.id
   );
   log.debug("Scanning through environment commands to close after one fails", {
-    commands: commands.map((c) => c.title),
+    commands: commands.map((c) => ({ title: c.title, order: c.order })),
     updatedCommand: updatedCommand.title,
+    originalEnvCommand: environmentCommand,
   });
   await Promise.all(
     commands.map((command) => {

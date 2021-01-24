@@ -3,11 +3,12 @@ query CurrentUserEnvironments {
     environments {
       totalCount
       nodes {
+        deleted
         id
         ipv4
+        lifecycleStatus
         name
         size
-        lifecycleStatus
       }
     }
   }

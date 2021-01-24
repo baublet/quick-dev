@@ -3,20 +3,11 @@ import { Route, Link } from "react-router-dom";
 import cx from "classnames";
 import { useInView } from "react-hook-inview";
 
-import type { EnvironmentCommand } from "../../../lambda/common/entities";
-import { LogOutput } from "../../components/LogOutput";
-import { StatusIndicator } from "../../components/StatusIndicator";
-import { useGetEnvironmentCommandLogsLazyQuery } from "../../generated";
-
-interface LogEntryProps {
-  commandId: string;
-  dynamic: boolean;
-  environmentId: string;
-  logText?: string;
-  poll: boolean;
-  status: EnvironmentCommand["status"];
-  title: string;
-}
+import type { EnvironmentCommand } from "../../../../lambda/common/entities";
+import { LogOutput } from "../../../components/LogOutput";
+import { StatusIndicator } from "../../../components/StatusIndicator";
+import { useGetEnvironmentCommandLogsLazyQuery } from "../../../generated";
+import { LogEntryProps } from ".";
 
 const baseClassNames =
   "shadow-sm block p-4 border rounded-sm border-gray-400 text-gray-800 leading-5";
@@ -42,17 +33,17 @@ const textClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
 function Status({ status }: { status: EnvironmentCommand["status"] }) {
   switch (status) {
     case "failed":
-      return <StatusIndicator status="red" alt="status" />;
+      return <StatusIndicator status="red" alt="failed" />;
     case "running":
-      return <StatusIndicator status="yellow" alt="status" />;
+      return <StatusIndicator status="yellow" alt="running" />;
     case "success":
-      return <StatusIndicator status="green" alt="status" />;
+      return <StatusIndicator status="green" alt="success" />;
     default:
       return <StatusIndicator status="none" alt="status" />;
   }
 }
 
-export function LogEntry({
+export function LogEntryActive({
   commandId,
   dynamic,
   environmentId,
@@ -119,13 +110,9 @@ export function LogEntry({
         <div className="inline-block mr-4">
           <Status status={status as EnvironmentCommand["status"]} />
         </div>
-        {status === "waiting" ? (
-          <span className={textClassNamesByStatus.waiting}>{title}</span>
-        ) : (
-          <Link to={logExpandedPath} className={textClassNamesByStatus[status]}>
-            {title}
-          </Link>
-        )}
+        <Link to={logExpandedPath} className={textClassNamesByStatus[status]}>
+          {title}
+        </Link>
       </div>
       <Route path={logExpandedPath}>
         <LogOutput

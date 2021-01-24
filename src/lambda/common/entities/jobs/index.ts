@@ -1,4 +1,4 @@
-import { JobKey } from "../../worker-background/jobs";
+import { JobKey } from "../../jobs";
 
 export type JobType = JobKey;
 

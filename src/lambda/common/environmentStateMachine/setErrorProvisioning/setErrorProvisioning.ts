@@ -10,9 +10,12 @@ export async function setErrorProvisioning({
   environment,
   trx,
 }: SetProvisioningArguments): Promise<StateMachineReturnValue> {
-  log.debug("Setting environment to status: error provisioning", {
-    environment: environment.name,
-  });
+  log.debug(
+    "setErrorProvisioning: Setting environment to status: error provisioning",
+    {
+      environment: environment.name,
+    }
+  );
   const canContinue = await canSetErrorProvisioning({ trx, environment });
 
   if (!canContinue.operationSuccess) {
@@ -27,7 +30,7 @@ export async function setErrorProvisioning({
     lifecycleStatus: "error_provisioning",
   });
 
-  log.debug("Updated environment to error provisioning", {
+  log.debug("setErrorProvisioning: Updated environment to error provisioning", {
     environment: environment.subdomain,
   });
 

@@ -6,35 +6,28 @@ export async function todo(
   knownJobTypes: string[],
   processor: string
 ): Promise<Job | undefined> {
-  const found = await trx<IntermediateJob>("jobs")
-    .select()
-    .whereIn("type", knownJobTypes)
-    .andWhere({
-      status: "ready",
-      processor: null,
-    })
-    .limit(1);
+  const nowInS = Math.floor(Date.now() / 1000);
 
-  if (found.length === 0) {
-    return undefined;
-  }
-
-  const payload = JSON.parse(found[0].payload);
-  const history = JSON.parse(found[0].history);
-  const jobToDo = found[0];
-  const updatedRows = await trx<Job>("jobs")
+  const updatedRows = await trx<IntermediateJob>("jobs")
     .update({ status: "working", processor, updated_at: trx.fn.now() })
-    .where({ id: jobToDo.id })
-    .andWhere({ processor: null })
-    .andWhere("status", "<>", "working")
-    .limit(1);
+    .andWhere((trx) => {
+      trx.whereNull("processor");
+      trx.where("status", "=", "ready");
+      trx.where("after", "<=", nowInS);
+    })
+    .limit(1)
+    .returning("*");
 
-  if (!updatedRows) {
+  if (!updatedRows.length) {
     return undefined;
   }
+
+  const found = updatedRows[0];
+  const payload = JSON.parse(found.payload);
+  const history = JSON.parse(found.history);
 
   return {
-    ...jobToDo,
+    ...found,
     payload,
     history,
   };

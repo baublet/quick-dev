@@ -12,7 +12,7 @@ export async function canSetErrorProvisioning({
   // Make sure they're not in the wrong status for some reason
   if (environment.lifecycleStatus !== "provisioning") {
     log.error(
-      `EnvironmentReadyToProvision request received for environment that's not in the proper status. Expected "provisioning", but got ${environment.lifecycleStatus}`,
+      `setErrorProvisioning request received for environment that's not in the proper status. Expected "provisioning", but got ${environment.lifecycleStatus}`,
       {
         environment: environment.subdomain,
         status: environment.lifecycleStatus,
@@ -21,7 +21,7 @@ export async function canSetErrorProvisioning({
     return {
       operationSuccess: false,
       errors: [
-        `EnvironmentReadyToProvision request received for environment that's not in the proper status`,
+        `setErrorProvisioning request received for environment that's not in the proper status`,
       ],
     };
   }
@@ -33,7 +33,7 @@ export async function canSetErrorProvisioning({
 
   if (hasCommandInStatus(commands, "waiting")) {
     log.debug(
-      "Environment has a command waiting, can't set error provisioning"
+      "setErrorProvisioning: Environment has a command waiting, can't set error provisioning"
     );
     return {
       operationSuccess: false,
@@ -43,7 +43,7 @@ export async function canSetErrorProvisioning({
 
   if (hasCommandInStatus(commands, "running")) {
     log.debug(
-      "Environment has a command running, can't set error provisioning"
+      "setErrorProvisioning: Environment has a command running, can't set error provisioning"
     );
     return {
       operationSuccess: false,

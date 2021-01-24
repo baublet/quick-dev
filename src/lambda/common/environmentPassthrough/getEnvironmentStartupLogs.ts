@@ -4,7 +4,7 @@ import { fetch } from "../fetch";
 
 export async function getEnvironmentStartupLogs(
   environment: Environment
-): Promise<string> {
+): Promise<string | null> {
   // If the startup logs exist on the environment, send those
   if (typeof environment.startupLogs === "string") {
     return environment.startupLogs;

@@ -33,13 +33,14 @@ export async function sendNextCommand({
     };
   }
 
+  // This will always return a result if `canSendNextCommand` is true
   const commandToRunNext = (() => {
     for (const command of commands) {
       if (command.status === "waiting") {
         return command;
       }
     }
-  })();
+  })() as envCommandEntity.EnvironmentCommand;
 
   await environmentCommandStateMachine.setRunning({
     trx,

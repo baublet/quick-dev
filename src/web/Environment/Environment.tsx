@@ -25,8 +25,15 @@ export function Environment({ id }: EnvironmentProps) {
         }
         content={
           <>
-            <H3>{environment?.name || ""}</H3>
+            <H3>
+              <Loader display={true} /> {environment?.name || ""}
+            </H3>
             <Loader display={loading} />
+            {!loading && (
+              <>
+                <b>Status:</b> {environment?.lifecycleStatus}
+              </>
+            )}
           </>
         }
       />

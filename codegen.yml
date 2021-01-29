@@ -6,6 +6,7 @@ generates:
     plugins:
       - "typescript"
     config:
+      enumsAsTypes: true
       scalars:
         ID: string
   src/web/generated.ts:
@@ -14,5 +15,6 @@ generates:
       - typescript-operations
       - typescript-react-apollo
     config:
+      enumsAsTypes: true
       scalars:
         ID: string

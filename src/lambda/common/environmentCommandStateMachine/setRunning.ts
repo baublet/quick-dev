@@ -39,7 +39,7 @@ export async function setRunning({
   });
 
   await enqueueJob(trx, "sendCommand", {
-    environmentCommandId: environmentCommand.commandId,
+    environmentCommandId: environmentCommand.id,
   });
 
   return {

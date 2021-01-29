@@ -10,8 +10,6 @@ import {
   environmentCommand as envCommandEntity,
 } from "./common/entities";
 import { environmentCommander } from "./common/environmentCommander";
-import { environmentCommandStateMachine } from "./common/environmentCommandStateMachine";
-import { environmentStateMachine } from "./common/environmentStateMachine";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = (event: APIGatewayEvent) => {
@@ -24,7 +22,7 @@ export const handler = (event: APIGatewayEvent) => {
       ?.status as EnvironmentCommand["status"];
 
     if (!commandId) {
-      log.error("EnvironmentCommandComplete did not receive a commandId", {
+      log.error("EnvironmentCommandComplete did not receive a command ID", {
         queryStringParameters: event.queryStringParameters,
       });
       return {
@@ -55,10 +53,7 @@ export const handler = (event: APIGatewayEvent) => {
     }
 
     // Make sure the environment command exists
-    const environmentCommand = await envCommandEntity.getByCommandId(
-      db,
-      commandId
-    );
+    const environmentCommand = await envCommandEntity.getById(db, commandId);
 
     if (!environmentCommand) {
       log.error("EnvironmentCommandComplete could not find command ID", {

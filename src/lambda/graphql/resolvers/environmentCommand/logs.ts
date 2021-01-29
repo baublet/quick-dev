@@ -64,7 +64,7 @@ export async function environmentCommandLogs(
     return parent.logs;
   }
 
-  const data = await safelyGetData(environment, parent.commandId, after);
+  const data = await safelyGetData(environment, parent.id, after);
 
   return data;
 }

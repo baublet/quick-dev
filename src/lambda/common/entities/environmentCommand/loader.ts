@@ -16,6 +16,10 @@ function loadEnvironmentCommands(
 export function loader(context: Context) {
   return new DataLoader<string, EnvironmentCommand>(async (ids) => {
     const foundEnvironments = await loadEnvironmentCommands(context, ids);
-    return ids.map((id) => foundEnvironments.find((env) => env.id === id));
+    return ids.map(
+      (id) =>
+        foundEnvironments.find((env) => env.id === id) ||
+        new Error(`Environment command with ID ${id} does not exist`)
+    );
   });
 }

@@ -15,7 +15,7 @@ export async function sendCommand(
   }
 
   await fetch(
-    `http://${environment.ipv4}:8333/command/${environmentCommand.commandId}`,
+    `http://${environment.ipv4}:8333/command/${environmentCommand.id}`,
     {
       method: "post",
       body: environmentCommand.command,

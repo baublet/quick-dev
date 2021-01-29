@@ -22,7 +22,7 @@ export async function getEnvironmentCommandLogs(
   }
 
   const response = await fetch(
-    `http://${environment.ipv4}:8333/command/${environmentCommand.commandId}`,
+    `http://${environment.ipv4}:8333/command/${environmentCommand.id}`,
     {
       method: "get",
       headers: {

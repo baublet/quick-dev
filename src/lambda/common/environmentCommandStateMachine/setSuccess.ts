@@ -38,7 +38,7 @@ export async function setSuccess({
   );
 
   await enqueueJob(trx, "getEnvironmentCommandLogs", {
-    environmentCommandId: environmentCommand.commandId,
+    environmentCommandId: environmentCommand.id,
   });
 
   log.debug("Updated environment command to complete", {

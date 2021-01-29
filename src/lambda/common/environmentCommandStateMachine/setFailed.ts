@@ -62,7 +62,7 @@ export async function setFailed({
   );
 
   await enqueueJob(trx, "getEnvironmentCommandLogs", {
-    environmentCommandId: environmentCommand.commandId,
+    environmentCommandId: environmentCommand.id,
   });
 
   log.debug("Updated environment command to failed", {

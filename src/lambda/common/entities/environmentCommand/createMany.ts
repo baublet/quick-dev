@@ -19,7 +19,6 @@ export async function createMany(
         status: "waiting",
         ...step,
         id: ulid(),
-        commandId: ulid(),
         environmentId,
         order: (nextOrder += 100),
       }))

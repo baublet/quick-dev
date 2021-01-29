@@ -10,7 +10,7 @@ type CreateEnvironmentCommandInput = Partial<EnvironmentCommand> &
 export async function create(
   trx: ConnectionOrTransaction,
   input: CreateEnvironmentCommandInput
-): Promise<EnvironmentCommand> {
+) {
   const nextOrder = await getNextCommandOrderByEnvironmentId(
     trx,
     input.environmentId
@@ -19,7 +19,6 @@ export async function create(
     .insert({
       ...input,
       id: ulid(),
-      commandId: ulid(),
       status: "waiting",
       order: nextOrder,
     })

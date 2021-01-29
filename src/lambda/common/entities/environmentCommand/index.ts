@@ -1,7 +1,6 @@
 export interface EnvironmentCommand {
   adminOnly: boolean;
   command: string;
-  commandId: string;
   created_at: Date;
   environmentId: string;
   id: string;
@@ -14,7 +13,7 @@ export interface EnvironmentCommand {
 
 export { create } from "./create";
 export { getByEnvironmentId } from "./getByEnvironmentId";
-export { getByCommandId } from "./getByCommandId";
+export { getById } from "./getById";
 export { update } from "./update";
 export { createMany } from "./createMany";
 export { loader } from "./loader";

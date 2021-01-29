@@ -5,9 +5,10 @@ import { EnvironmentLogs } from "./EnvironmentLogs";
 
 import { H3 } from "../components/H3";
 import { RightNavigationLayout } from "../components/RightNavigationLayout";
-import { Loader } from "../components/Loader";
+import { LoaderInline } from "../components/LoaderInline";
 import { EnvironmentActions } from "./EnvironmentActions";
 import { EnvironmentBuilding } from "./EnvironmentBuilding";
+import { Loader } from "../components/Loader";
 
 interface EnvironmentProps {
   id: string;
@@ -25,8 +26,12 @@ export function Environment({ id }: EnvironmentProps) {
         }
         content={
           <>
-            <H3>
-              <Loader display={true} /> {environment?.name || ""}
+            <H3 className="mb-4">
+              <LoaderInline
+                className="mr-2"
+                display={environment?.working === true}
+              />
+              {environment?.name || ""}
             </H3>
             <Loader display={loading} />
             {!loading && (
@@ -40,11 +45,13 @@ export function Environment({ id }: EnvironmentProps) {
       {!environment ? null : !hasLogs ? (
         <EnvironmentBuilding />
       ) : (
-        <EnvironmentLogs
-          environmentId={environment?.id}
-          startupLogs={environment?.logs?.startupLogs || ""}
-          commands={environment?.logs?.commands || []}
-        />
+        <div className="mt-4">
+          <EnvironmentLogs
+            environmentId={environment?.id}
+            startupLogs={environment?.logs?.startupLogs || ""}
+            commands={environment?.logs?.commands || []}
+          />
+        </div>
       )}
     </div>
   );

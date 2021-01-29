@@ -6,7 +6,7 @@ export async function todo(
   knownJobTypes: string[],
   processor: string
 ): Promise<Job | undefined> {
-  const nowInS = Math.floor(Date.now() / 1000);
+  const nowInS = Date.now();
 
   const updatedRows = await trx<IntermediateJob>("jobs")
     .update({ status: "working", processor, updated_at: trx.fn.now() })

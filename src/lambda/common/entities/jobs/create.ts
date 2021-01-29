@@ -20,7 +20,7 @@ export async function create<
   const created = await trx<IntermediateJob>("jobs")
     .insert({
       type,
-      after,
+      after: Date.now() + after,
       id: ulid(),
       payload: payloadString,
       status: "ready",

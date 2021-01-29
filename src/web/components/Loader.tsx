@@ -1,7 +1,11 @@
 import React from "react";
 import cx from "classnames";
 
-export const Loader = React.memo(function ({ display }: { display: boolean }) {
+export const Loader = React.memo(function ({
+  display = true,
+}: {
+  display?: boolean;
+}) {
   return (
     <div className={cx("flex justify-center", { hidden: !display })}>
       <svg

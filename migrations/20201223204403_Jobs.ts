@@ -16,6 +16,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("error");
     table.text("payload");
     table.text("history").notNullable();
+    table.bigInteger("after").unsigned().notNullable().defaultTo(0);
   });
 }
 

@@ -13,9 +13,11 @@ export function Environment() {
       <H3>Environments</H3>
       <Loader display={loading} />
       <ul>
-        {environments.map((env) => (
-          <EnvironmentCard key={env.id} environment={env} />
-        ))}
+        {environments
+          .filter((env) => !env.deleted)
+          .map((env) => (
+            <EnvironmentCard key={env.id} environment={env} />
+          ))}
       </ul>
     </>
   );

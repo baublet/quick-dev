@@ -7,7 +7,6 @@ export async function up(knex: Knex): Promise<void> {
 
     table.boolean("adminOnly").index().notNullable().defaultTo(false);
     table.text("environmentId").index().notNullable();
-    table.text("commandId").index().notNullable();
     table.text("command").notNullable();
     table.text("title").notNullable();
     table.text("status").index().notNullable().defaultTo("not_ready");

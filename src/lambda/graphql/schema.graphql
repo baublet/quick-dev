@@ -65,6 +65,7 @@ type Environment {
   size: String!
   subdomain: String!
   updated: Date!
+  working: Boolean!
 }
 
 type EnvironmentPermissions {

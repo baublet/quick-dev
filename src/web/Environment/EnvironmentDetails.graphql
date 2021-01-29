@@ -5,6 +5,7 @@ query EnvironmentDetails($id: ID!) {
     subdomain
     ipv4
     lifecycleStatus
+    working
     permissions {
       canDelete
     }

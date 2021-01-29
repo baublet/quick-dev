@@ -5,6 +5,7 @@ import { environments } from "./resolvers/user/environments";
 
 import { environment } from "./resolvers/environment";
 import { environmentLogs } from "./resolvers/environment/logs";
+import { environmentWorking } from "./resolvers/environment/working";
 import { environmentPermissions } from "./resolvers/environment/permissions";
 import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 
@@ -35,6 +36,7 @@ export const resolvers = {
   Environment: {
     logs: environmentLogs,
     permissions: environmentPermissions,
+    working: environmentWorking,
   },
   User: {
     repositories,

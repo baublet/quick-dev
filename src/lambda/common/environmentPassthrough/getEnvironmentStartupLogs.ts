@@ -2,6 +2,12 @@ import { Environment } from "../entities";
 import { log } from "../../../common/logger";
 import { fetch } from "../fetch";
 
+function isFetchableStatus(status: Environment["lifecycleStatus"]): boolean {
+  if (status === "provisioning") return true;
+  if (status === "starting") return true;
+  return false;
+}
+
 export async function getEnvironmentStartupLogs(
   environment: Environment
 ): Promise<string | null> {
@@ -16,6 +22,11 @@ export async function getEnvironmentStartupLogs(
       { environment }
     );
     return null;
+  }
+
+  // Only ping the environment if it's in provisioning
+  if (!isFetchableStatus(environment.lifecycleStatus)) {
+    return "";
   }
 
   const response = await fetch(`http://${environment.ipv4}:8333/startupLogs`, {

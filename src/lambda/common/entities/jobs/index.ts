@@ -16,6 +16,9 @@ export interface Job {
   created_at: Date;
   updated_at: Date;
   after: number;
+  retries: number;
+  retriesRemaining: number;
+  retryDelaySeconds: number;
   payload: Record<string, any>;
   type: JobType;
   status: JobStatus;

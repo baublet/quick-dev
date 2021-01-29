@@ -1,6 +1,7 @@
 import { ConnectionOrTransaction } from "../../db";
 import { IntermediateJob, JobHistory } from "./index";
 import { getById } from "./getById";
+import { log } from "../../../../common/logger";
 
 export async function jobFailed(
   trx: ConnectionOrTransaction,
@@ -15,15 +16,37 @@ export async function jobFailed(
     output,
   };
   const job = await getById(trx, jobId);
+
+  if (!job) {
+    throw new Error(
+      `Job invariance violation! Tried to perform jobFailed task on job ${jobId}, but couldn't find that job!`
+    );
+  }
+
   const history = JSON.parse(job.history);
   history.push(historyItem);
-  job.status = "failed";
-  job.processor = null;
+  job.processor = undefined;
   job.history = JSON.stringify(history);
+
+  if (job.retriesRemaining > 0) {
+    job.retriesRemaining = job.retriesRemaining - 1;
+    job.status = "ready";
+    job.after = Date.now() + job.retriesRemaining * 1000;
+    log.warning(
+      `Job ${job.type} failed. Retrying after ${job.retryDelaySeconds} seconds (retries left: ${job.retriesRemaining})`,
+      {
+        historyItem,
+        job,
+      }
+    );
+  } else {
+    job.status = "failed";
+  }
+
   await trx<IntermediateJob>("jobs")
     .update({
-      updated_at: trx.fn.now(),
       ...job,
+      updated_at: trx.fn.now(),
     })
     .where("id", "=", jobId)
     .limit(1);

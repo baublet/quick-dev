@@ -8,13 +8,21 @@ type CreateJobInput<
 > = Pick<Job, "type"> & {
   payload?: T;
   after?: number;
+  retries?: number;
+  retryDelaySeconds?: number;
 };
 
 export async function create<
   T extends Record<string, string | number | boolean>
 >(
   trx: ConnectionOrTransaction,
-  { type, after = 0, payload = {} as T }: CreateJobInput<T>
+  {
+    type,
+    after = 0,
+    retries = 2,
+    retryDelaySeconds = 20,
+    payload = {} as T,
+  }: CreateJobInput<T>
 ): Promise<IntermediateJob | undefined> {
   const payloadString = JSON.stringify(payload);
   const created = await trx<IntermediateJob>("jobs")
@@ -22,6 +30,9 @@ export async function create<
       type,
       after: Date.now() + after,
       id: ulid(),
+      retries,
+      retriesRemaining: retries,
+      retryDelaySeconds,
       payload: payloadString,
       status: "ready",
       history: "[]",

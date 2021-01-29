@@ -1,6 +1,6 @@
-import { hri } from "human-readable-ids";
 import { ulid } from "ulid";
 
+import { createHumanReadableId } from "../../createHumanReadableId";
 import { canSetNew, SetNewArguments } from ".";
 import { StateMachineReturnValue } from "../";
 import { log } from "../../../../common/logger";
@@ -18,12 +18,17 @@ export async function setNew({
     return canContinue;
   }
 
+  const user = context.user;
+  if (user === null) {
+    throw new Error(`You must be logged in to create new environments`);
+  }
+
   return context.db.transaction(async (trx) => {
     let sshKeyId: string;
     try {
       const providerKey = await getOrCreateSSHKey(trx, context, {
-        user: context.user.email,
-        userSource: context.user.source,
+        user: user.email,
+        userSource: user.source,
       });
       sshKeyId = providerKey.sshKeyId;
     } catch (e) {
@@ -43,7 +48,7 @@ export async function setNew({
       };
     }
 
-    const subdomain = hri.random();
+    const subdomain = createHumanReadableId();
     const environment = await envEntity.create(trx, {
       name: subdomain,
       repositoryUrl: input.repositoryUrl,
@@ -51,8 +56,8 @@ export async function setNew({
       sshKeyId,
       strapYardFile: environmentStrapYardFile.rawFile,
       subdomain,
-      user: context.user.email,
-      userSource: context.user.source,
+      user: user.email,
+      userSource: user.source,
     });
     await enqueueJob(trx, "createEnvironmentCommands", {
       environmentId: environment.id,

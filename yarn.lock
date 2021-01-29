@@ -2571,6 +2571,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/faker@^5.1.5":
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.1.5.tgz#f14b015e0100232bb00c6dd7611505efb08709a0"
+  integrity sha512-2uEQFb7bsx68rqD4F8q95wZq6LTLOyexjv6BnvJogCO4jStkyc6IDEkODPQcWfovI6g6M3uPQ2/uD/oedJKkNw==
+
 "@types/fs-capacitor@*":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/fs-capacitor/-/fs-capacitor-2.0.0.tgz#17113e25817f584f58100fb7a08eed288b81956e"
@@ -6762,6 +6767,11 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
+faker@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-5.2.0.tgz#5ee7ca475737eda8cf59c0cbaae5f5068e668dd9"
+  integrity sha512-UlrF1NNRIdzEPtBcy5l8JTlnXQZdz+4pQc3v2TAVocW39nnczCNQ0g0CBKgPGISJPzA2DqJVN1kdr+FCRFdN5g==
+
 fast-deep-equal@^3.1.1:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
@@ -8118,13 +8128,6 @@ https-proxy-agent@^5.0.0:
   dependencies:
     agent-base "6"
     debug "4"
-
-human-readable-ids@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/human-readable-ids/-/human-readable-ids-1.0.4.tgz#41b3a2a6966636e104e41e0673b984b36dfde202"
-  integrity sha512-h1zwThTims8A/SpqFGWyTx+jG1+WRMJaEeZgbtPGrIpj2AZjsOgy8Y+iNzJ0yAyN669Q6F02EK66WMWcst+2FA==
-  dependencies:
-    knuth-shuffle "^1.0.0"
 
 human-signals@^1.1.1:
   version "1.1.1"
@@ -9535,11 +9538,6 @@ knex@^0.21.14:
     tarn "^3.0.1"
     tildify "2.0.0"
     v8flags "^3.2.0"
-
-knuth-shuffle@^1.0.0:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/knuth-shuffle/-/knuth-shuffle-1.0.8.tgz#929a467b0efd8d297bdcf318ca988a9f1037f80d"
-  integrity sha512-IdC4Hpp+mx53zTt6VAGsAtbGM0g4BV9fP8tTcviCosSwocHcRDw9uG5Rnv6wLWckF4r72qeXFoK9NkvV1gUJCQ==
 
 kuler@^2.0.0:
   version "2.0.0"

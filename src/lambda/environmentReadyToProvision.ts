@@ -4,7 +4,6 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
-import { enqueueJob } from "./common/enqueueJob";
 import { environment as envEntity } from "./common/entities";
 import { environmentStateMachine } from "./common/environmentStateMachine";
 

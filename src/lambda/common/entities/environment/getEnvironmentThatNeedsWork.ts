@@ -12,7 +12,7 @@ export async function getEnvironmentThatNeedsWork(
   input: {
     currentProcessor: string;
   }
-): Promise<Environment | null> {
+) {
   const updatedRows = await db<Environment>("environments")
     .update({ processor: input.currentProcessor, updated_at: db.fn.now() })
     .andWhere((b) => {

@@ -21,7 +21,7 @@ export async function getRepoStrapYardFile(
     const fetchResponse = await githubApi<GitHubStrapYardFileResponse>({
       path: `repos/${owner}/${name}/contents/strapyard.yml`,
       method: "get",
-      accessToken: context.accessToken,
+      accessToken: context.accessToken || "",
       expectStatus: 200,
     });
 

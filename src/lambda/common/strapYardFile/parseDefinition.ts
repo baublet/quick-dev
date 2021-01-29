@@ -29,7 +29,7 @@ export async function parseDefinition(
     description: parsed.description || "",
     rawFile: def,
     repositoryUrl,
-    steps: (parsed.steps || []).map((step) => {
+    steps: (parsed.steps || []).map((step: any) => {
       assertStepValid(step);
       return {
         name: step.name || step.command,

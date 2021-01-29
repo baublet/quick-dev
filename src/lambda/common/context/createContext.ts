@@ -22,6 +22,10 @@ export interface Context {
   requestId: string;
 }
 
+export interface ContextWithUser extends Context {
+  user: ContextUser;
+}
+
 /**
  * Creates a context outside of the lambda event. Useful for robots and things
  * that happen outside of GraphQL

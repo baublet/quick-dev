@@ -3,11 +3,17 @@ import { sshKey, SSHKey } from "../entities";
 import { ConnectionOrTransaction } from "../../common/db";
 import { Context } from "../context";
 import { saveSSHKey } from "./saveSSHKey";
+import { unauthorized } from "../../graphql/common/unauthorized";
+import { unauthorizedError } from "../../graphql/common/unauthorizedError";
 
 export async function getOrCreateSSHKey(
   trx: ConnectionOrTransaction,
   context: Context
 ): Promise<SSHKey> {
+  if (!unauthorized(context)) {
+    throw unauthorizedError(context);
+  }
+
   const extant = await sshKey.getByUser(
     trx,
     context.user.email,

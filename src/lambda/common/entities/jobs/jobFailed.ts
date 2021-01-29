@@ -29,9 +29,11 @@ export async function jobFailed(
   job.history = JSON.stringify(history);
 
   if (job.retriesRemaining > 0) {
+    const originalCancelAfter = job.cancelAfter - job.startAfter;
     job.retriesRemaining = job.retriesRemaining - 1;
     job.status = "ready";
-    job.after = Date.now() + job.retriesRemaining * 1000;
+    job.startAfter = Date.now() + job.retryDelaySeconds * 1000;
+    job.cancelAfter = job.startAfter + originalCancelAfter;
     log.warning(
       `Job ${job.type} failed. Retrying after ${job.retryDelaySeconds} seconds (retries left: ${job.retriesRemaining})`,
       {

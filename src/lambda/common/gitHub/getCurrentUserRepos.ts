@@ -20,11 +20,11 @@ export interface GitHubRepo {
 export async function getCurrentUserRepos(
   context: Context,
   {
-    page,
-    perPage,
+    page = 1,
+    perPage = 10,
   }: {
-    page: number;
-    perPage: number;
+    page?: number;
+    perPage?: number;
   }
 ): Promise<{
   totalCount?: number;

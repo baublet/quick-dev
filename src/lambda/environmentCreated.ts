@@ -9,7 +9,7 @@ import { environment as envEntity } from "./common/entities";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
-  const body = JSON.parse(event.body);
+  const body = JSON.parse(event.body || "{}");
   const ipv4 = body.ipv4;
   const db = getDatabaseConnection();
   const secret = event.headers.authorization;

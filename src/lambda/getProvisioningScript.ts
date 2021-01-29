@@ -10,8 +10,8 @@ import { getProvisionScript } from "../provisionerV1/getProvisionScript";
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
   const db = getDatabaseConnection();
-  const secret = event.queryStringParameters.secret;
-  const subdomain = event.queryStringParameters.subdomain;
+  const secret = event.queryStringParameters?.secret;
+  const subdomain = event.queryStringParameters?.subdomain;
 
   if (!secret) {
     log.error("getProvisioningScript did not receive a secret");

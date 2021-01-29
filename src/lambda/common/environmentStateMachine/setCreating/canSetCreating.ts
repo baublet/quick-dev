@@ -37,4 +37,11 @@ export async function canSetCreating({
       errors: [],
     };
   }
+
+  return {
+    operationSuccess: false,
+    errors: [
+      "Environment can't be moved to 'creating' unless it starts in 'new'",
+    ],
+  };
 }

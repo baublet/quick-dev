@@ -14,6 +14,12 @@ export const setupEnvironmentDomain = async (
 ) => {
   const environment = await envEntity.getById(trx, payload.environmentId);
 
+  if (!environment) {
+    throw new Error(
+      `setupEnvironmentDomain invariance violation. Expected environment ${environment} to exist. It did not.`
+    );
+  }
+
   const type = "A";
   const name = `${environment.subdomain}.env`;
   const data = environment.ipv4;

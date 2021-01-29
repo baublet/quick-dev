@@ -2886,6 +2886,13 @@
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
   integrity sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA==
 
+"@types/sshpk@^1.10.5":
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/@types/sshpk/-/sshpk-1.10.5.tgz#d3c759da1c3bd93e82daf297b6309a93ad5bfa05"
+  integrity sha512-5EKeKE0YmM2F5xjhk5k6mgL9tx5XpHPqKVaN5c1zCBGSFv4VPRqp1fhGKjo1lkyb7kmvchjgWB8TPAT14+JiRg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/stack-utils@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"

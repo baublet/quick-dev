@@ -9,6 +9,13 @@ export const getEnvironmentStartupLogs = async (
   }
 ) => {
   const environment = await envEntity.getById(trx, payload.environmentId);
+
+  if (!environment) {
+    throw new Error(
+      `getEnvironmentStartupLogs invariance error! Environment doesn't exist in the DB: ${payload.environmentId}`
+    );
+  }
+
   const startupLogs = await getEnvironmentStartupLogsFromEnvironment(
     environment
   );

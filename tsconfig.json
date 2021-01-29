@@ -1,6 +1,6 @@
 {
   "exclude": ["./builtWeb", "./builtFunctions", "./dist"],
-  "include": ["src"],
+  "include": ["src", "types"],
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

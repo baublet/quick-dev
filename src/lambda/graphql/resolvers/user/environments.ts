@@ -3,6 +3,8 @@ import {
   Environment,
 } from "../../../common/entities";
 import { Context } from "../../../common/context";
+import { unauthorized } from "../../common/unauthorized";
+import { unauthorizedError } from "../../common/unauthorizedError";
 
 interface Args {
   input?: {
@@ -26,6 +28,10 @@ export async function environments(
 }> {
   const perPage = input?.perPage || 25;
   const currentPage = input?.page || 1;
+
+  if (!unauthorized(context)) {
+    throw unauthorizedError(context);
+  }
 
   const environments = await envEntity.get(context.db, {
     user: context.user.email,

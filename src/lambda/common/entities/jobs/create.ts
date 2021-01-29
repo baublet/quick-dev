@@ -7,7 +7,8 @@ type CreateJobInput<
   T extends Record<string, string | number | boolean> = any
 > = Pick<Job, "type"> & {
   payload?: T;
-  after?: number;
+  startAfter: number;
+  cancelAfter: number;
   retries?: number;
   retryDelaySeconds?: number;
 };
@@ -18,17 +19,20 @@ export async function create<
   trx: ConnectionOrTransaction,
   {
     type,
-    after = 0,
+    startAfter,
+    cancelAfter,
     retries = 2,
     retryDelaySeconds = 20,
     payload = {} as T,
   }: CreateJobInput<T>
 ): Promise<IntermediateJob | undefined> {
   const payloadString = JSON.stringify(payload);
+  const startAfterTime = Date.now() + startAfter;
   const created = await trx<IntermediateJob>("jobs")
     .insert({
       type,
-      after: Date.now() + after,
+      startAfter: startAfterTime,
+      cancelAfter: startAfterTime + cancelAfter,
       id: ulid(),
       retries,
       retriesRemaining: retries,

@@ -8,7 +8,7 @@ export async function setCreating({
   trx,
   environment,
 }: SetCreatingArguments): Promise<StateMachineReturnValue> {
-  let createdDropletId: string;
+  let createdDropletId: string = "";
 
   const canContinue = await canSetCreating({ trx, environment });
   if (canContinue.operationSuccess === false) {
@@ -24,7 +24,7 @@ export async function setCreating({
     );
     createdDropletId = createdDroplet.id;
     const updatedEntity = await envEntity.update(trx, environment.id, {
-      processor: null,
+      processor: undefined,
       sourceId: createdDroplet.id,
     });
     return {

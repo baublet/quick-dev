@@ -38,9 +38,16 @@ export async function setRunning({
     status: "running",
   });
 
-  await enqueueJob(trx, "sendCommand", {
-    environmentCommandId: environmentCommand.id,
-  });
+  await enqueueJob(
+    trx,
+    "sendCommand",
+    {
+      environmentCommandId: environmentCommand.id,
+    },
+    // It should take almost no time ping the downstream server. If it takes
+    // more than 5 seconds, it probably failed, so try again.
+    { cancelAfter: 5000 }
+  );
 
   return {
     errors: [],

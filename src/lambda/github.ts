@@ -10,7 +10,7 @@ export const handler = async (event: APIGatewayEvent) => {
     redirect_uri: redirectUri,
     client_secret: clientSecret,
     code,
-  } = JSON.parse(event.body);
+  } = JSON.parse(event.body || "{}");
 
   const data = new FormData();
   data.append("client_id", clientId);

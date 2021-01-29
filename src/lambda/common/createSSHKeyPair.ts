@@ -24,7 +24,7 @@ export async function createSSHKeyPair(
         read: true,
         format: format,
       },
-      (err, out) => {
+      (err: any, out: any) => {
         if (err) {
           log.error(err);
           return reject("SSH key gen error " + err);
@@ -38,7 +38,7 @@ export async function createSSHKeyPair(
             resolve({
               privateKey: out.key,
               publicKey: out.pubKey,
-              fingerprint
+              fingerprint,
             });
           });
         });

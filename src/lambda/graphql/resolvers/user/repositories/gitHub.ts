@@ -23,7 +23,7 @@ export async function gitHub(
   nodes: GitHubRepo[];
 }> {
   return getCurrentUserRepos(context, {
-    page: input.page,
-    perPage: input.perPage,
+    page: input?.page,
+    perPage: input?.perPage,
   });
 }

@@ -27,7 +27,7 @@ export async function setErrorProvisioning({
     trx,
     "deleteEnvironmentInProvider",
     { environmentId: environment.id },
-    { after: 1000 * 60 * 60 * 2 }
+    { startAfter: 1000 * 60 * 60 * 2 }
   );
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "error_provisioning",

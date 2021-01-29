@@ -6,7 +6,7 @@ export async function resetProcessorByEnvironmentId(
   id: Environment["id"]
 ): Promise<Environment> {
   const results = await trx<Environment>("environments")
-    .update({ processor: null, updated_at: trx.fn.now() })
+    .update({ processor: undefined, updated_at: trx.fn.now() })
     .where({ id })
     .whereNotNull("processor")
     .limit(1)

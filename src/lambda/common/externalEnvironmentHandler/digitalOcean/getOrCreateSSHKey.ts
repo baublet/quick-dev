@@ -4,6 +4,8 @@ import { getOrCreateSSHKey as getOrCreateGitHubKey } from "../../gitHub";
 import { Context } from "../../context";
 import { log } from "../../../../common/logger";
 import { ConnectionOrTransaction } from "../../db";
+import { unauthorized } from "../../../graphql/common/unauthorized";
+import { unauthorizedError } from "../../../graphql/common/unauthorizedError";
 
 interface GetOrCreateKeyArgs {
   user: string;
@@ -16,6 +18,10 @@ export async function getOrCreateSSHKey(
   args: GetOrCreateKeyArgs
 ): Promise<ProviderSSHKey> {
   const { user, userSource } = args;
+
+  if (!unauthorized(context)) {
+    throw unauthorizedError(context);
+  }
 
   const extant = await providerSSHKey.get(trx, {
     user,

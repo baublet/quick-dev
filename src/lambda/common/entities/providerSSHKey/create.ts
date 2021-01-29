@@ -11,7 +11,7 @@ type CreateSSHKeyInput = Pick<
 export async function create(
   trx: ConnectionOrTransaction,
   input: CreateSSHKeyInput
-): Promise<ProviderSSHKey> {
+) {
   const created = await trx<ProviderSSHKey>("providerSSHKeys")
     .insert({ ...input, id: ulid() })
     .returning("*");

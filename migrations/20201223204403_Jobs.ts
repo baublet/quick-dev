@@ -19,7 +19,8 @@ export async function up(knex: Knex): Promise<void> {
     table.integer("retriesRemaining").notNullable().defaultTo(2);
     table.integer("retryDelaySeconds").notNullable().defaultTo(20);
     table.text("history").notNullable();
-    table.bigInteger("after").unsigned().notNullable().defaultTo(0);
+    table.bigInteger("startAfter").unsigned().notNullable().defaultTo(0);
+    table.bigInteger("cancelAfter").unsigned().notNullable();
   });
 }
 

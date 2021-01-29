@@ -15,7 +15,8 @@ export interface Job {
   id: string;
   created_at: Date;
   updated_at: Date;
-  after: number;
+  startAfter: number;
+  cancelAfter: number;
   retries: number;
   retriesRemaining: number;
   retryDelaySeconds: number;
@@ -36,3 +37,4 @@ export { todo } from "./todo";
 export { jobComplete } from "./jobComplete";
 export { jobFailed } from "./jobFailed";
 export { get } from "./get";
+export { toCancel } from "./toCancel";

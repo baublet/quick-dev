@@ -1,9 +1,8 @@
 import { Job, IntermediateJob } from "./index";
 import { Connection } from "../../db";
 
-export async function todo(
+export async function toCancel(
   trx: Connection,
-  knownJobTypes: string[],
   processor: string
 ): Promise<Job | undefined> {
   const now = Date.now();
@@ -11,10 +10,8 @@ export async function todo(
   const updatedRows = await trx<IntermediateJob>("jobs")
     .update({ status: "working", processor, updated_at: trx.fn.now() })
     .andWhere((trx) => {
-      trx.whereNull("processor");
-      trx.where("status", "=", "ready");
-      trx.where("after", "<=", now);
-      trx.whereIn("type", knownJobTypes);
+      trx.where("status", "=", "working");
+      trx.where("cancelAfter", "<=", now);
     })
     .limit(1)
     .returning("*");

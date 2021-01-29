@@ -12,7 +12,7 @@ type CreateEnvironmentInput = Partial<EnvironmentDomainRecord> &
 export async function create(
   trx: ConnectionOrTransaction,
   input: CreateEnvironmentInput
-): Promise<EnvironmentDomainRecord> {
+) {
   const created = await trx<EnvironmentDomainRecord>("environmentDomainRecords")
     .insert({ ...input, id: ulid() })
     .returning("*");

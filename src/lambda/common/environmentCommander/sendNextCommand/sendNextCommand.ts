@@ -1,6 +1,5 @@
 import { EnvironmentCommanderReturn } from "..";
 import { Transaction } from "../../db";
-import { enqueueJob } from "../../enqueueJob";
 import {
   Environment,
   environmentCommand as envCommandEntity,

@@ -13,14 +13,21 @@ export async function jobComplete(
     processor,
   };
   const job = await getById(trx, jobId);
+
+  if (!job) {
+    throw new Error(
+      `Job invariance violation! Tried to set job ${job} complete, but it doesn't exist!`
+    );
+  }
+
   const history = JSON.parse(job.history);
   history.push(historyItem);
   job.status = "done";
   job.history = JSON.stringify(history);
   await trx<IntermediateJob>("jobs")
     .update({
-      updated_at: trx.fn.now(),
       ...job,
+      updated_at: trx.fn.now(),
     })
     .where("id", "=", jobId)
     .limit(1);

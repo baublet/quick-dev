@@ -15,9 +15,7 @@ interface SetFailedArguments {
   environmentCommand: EnvironmentCommand;
 }
 
-export async function setFailed({
-  trx,
-  environment,
+export async function canSetFailed({
   environmentCommand,
 }: SetFailedArguments): Promise<EnvironmentCommandStateMachineReturn> {
   if (environmentCommand.status !== "running") {
@@ -25,6 +23,27 @@ export async function setFailed({
       errors: ["Cannot set a command status to failed if it's not yet running"],
       operationSuccess: false,
     };
+  }
+
+  return {
+    errors: [],
+    operationSuccess: true,
+  };
+}
+
+export async function setFailed({
+  trx,
+  environment,
+  environmentCommand,
+}: SetFailedArguments): Promise<EnvironmentCommandStateMachineReturn> {
+  const canContinue = await canSetFailed({
+    trx,
+    environmentCommand,
+    environment,
+  });
+
+  if (canContinue.operationSuccess === false) {
+    return canContinue;
   }
 
   const updatedCommand = await envCommandEntity.update(
@@ -41,7 +60,7 @@ export async function setFailed({
     trx,
     environment.id
   );
-  log.debug("Scanning through environment commands to close after one fails", {
+  log.debug("Scanning through environment commands to close after one failed", {
     commands: commands.map((c) => ({ title: c.title, order: c.order })),
     updatedCommand: updatedCommand.title,
     originalEnvCommand: environmentCommand,

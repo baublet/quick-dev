@@ -7,7 +7,8 @@ export async function del(trx: ConnectionOrTransaction, id: Environment["id"]) {
     .where({ id })
     .limit(1);
   const freshRows = await trx<Environment>("environments")
-    .select({ id })
+    .select("*")
+    .where("id", "=", id)
     .limit(1);
   return freshRows[0];
 }

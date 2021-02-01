@@ -25,7 +25,7 @@ export async function jobFailed(
 
   const history = JSON.parse(job.history);
   history.push(historyItem);
-  job.processor = undefined;
+  job.processor = null;
   job.history = JSON.stringify(history);
 
   if (job.retriesRemaining > 0) {

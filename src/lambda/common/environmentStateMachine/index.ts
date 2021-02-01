@@ -7,6 +7,10 @@ import {
   canSetErrorProvisioning,
   setErrorProvisioning,
 } from "./setErrorProvisioning";
+import {
+  setFinishedProvisioning,
+  canSetFinishedProvisioning,
+} from "./setFinishedProvisioning";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -26,6 +30,9 @@ export const environmentStateMachine = {
 
   canSetErrorProvisioning,
   setErrorProvisioning,
+
+  canSetFinishedProvisioning,
+  setFinishedProvisioning,
 
   canSetDeleted,
   setDeleted,

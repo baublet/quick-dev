@@ -24,6 +24,7 @@ export async function jobComplete(
   history.push(historyItem);
   job.status = "done";
   job.history = JSON.stringify(history);
+  job.processor = null;
   await trx<IntermediateJob>("jobs")
     .update({
       ...job,

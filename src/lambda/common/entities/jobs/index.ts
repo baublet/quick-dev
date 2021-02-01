@@ -23,7 +23,7 @@ export interface Job {
   payload: Record<string, any>;
   type: JobType;
   status: JobStatus;
-  processor?: string;
+  processor?: string | null;
   history: JobHistory[];
 }
 

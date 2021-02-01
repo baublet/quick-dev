@@ -36,9 +36,9 @@ export async function deleteEnvironment(
     try {
       await environmentStateMachine.setDeleted({ context, environment });
     } catch (e) {
-      log.error("Deletion request failed", {
+      log.error("Deletion request failed from the resolver", {
         context,
-        environment,
+        environment: environment.name,
         error: e.message,
         stack: e.stack,
       });

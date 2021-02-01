@@ -9,17 +9,15 @@ import {
   environment as envEntity,
 } from "../entities";
 
-interface SetFailedArguments {
+interface SetSuccessArguments {
   trx: Transaction;
   environment: Environment;
   environmentCommand: EnvironmentCommand;
 }
 
-export async function setSuccess({
-  trx,
-  environment,
+export async function canSetSuccess({
   environmentCommand,
-}: SetFailedArguments): Promise<EnvironmentCommandStateMachineReturn> {
+}: SetSuccessArguments): Promise<EnvironmentCommandStateMachineReturn> {
   if (environmentCommand.status !== "running") {
     return {
       errors: [
@@ -27,6 +25,27 @@ export async function setSuccess({
       ],
       operationSuccess: false,
     };
+  }
+
+  return {
+    errors: [],
+    operationSuccess: true,
+  };
+}
+
+export async function setSuccess({
+  trx,
+  environment,
+  environmentCommand,
+}: SetSuccessArguments): Promise<EnvironmentCommandStateMachineReturn> {
+  const canContinue = await canSetSuccess({
+    trx,
+    environment,
+    environmentCommand,
+  });
+
+  if (canContinue.operationSuccess === false) {
+    return canContinue;
   }
 
   const updatedCommand = await envCommandEntity.update(

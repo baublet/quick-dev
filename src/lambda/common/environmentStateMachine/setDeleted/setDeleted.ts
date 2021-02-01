@@ -31,7 +31,7 @@ export function setDeleted({
     } catch (e) {
       log.error("Deletion request failed", {
         context,
-        environment,
+        environment: environment.name,
         error: e.message,
         stack: e.stack,
       });

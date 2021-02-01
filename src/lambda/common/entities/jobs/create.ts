@@ -27,12 +27,11 @@ export async function create<
   }: CreateJobInput<T>
 ): Promise<IntermediateJob | undefined> {
   const payloadString = JSON.stringify(payload);
-  const startAfterTime = Date.now() + startAfter;
   const created = await trx<IntermediateJob>("jobs")
     .insert({
       type,
-      startAfter: startAfterTime,
-      cancelAfter: startAfterTime + cancelAfter,
+      startAfter,
+      cancelAfter,
       id: ulid(),
       retries,
       retriesRemaining: retries,

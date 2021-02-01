@@ -47,5 +47,6 @@ export async function processEnvironment(currentProcessor: string) {
         stack: e.stack,
       }
     );
+    throw e;
   }
 }

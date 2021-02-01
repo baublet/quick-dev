@@ -7,12 +7,13 @@ export async function del(
 ) {
   await trx<EnvironmentDomainRecord>("environmentDomainRecords")
     .update({ deleted: true })
-    .where({ id })
+    .where("id", "=", id)
     .limit(1);
   const freshRows = await trx<EnvironmentDomainRecord>(
     "environmentDomainRecords"
   )
-    .select({ id })
+    .select("*")
+    .where("id", "=", id)
     .limit(1);
   return freshRows[0];
 }

@@ -23,16 +23,19 @@ export function getDatabaseConnection() {
     process.exit();
   }
 
-  log.debug("Fetching a database connection...");
   if (!global.dbConnection) {
-    log.debug("db.ts: No DB connection exists in global context. Creating one...");
+    log.debug(
+      "db.ts: No DB connection exists in global context. Creating one..."
+    );
     const connectionInfo = JSON.parse(process.env.DATABASE_CONNECTION);
     // If we're in sqlite, never save the DB connection to global context. Why?
     // Because SQLite only allows a single connection instance at a time. So
     // if we keep it open in the global context, no other functions can access
     // the database!
     if (connectionInfo.client.includes("sqlite")) {
-      log.debug("db.ts: SQLite connection detected. Making a transient connection...");
+      log.debug(
+        "db.ts: SQLite connection detected. Making a transient connection..."
+      );
       return knex(connectionInfo);
     }
     global.dbConnection = knex(connectionInfo);

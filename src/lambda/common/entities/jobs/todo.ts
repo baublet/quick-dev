@@ -13,7 +13,7 @@ export async function todo(
     .andWhere((trx) => {
       trx.whereNull("processor");
       trx.where("status", "=", "ready");
-      trx.where("after", "<=", now);
+      trx.where("startAfter", "<=", now);
       trx.whereIn("type", knownJobTypes);
     })
     .limit(1)

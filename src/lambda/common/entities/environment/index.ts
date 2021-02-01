@@ -3,6 +3,7 @@ export type EnvironmentLifecycleStatus =
   | "creating"
   | "provisioning"
   | "error_provisioning"
+  | "finished_provisioning"
   | "starting";
 
 export type EnvironmentUserSource = "github";
@@ -44,3 +45,4 @@ export { getById } from "./getById";
 export { getBySubdomain } from "./getBySubdomain";
 export { getBySecret } from "./getBySecret";
 export { del } from "./delete";
+export { touch } from "./touch";

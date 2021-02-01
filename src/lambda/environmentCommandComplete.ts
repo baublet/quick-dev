@@ -12,59 +12,59 @@ import {
 import { environmentCommander } from "./common/environmentCommander";
 
 // Called by a box when it's up and starts running our provisioning scripts
-export const handler = (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
   const db = getDatabaseConnection();
 
+  const secret = event.headers.authorization;
+  const commandId = event?.queryStringParameters?.commandId;
+  const status = event?.queryStringParameters
+    ?.status as EnvironmentCommand["status"];
+
+  if (!commandId) {
+    log.error("EnvironmentCommandComplete did not receive a command ID", {
+      queryStringParameters: event.queryStringParameters,
+    });
+    return {
+      statusCode: 403,
+    };
+  }
+
+  if (!secret) {
+    log.error("EnvironmentCommandComplete did not receive a secret", {
+      headers: event.headers,
+    });
+    return {
+      statusCode: 403,
+    };
+  }
+
+  // Check if the environment exists
+  const environment = await envEntity.getBySecret(db, secret);
+
+  if (!environment) {
+    log.error(
+      "EnvironmentCommandComplete received invalid environment secret (not found)",
+      { secret }
+    );
+    return {
+      statusCode: 404,
+    };
+  }
+
+  // Make sure the environment command exists
+  const environmentCommand = await envCommandEntity.getById(db, commandId);
+
+  if (!environmentCommand) {
+    log.error("EnvironmentCommandComplete could not find command ID", {
+      commandId,
+      environment: environment.name,
+    });
+    return {
+      statusCode: 404,
+    };
+  }
+
   return db.transaction(async (trx) => {
-    const secret = event.headers.authorization;
-    const commandId = event?.queryStringParameters?.commandId;
-    const status = event?.queryStringParameters
-      ?.status as EnvironmentCommand["status"];
-
-    if (!commandId) {
-      log.error("EnvironmentCommandComplete did not receive a command ID", {
-        queryStringParameters: event.queryStringParameters,
-      });
-      return {
-        statusCode: 403,
-      };
-    }
-
-    if (!secret) {
-      log.error("EnvironmentCommandComplete did not receive a secret", {
-        headers: event.headers,
-      });
-      return {
-        statusCode: 403,
-      };
-    }
-
-    // Check if the environment exists
-    const environment = await envEntity.getBySecret(db, secret);
-
-    if (!environment) {
-      log.error(
-        "EnvironmentCommandComplete received invalid environment secret (not found)",
-        { secret }
-      );
-      return {
-        statusCode: 404,
-      };
-    }
-
-    // Make sure the environment command exists
-    const environmentCommand = await envCommandEntity.getById(db, commandId);
-
-    if (!environmentCommand) {
-      log.error("EnvironmentCommandComplete could not find command ID", {
-        commandId,
-        environment: environment.name,
-      });
-      return {
-        statusCode: 404,
-      };
-    }
-
     await environmentCommander.handleCommandComplete({
       trx,
       environment,

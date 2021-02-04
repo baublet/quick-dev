@@ -15,3 +15,4 @@ export const JOB_MAP = {
 } as const;
 
 export type JobKey = keyof typeof JOB_MAP;
+export const knownJobTypes = Object.keys(JOB_MAP);

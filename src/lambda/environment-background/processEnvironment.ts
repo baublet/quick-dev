@@ -15,7 +15,7 @@ export async function processEnvironment(currentProcessor: string) {
   let subdomain: string = "unknown";
   let id: string;
   try {
-    const environment = await envEntity.getEnvironmentThatNeedsWork(db, {
+    const environment = await envEntity.getEnvironmentCommandThatNeedsWork(db, {
       currentProcessor,
     });
     if (!environment) {

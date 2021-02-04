@@ -9,6 +9,7 @@
     "db:drop": "ts-node scripts/dropDatabase.ts",
     "db:create": "ts-node scripts/createDatabase.ts",
     "db:reset": "yarn db:drop && yarn db:create && yarn db:migrate",
+    "develop:dependencies": "docker-compose up -d",
     "build:netlify": "NODE_ENV=production yarn concurrently npm:build:lambda npm:build:web npm:build:provisioner",
     "build:lambda": "node scripts/buildLambda.js",
     "build:provisioner": "node scripts/buildProvisioner.js",

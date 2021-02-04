@@ -2,7 +2,7 @@ import { JobKey } from "../../jobs";
 
 export type JobType = JobKey;
 
-export type JobStatus = "ready" | "working" | "failed" | "done";
+export type JobStatus = "waiting" | "ready" | "working" | "failed" | "done";
 
 export interface JobHistory {
   action: "startWork" | "fail" | "endWork";
@@ -13,18 +13,19 @@ export interface JobHistory {
 
 export interface Job {
   id: string;
-  created_at: Date;
-  updated_at: Date;
-  startAfter: number;
   cancelAfter: number;
+  created_at: Date;
+  history: JobHistory[];
+  payload: Record<string, any>;
+  processor?: string | null;
+  pulse: number;
   retries: number;
   retriesRemaining: number;
   retryDelaySeconds: number;
-  payload: Record<string, any>;
-  type: JobType;
+  startAfter: number;
   status: JobStatus;
-  processor?: string | null;
-  history: JobHistory[];
+  type: JobType;
+  updated_at: Date;
 }
 
 export type IntermediateJob = Omit<Job, "payload" | "history"> & {
@@ -38,3 +39,5 @@ export { jobComplete } from "./jobComplete";
 export { jobFailed } from "./jobFailed";
 export { get } from "./get";
 export { toCancel } from "./toCancel";
+export { pulse } from "./pulse";
+export { schedule } from "./schedule";

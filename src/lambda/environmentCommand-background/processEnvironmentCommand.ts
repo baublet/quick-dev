@@ -6,7 +6,7 @@ import { getDatabaseConnection } from "../common/db";
 import { log } from "../../common/logger";
 import { environmentCommandStateMachine } from "../common/environmentCommandStateMachine";
 
-export async function processEnvironment(currentProcessor: string) {
+export async function processEnvironmentCommand(currentProcessor: string) {
   const db = getDatabaseConnection();
   try {
     const environmentCommand = await envCommandEntity.getEnvironmentCommandThatNeedsWork(

@@ -1,23 +1,28 @@
 import { Job, IntermediateJob } from "./index";
 import { Connection } from "../../db";
 
-export async function toCancel(
+export async function schedule(
   trx: Connection,
+  knownJobTypes: string[],
   processor: string
 ): Promise<Job | undefined> {
   const now = Date.now();
 
   const updatedRows = await trx<IntermediateJob>("jobs")
     .update({
-      status: "working",
+      status: "ready",
       processor,
       updated_at: trx.fn.now(),
+      pulse: now,
     })
-    .where("status", "=", "working")
-    .orWhere((trx) => {
-      trx.where("pulse");
-      trx.where("cancelAfter", "<=", now);
-    })
+    .andWhere((trx) =>
+      trx
+        .whereNull("processor")
+        .where("status", "=", "waiting")
+        .where("startAfter", "<=", now)
+        .where("cancelAfter", ">=", now)
+        .whereIn("type", knownJobTypes)
+    )
     .limit(1)
     .returning("*");
 

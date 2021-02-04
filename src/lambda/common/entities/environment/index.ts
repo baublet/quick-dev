@@ -37,7 +37,7 @@ export interface Environment {
 export { create } from "./create";
 export { get } from "./get";
 export { update } from "./update";
-export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
+export { getEnvironmentCommandThatNeedsWork } from "./getEnvironmentCommandThatNeedsWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
 export { resetProcessorByEnvironmentId } from "./resetProcessorByEnvironmentId";
 export { loader } from "./loader";

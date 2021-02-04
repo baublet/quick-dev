@@ -9,7 +9,7 @@ import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
 } from "./common/entities";
-import { environmentCommander } from "./common/environmentCommander";
+import { environmentCommandStateMachine } from "./common/environmentCommandStateMachine";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export const handler = async (event: APIGatewayEvent) => {
@@ -65,12 +65,19 @@ export const handler = async (event: APIGatewayEvent) => {
   }
 
   return db.transaction(async (trx) => {
-    await environmentCommander.handleCommandComplete({
-      trx,
-      environment,
-      environmentCommand,
-      newStatus: status,
-    });
+    if (status === "success") {
+      await environmentCommandStateMachine.setSuccess({
+        trx,
+        environment,
+        environmentCommand,
+      });
+    } else {
+      await environmentCommandStateMachine.setFailed({
+        trx,
+        environment,
+        environmentCommand,
+      });
+    }
 
     return {
       statusCode: 200,

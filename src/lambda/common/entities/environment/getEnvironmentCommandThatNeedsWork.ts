@@ -7,7 +7,7 @@ const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
   "provisioning",
 ];
 
-export async function getEnvironmentThatNeedsWork(
+export async function getEnvironmentCommandThatNeedsWork(
   db: Connection,
   input: {
     currentProcessor: string;

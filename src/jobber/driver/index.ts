@@ -19,7 +19,9 @@ export interface Job {
   retryDelay: number;
 }
 
-export interface JobberDriver {
+export type AnyJobberDriver = any;
+
+export type JobberDriver = {
   enqueueJob: (jobName: string, payload: JobPayload) => Promise<Job>;
   expireWorker: (worker: Worker) => Promise<Worker>;
   getAllWorkers: () => Promise<Worker[]>;
@@ -28,7 +30,7 @@ export interface JobberDriver {
   getOutstandingJobs: () => Promise<Job[]>;
   getWorkersToExpire: () => Promise<Worker[]>;
   driverName: string;
-  initialize: (jobs: JobMap) => Promise<void>;
+  initialize: (driver: AnyJobberDriver, jobs: JobMap) => Promise<void>;
   log: (
     level: "error" | "debug" | "info" | "warn",
     message: string,
@@ -41,7 +43,7 @@ export interface JobberDriver {
   schedulerTick: (jobSystem: JobSystem) => Promise<void>;
   workerTick: (jobSystem: JobSystem) => Promise<void>;
   workerPulse: (worker: Worker) => Promise<Worker>;
-}
+};
 
 export type JobFunction = (payload: JobPayload) => Promise<void>;
 export type JobMap = Record<string, JobFunction>;

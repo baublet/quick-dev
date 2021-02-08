@@ -1,3 +1,10 @@
+export type JobStatus =
+  | "waiting"
+  | "ready"
+  | "success"
+  | "failed"
+  | "cancelled";
+
 export interface Worker {
   id: string;
   jobId?: string;
@@ -9,9 +16,21 @@ export type JobPayload = Record<string, string | number | boolean>;
 
 export interface Job {
   id: string;
-  status: "waiting" | "ready" | "success" | "failed" | "cancelled";
+  status: JobStatus;
   name: string;
   payload: JobPayload;
+  history: string[];
+  attempts: number;
+  retries: number;
+  startAfter: number;
+  retryDelay: number;
+}
+
+export interface UnserializedJob {
+  id: string;
+  status: JobStatus;
+  name: string;
+  payload: string;
   history: string[];
   attempts: number;
   retries: number;
@@ -22,11 +41,17 @@ export interface Job {
 export type AnyJobberDriver = any;
 
 export type JobberDriver = {
-  enqueueJob: (jobName: string, payload: JobPayload) => Promise<Job>;
+  enqueueJob: (
+    jobName: string,
+    payload: JobPayload,
+    opts?: { startAfter?: number; retries?: number; retryDelay?: number }
+  ) => Promise<Job>;
   expireWorker: (worker: Worker) => Promise<Worker>;
+  getActiveWorkers: () => Promise<Worker[]>;
   getAllWorkers: () => Promise<Worker[]>;
-  getDeadJobs: () => Promise<Job[]>;
+  getExpiredWorkers: () => Promise<Worker[]>;
   getIdleWorkers: () => Promise<Worker[]>;
+  getOrphanJobs: () => Promise<Job[]>;
   getOutstandingJobs: () => Promise<Job[]>;
   getWorkersToExpire: () => Promise<Worker[]>;
   driverName: string;
@@ -37,7 +62,7 @@ export type JobberDriver = {
     ...data: any[]
   ) => void;
   performJob: (job: Job) => Promise<Job>;
-  registerWorker: (worker: Pick<Worker, "id">) => Promise<Worker>;
+  registerWorker: (id: Worker["id"]) => Promise<Worker>;
   resetJobForRetry: (job: Job) => Promise<void>;
   scheduleJob: (job: Job, worker: Worker) => Promise<void>;
   schedulerTick: (jobSystem: JobSystem) => Promise<void>;

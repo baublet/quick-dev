@@ -12,5 +12,5 @@ export interface JobberPostgresDriver extends JobberDriver {
   migrationsTableName: string;
   workerTableName: string;
   jobTableName: string;
-  getConnection: () => knex.QueryBuilder<any, unknown[]>;
+  getConnection: () => knex<any, unknown[]>;
 }

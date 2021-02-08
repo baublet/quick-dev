@@ -15,8 +15,8 @@ export function getConnectionFactory({
   password: string;
   database: string;
 }) {
-  return () => {
-    const primedConnection = knex({
+  return <T = any>(withSchema: boolean = true) => {
+    const connection = knex<T>({
       client: "pg",
       connection: {
         host,
@@ -25,8 +25,16 @@ export function getConnectionFactory({
         password,
         database,
       },
-    }).withSchema(schema);
+      pool: {
+        min: 2,
+        max: 10,
+      },
+    });
 
-    return primedConnection;
+    if (withSchema) {
+      connection.withSchema(schema);
+    }
+
+    return connection;
   };
 }

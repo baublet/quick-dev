@@ -1,25 +1,26 @@
+import { JobFunction } from "../../../jobber";
+
 import { environment as envEntity } from "../entities";
-import { ConnectionOrTransaction } from "../../common/db";
+import { getDatabaseConnection } from "../../common/db";
 import { getEnvironmentStartupLogs as getEnvironmentStartupLogsFromEnvironment } from "../environmentPassthrough";
 
-export const getEnvironmentStartupLogs = async (
-  trx: ConnectionOrTransaction,
-  payload: {
-    environmentId: string;
-  }
-) => {
-  const environment = await envEntity.getById(trx, payload.environmentId);
+export const getEnvironmentStartupLogs: JobFunction = async (payload: {
+  environmentId: string;
+}) => {
+  return getDatabaseConnection().transaction(async (trx) => {
+    const environment = await envEntity.getById(trx, payload.environmentId);
 
-  if (!environment) {
-    throw new Error(
-      `getEnvironmentStartupLogs invariance error! Environment doesn't exist in the DB: ${payload.environmentId}`
+    if (!environment) {
+      throw new Error(
+        `getEnvironmentStartupLogs invariance error! Environment doesn't exist in the DB: ${payload.environmentId}`
+      );
+    }
+
+    const startupLogs = await getEnvironmentStartupLogsFromEnvironment(
+      environment
     );
-  }
-
-  const startupLogs = await getEnvironmentStartupLogsFromEnvironment(
-    environment
-  );
-  await envEntity.update(trx, environment.id, {
-    startupLogs,
+    await envEntity.update(trx, environment.id, {
+      startupLogs,
+    });
   });
 };

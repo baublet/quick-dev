@@ -1,18 +1,15 @@
 require("./common/initialize");
 
-import { scheduleJob } from "./worker-background/scheduleJob";
-import { createHumanReadableId } from "./common/createHumanReadableId";
-import { doAJob } from "./worker-background/doAJob";
-import { cancelTimedOutJob } from "./worker-background/cancelTimedOutJob";
+import { getJobSystem } from "./common/jobs/getJobSystem";
 
 const maxBeats = 3;
+const workers = ["larry", "curly", "mo"];
 
 export const handler = async () => {
-  const processor = createHumanReadableId();
+  const jobSystem = await getJobSystem();
 
   for (let i = 0; i < maxBeats; i++) {
-    await scheduleJob(processor);
-    await doAJob(processor);
-    // await cancelTimedOutJob(processor);
+    await jobSystem.schedulerTick();
+    await Promise.all(workers.map((worker) => jobSystem.workerTick(worker)));
   }
 };

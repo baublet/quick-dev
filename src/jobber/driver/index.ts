@@ -1,67 +1,31 @@
-import { ulid } from "ulid";
-
-export type JobStatus =
-  | "waiting"
-  | "ready"
-  | "success"
-  | "failed"
-  | "cancelled";
-
-export interface Worker {
-  id: string;
-  jobId?: string;
-  lastPulse: Date;
-  status: "idle" | "working" | "expired";
-}
-
-export type JobPayload = Record<string, string | number | boolean>;
-
-export interface Job {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  status: JobStatus;
-  name: string;
-  payload: JobPayload;
-  history: string[];
-  attempts: number;
-  retries: number;
-  startAfter: number;
-  retryDelay: number;
-}
-
-export interface UnserializedJob {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  status: JobStatus;
-  name: string;
-  payload: string;
-  history: string;
-  attempts: number;
-  retries: number;
-  startAfter: number;
-  retryDelay: number;
-}
+import {
+  Job,
+  JobFunction,
+  JobMap,
+  JobPayload,
+  JobSystem,
+  Worker,
+} from "../index";
 
 export function getJobberDriverDefaults() {
-  return {
-    workerName: process.env.JOBBER_WORKER_NAME || ulid(),
-  };
+  return {};
 }
 
 export type AnyJobberDriver = any;
 
 export type JobberDriver = {
+  addJobHistory: (jobId: string, message: string) => Promise<void>;
   enqueueJob: (
     jobName: string,
     payload: JobPayload,
     opts?: { startAfter?: number; retries?: number; retryDelay?: number }
   ) => Promise<Job>;
-  expireWorker: (worker: Worker) => Promise<Worker>;
+  getWorkerByIdOrFail: (id: string) => Promise<Worker>;
   getActiveWorkers: () => Promise<Worker[]>;
   getAllWorkers: () => Promise<Worker[]>;
   getExpiredWorkers: () => Promise<Worker[]>;
+  getJobFunctionOrFail: (job: Job, jobs: JobMap) => Promise<JobFunction>;
+  getJobByIdOrFail: (jobId: string) => Promise<Job>;
   getIdleWorkers: () => Promise<Worker[]>;
   getOrphanJobs: () => Promise<Job[]>;
   getOutstandingJobs: () => Promise<Job[]>;
@@ -73,29 +37,19 @@ export type JobberDriver = {
     message: string,
     ...data: any[]
   ) => void;
-  performJob: (job: Job) => Promise<Job>;
-  registerWorker: (id: Worker["id"]) => Promise<Worker>;
-  resetJobForRetry: (job: Job) => Promise<void>;
-  scheduleJob: (job: Job, worker: Worker) => Promise<void>;
+  registerWorker: (id: string) => Promise<void>;
+  resetJobForRetry: (jobId: string) => Promise<void>;
+  scheduleJob: (jobId: string, workerId: string) => Promise<void>;
   schedulerTick: (jobSystem: JobSystem) => Promise<void>;
-  workerName: string;
-  workerTick: (jobSystem: JobSystem) => Promise<void>;
-  workerPulse: (worker: Worker) => Promise<Worker>;
+  setJobWaiting: (jobId: string) => Promise<void>;
+  setJobReady: (jobId: string) => Promise<void>;
+  setJobWorking: (jobId: string) => Promise<void>;
+  setJobSuccess: (jobId: string) => Promise<void>;
+  setJobFailed: (jobId: string) => Promise<void>;
+  setJobCancelled: (jobId: string) => Promise<void>;
+  setWorkerWorking: (workerId: string) => Promise<void>;
+  setWorkerIdle: (workerId: string) => Promise<void>;
+  setWorkerExpired: (workerId: string) => Promise<void>;
+  workerTick: (jobSystem: JobSystem, workerId: string) => Promise<void>;
+  workerPulse: (workerId: string) => Promise<void>;
 };
-
-export type JobFunction = (payload: JobPayload) => Promise<void>;
-export type JobMap = Record<string, JobFunction>;
-export type EnqueueJobFunction<
-  T extends JobMap = {},
-  K extends keyof T = string
-> = (job: K, payload: Parameters<T[K]>[0]) => Promise<void>;
-
-export interface JobSystem<Jobs extends JobMap = any> {
-  driver: JobberDriver;
-  enqueueJob: <Key extends keyof Jobs = string>(
-    job: Key,
-    payload: Parameters<Jobs[Key]>[0]
-  ) => Promise<void>;
-  jobs: Jobs;
-  workerPulseInterval: number;
-}

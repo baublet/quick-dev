@@ -75,13 +75,13 @@ async function runMigration(
       ).insert({
         migrationSql: migration,
       });
-      driver.log("info", "Jobber migration run successfully", {
+      driver.log("info", "Jobber: migration run successfully", {
         rawMigration,
         migrationRecord,
       });
     });
   } catch (e) {
-    driver.log("error", "Error running a migration", {
+    driver.log("error", "Jobber: error running a migration", {
       migration,
       rawError: e,
       message: e.message,
@@ -92,10 +92,10 @@ async function runMigration(
 }
 
 export async function initialize(driver: JobberPostgresDriver) {
-  driver.log("debug", `Initializing Jobber: ${driver.driverName}`);
+  driver.log("debug", `Jobber: initializing driver ${driver.driverName}`);
   const migrationsToRun = await getMigrationsToRun(driver);
   for (const migration of migrationsToRun) {
     await runMigration(driver, migration);
   }
-  driver.log("debug", "Jobber initialized");
+  driver.log("debug", `Jobber: driver ${driver.driverName} initialized`);
 }

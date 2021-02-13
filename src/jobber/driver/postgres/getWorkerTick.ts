@@ -1,11 +1,14 @@
-import { JobberPostgresDriver } from ".";
-import { Worker } from "../";
+import { JobberPostgresDriver } from "./index";
+import { JobSystem, Worker } from "../../index";
 
-async function isWorkerBusy(driver: JobberPostgresDriver): Promise<boolean> {
+async function isWorkerBusy(
+  driver: JobberPostgresDriver,
+  workerId: string
+): Promise<boolean> {
   const worker = await driver
     .getConnection()<Worker>(driver.getWorkersTableName())
     .select("*")
-    .where("id", "=", driver.workerName)
+    .where("id", "=", workerId)
     .limit(1);
 
   if (worker.length === 0) {
@@ -20,42 +23,53 @@ async function isWorkerBusy(driver: JobberPostgresDriver): Promise<boolean> {
 }
 
 async function registerWorkerIfNecessary(
-  driver: JobberPostgresDriver
+  driver: JobberPostgresDriver,
+  workerId: string
 ): Promise<void> {
-  const worker = await driver
-    .getConnection()<Worker>(driver.getWorkersTableName())
+  const connection = driver.getConnection();
+  const worker = await connection<Worker>(driver.getWorkersTableName())
     .select("*")
-    .where("id", "=", driver.workerName)
+    .where("id", "=", workerId)
     .limit(1);
 
   if (worker.length === 0) {
-    await driver.registerWorker(driver.workerName);
+    await driver.registerWorker(workerId);
     return;
   }
 
   if (worker[0].status === "expired") {
-    driver.log(
-      "debug",
-      `Worker ${driver.workerName} expired. Resurrecting it...`
-    );
-    await driver
-      .getConnection()<Worker>(driver.getWorkersTableName())
-      .update({ status: "idle" })
-      .where("id", "=", driver.workerName)
+    driver.log("debug", `Jobber: worker ${workerId} expired. Resurrecting it`);
+    await connection<Worker>(driver.getWorkersTableName())
+      .update({ status: "idle", lastPulse: connection.raw("now()") })
+      .where("id", "=", workerId)
       .limit(1);
   }
 }
 
-export function getWorkerTick(driver: JobberPostgresDriver) {
-  return async () => {
-    if (await isWorkerBusy(driver)) {
+export function getWorkerTick() {
+  return async (system: JobSystem<JobberPostgresDriver>, workerId: string) => {
+    const driver = system.driver;
+    if (await isWorkerBusy(driver, workerId)) {
       driver.log(
         "debug",
-        `Worker ${driver.workerName} is busy. Skipping worker tick...`
+        `Jobber: worker ${workerId} is busy. Skipping worker tick`
       );
       return;
     }
-    await registerWorkerIfNecessary(driver);
-    driver.getConnection()<Worker>(driver.getWorkersTableName());
+    await registerWorkerIfNecessary(driver, workerId);
+    await driver.workerPulse(workerId);
+
+    const worker = await driver.getWorkerByIdOrFail(workerId);
+    const jobId = worker.jobId;
+    if (!jobId) {
+      driver.log(
+        "debug",
+        `Jobber: worker ${worker.id} has no job assigned. Idling`,
+        { worker }
+      );
+      return;
+    }
+
+    await system.performJob(worker.id, jobId);
   };
 }

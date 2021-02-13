@@ -2,6 +2,8 @@ import knex from "knex";
 
 import { JobberDriver } from "..";
 
+export { createPostgresDriver } from "./postgres";
+
 export interface Migration {
   id: string;
   createdAt: Date;

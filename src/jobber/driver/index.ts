@@ -1,3 +1,5 @@
+import { ulid } from "ulid";
+
 export type JobStatus =
   | "waiting"
   | "ready"
@@ -16,6 +18,8 @@ export type JobPayload = Record<string, string | number | boolean>;
 
 export interface Job {
   id: string;
+  createdAt: Date;
+  updatedAt: Date;
   status: JobStatus;
   name: string;
   payload: JobPayload;
@@ -28,14 +32,22 @@ export interface Job {
 
 export interface UnserializedJob {
   id: string;
+  createdAt: string;
+  updatedAt: string;
   status: JobStatus;
   name: string;
   payload: string;
-  history: string[];
+  history: string;
   attempts: number;
   retries: number;
   startAfter: number;
   retryDelay: number;
+}
+
+export function getJobberDriverDefaults() {
+  return {
+    workerName: process.env.JOBBER_WORKER_NAME || ulid(),
+  };
 }
 
 export type AnyJobberDriver = any;
@@ -66,6 +78,7 @@ export type JobberDriver = {
   resetJobForRetry: (job: Job) => Promise<void>;
   scheduleJob: (job: Job, worker: Worker) => Promise<void>;
   schedulerTick: (jobSystem: JobSystem) => Promise<void>;
+  workerName: string;
   workerTick: (jobSystem: JobSystem) => Promise<void>;
   workerPulse: (worker: Worker) => Promise<Worker>;
 };

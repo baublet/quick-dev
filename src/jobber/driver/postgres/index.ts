@@ -1,6 +1,13 @@
 import knex from "knex";
 
-import { JobberDriver, JobMap } from "..";
+import { JobberDriver } from "..";
+
+export interface Migration {
+  id: string;
+  createdAt: Date;
+  migration: number;
+  migrationSql: string;
+}
 
 export interface JobberPostgresDriver extends JobberDriver {
   host: string;
@@ -10,7 +17,10 @@ export interface JobberPostgresDriver extends JobberDriver {
   password: string;
   database: string;
   migrationsTableName: string;
-  workerTableName: string;
-  jobTableName: string;
+  workersTableName: string;
+  jobsTableName: string;
   getConnection: () => knex<any, unknown[]>;
+  getMigrationsTableName: () => string;
+  getJobsTableName: () => string;
+  getWorkersTableName: () => string;
 }

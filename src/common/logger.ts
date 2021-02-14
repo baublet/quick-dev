@@ -17,5 +17,5 @@ export const log = {
     logger("log", ...data);
   },
   info: (...data: any[]) => logger("log", ...data),
-  warning: (...data: any[]) => logger("warn", ...data),
+  warn: (...data: any[]) => logger("warn", ...data),
 };

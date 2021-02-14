@@ -40,7 +40,7 @@ export const handler = async (event: APIGatewayEvent) => {
   });
 
   if (!result.operationSuccess) {
-    log.warning("Tried to set an environment as provisioning, but failed!", {
+    log.warn("Tried to set an environment as provisioning, but failed!", {
       environment: environment.name,
       errors: result.errors,
     });

@@ -34,7 +34,7 @@ export async function jobFailed(
     job.status = "ready";
     job.startAfter = Date.now() + job.retryDelaySeconds * 1000;
     job.cancelAfter = job.startAfter + originalCancelAfter;
-    log.warning(
+    log.warn(
       `Job ${job.type} failed. Retrying after ${job.retryDelaySeconds} seconds (retries left: ${job.retriesRemaining})`,
       {
         historyItem,

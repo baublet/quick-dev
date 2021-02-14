@@ -11,7 +11,7 @@ export async function cancelTimedOutJob(processor: string): Promise<void> {
     return;
   }
 
-  log.warning(
+  log.warn(
     `Job ${jobToCancel.type} outstayed its welcome. Setting it as failed`,
     {
       jobToCancel,

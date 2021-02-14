@@ -17,7 +17,7 @@ export async function getEnvironmentStartupLogs(
   }
 
   if (!environment.ipv4) {
-    log.warning(
+    log.warn(
       "Tried to get environment startup logs for an environment that doesn't have an IP!",
       { environment }
     );

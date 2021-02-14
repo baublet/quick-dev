@@ -1,2 +1,1 @@
-# quick-dev
-quick-dev
+# StrapYard

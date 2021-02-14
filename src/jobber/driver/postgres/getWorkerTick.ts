@@ -1,12 +1,13 @@
-import { JobberPostgresDriver } from "./index";
-import { JobSystem, Worker } from "../../index";
+import { JobberPostgresDriver, WorkerEntity } from "./index";
+import { JobSystem } from "../../index";
 
 async function isWorkerBusy(
   driver: JobberPostgresDriver,
   workerId: string
 ): Promise<boolean> {
   const worker = await driver
-    .getConnection()<Worker>(driver.getWorkersTableName())
+    .getConnection()<WorkerEntity>(driver.workersTableName)
+    .withSchema(driver.schema)
     .select("*")
     .where("id", "=", workerId)
     .limit(1);
@@ -27,7 +28,8 @@ async function registerWorkerIfNecessary(
   workerId: string
 ): Promise<void> {
   const connection = driver.getConnection();
-  const worker = await connection<Worker>(driver.getWorkersTableName())
+  const worker = await connection<WorkerEntity>(driver.workersTableName)
+    .withSchema(driver.schema)
     .select("*")
     .where("id", "=", workerId)
     .limit(1);
@@ -39,8 +41,9 @@ async function registerWorkerIfNecessary(
 
   if (worker[0].status === "expired") {
     driver.log("debug", `Jobber: worker ${workerId} expired. Resurrecting it`);
-    await connection<Worker>(driver.getWorkersTableName())
-      .update({ status: "idle", lastPulse: connection.raw("now()") })
+    await connection<WorkerEntity>(driver.workersTableName)
+      .withSchema(driver.schema)
+      .update({ status: "idle", last_pulse: connection.raw("now()") })
       .where("id", "=", workerId)
       .limit(1);
   }

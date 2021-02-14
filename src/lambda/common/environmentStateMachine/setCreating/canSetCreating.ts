@@ -18,7 +18,7 @@ export async function canSetCreating({
   );
 
   if (externalEnvironmentExists !== false) {
-    log.warning(
+    log.warn(
       "Environment tried to be flipped to 'creating' when it was already created in the external environment. FIX THIS",
       {
         environment,

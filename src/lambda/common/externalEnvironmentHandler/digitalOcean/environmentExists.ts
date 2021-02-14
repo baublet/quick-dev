@@ -39,7 +39,7 @@ export const environmentExists: ExternalEnvironmentHandler["environmentExists"] 
   const droplet = taggedDroplets.droplets[0];
 
   if (taggedDroplets.droplets.length > 1) {
-    log.warning(
+    log.warn(
       "Multiple droplets found for a single environment ID. FIND OUT WHY AND FIX THIS!",
       { environment, taggedDroplets }
     );

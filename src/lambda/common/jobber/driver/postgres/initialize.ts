@@ -5,34 +5,39 @@ import { deseralizeError } from "../../createJobSystem";
 const migrations: string[] = [
   `CREATE TABLE $migrationsTable (
     id            TEXT PRIMARY KEY,
-    created_at    TIMESTAMPTZ NOT NULL,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     migration     SMALLSERIAL UNIQUE NOT NULL,
     migration_sql TEXT UNIQUE NOT NULL
   );`,
   `CREATE TABLE $jobsTable (
     id          TEXT PRIMARY KEY,
-    created_at  TIMESTAMPTZ NOT NULL,
-    updated_at  TIMESTAMPTZ NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     status      TEXT NOT NULL,
     name        TEXT NOT NULL,
     payload     TEXT NOT NULL,
-    history     TEXT NOT NULL,
     attempts    INT NOT NULL,
     retries     INT NOT NULL,
-    start_after TIMESTAMPTZ NOT NULL,
+    start_after TIMESTAMPTZ NOT NULL DEFAULT now(),
     retry_delay INT NOT NULL
   );`,
   `CREATE INDEX job_status_index ON $jobsTable ("status");`,
   `CREATE TABLE $workersTable (
     id          TEXT PRIMARY KEY,
-    created_at  TIMESTAMPTZ NOT NULL,
-    updated_at  TIMESTAMPTZ NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     job_id      TEXT UNIQUE REFERENCES $jobsTable,
     status      TEXT NOT NULL,
-    last_pulse  TIMESTAMPTZ NOT NULL
+    last_pulse  TIMESTAMPTZ NOT NULL DEFAULT now()
   );`,
   `CREATE INDEX worker_status_index ON $workersTable ("status");`,
   `CREATE INDEX worker_pulse_index ON $workersTable ("last_pulse");`,
+  `CREATE TABLE $jobHistoryTable (
+    id          TEXT PRIMARY KEY,
+    job_id      TEXT REFERENCES $jobsTable,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    history     TEXT
+  );`,
 ];
 
 async function getMigrationsToRun(
@@ -50,11 +55,14 @@ async function getMigrationsToRun(
         migration.migration > latest ? migration.migration : latest,
       0
     );
-    driver.log("debug", "Jobber: migrations needed to run", {
-      newestIndex,
-      existingMigrations,
-    });
-    return migrations.slice(newestIndex + 1);
+    const migrationsToRun = migrations.slice(newestIndex + 1);
+    if (migrationsToRun.length > 0) {
+      driver.log("debug", "Jobber: migrations needed to run", {
+        newestIndex,
+        migrationsToRun,
+      });
+    }
+    return migrationsToRun;
   } catch (e) {
     driver.log("warn", "Jobber: unexpected error migrating", {
       error: deseralizeError(e),
@@ -69,6 +77,7 @@ function replaceMigrationVariables(
 ): string {
   return migration
     .replace(/\$jobsTable/g, driver.getJobsTableName())
+    .replace(/\$jobHistoryTable/g, driver.getJobHistoriesTableName())
     .replace(/\$workersTable/g, driver.getWorkersTableName())
     .replace(/\$migrationsTable/g, driver.getMigrationsTableName());
 }
@@ -95,7 +104,6 @@ async function runMigration(
         .withSchema(driver.schema)
         .insert({
           id: ulid(),
-          created_at: trx.raw("now()"),
           migration_sql: migration,
         })
         .returning("*");

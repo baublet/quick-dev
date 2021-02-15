@@ -26,9 +26,14 @@ function unserializedJobEntityToJob({
   };
 }
 
-function workerEntityToWorker({ last_pulse, ...worker }: WorkerEntity): Worker {
+function workerEntityToWorker({
+  last_pulse,
+  job_id,
+  ...worker
+}: WorkerEntity): Worker {
   return {
     ...worker,
+    jobId: job_id,
     lastPulse: last_pulse,
   };
 }
@@ -37,6 +42,7 @@ export function createPostgresDriver({
   migrationsTableName = "jobberMigration",
   workersTableName = "jobberWorker",
   jobsTableName = "jobberJob",
+  jobHistoriesTableName = "jobberJobHistory",
   host,
   port,
   schema = "public",
@@ -54,6 +60,7 @@ export function createPostgresDriver({
   migrationsTableName?: string;
   workersTableName?: string;
   jobsTableName?: string;
+  jobHistoriesTableName?: string;
   logger?: typeof defaultLogger;
 }): JobberPostgresDriver {
   const getConnection = getConnectionFactory({
@@ -91,6 +98,10 @@ export function createPostgresDriver({
     return `"${schema}"."${workersTableName}"`;
   }
 
+  function getJobHistoriesTableName() {
+    return `"${schema}"."${jobHistoriesTableName}"`;
+  }
+
   const driver: Partial<JobberPostgresDriver> &
     Omit<
       JobberPostgresDriver,
@@ -102,6 +113,7 @@ export function createPostgresDriver({
     migrationsTableName,
     workersTableName,
     jobsTableName,
+    jobHistoriesTableName,
     host,
     port,
     schema,
@@ -113,9 +125,10 @@ export function createPostgresDriver({
     enqueueJob: async (
       jobName,
       payload,
-      { retryDelay = 0, retries = 0, startAfter = Date.now() } = {}
+      { retryDelayMs = 0, retries = 0, startAfter } = {}
     ) => {
-      const results = await getConnection()<UnserializedJobEntity>(
+      const connection = getConnection();
+      const results = await connection<UnserializedJobEntity>(
         driver.jobsTableName
       )
         .withSchema(driver.schema)
@@ -124,9 +137,11 @@ export function createPostgresDriver({
           name: jobName,
           payload: JSON.stringify(payload),
           retries,
-          start_after: startAfter,
-          retry_delay: retryDelay,
+          start_after: startAfter?.toISOString() || connection.raw("now()"),
+          retry_delay: retryDelayMs,
           status: "waiting",
+          attempts: 0,
+          history: JSON.stringify([]),
         })
         .returning("*");
 
@@ -191,7 +206,7 @@ export function createPostgresDriver({
         .select("*")
         .andWhere((db) => {
           db.whereIn("id", expiredJobIds);
-          db.whereNotIn("status", ["cancelled", "failed"]);
+          db.whereIn("status", ["ready", "working"]);
         });
       return jobs.map(unserializedJobEntityToJob).map(serializeJob);
     },
@@ -231,10 +246,8 @@ export function createPostgresDriver({
         .withSchema(driver.schema)
         .insert({
           id: workerId,
-          updated_at: connection.raw("now()"),
-          created_at: connection.raw("now()"),
+          job_id: undefined,
           status: "idle",
-          last_pulse: connection.raw("now()"),
         })
         .returning("*");
     },
@@ -253,6 +266,7 @@ export function createPostgresDriver({
       return jobs[job.name];
     },
     getJobsTableName,
+    getJobHistoriesTableName,
     getWorkersTableName,
     getJobByIdOrFail: async (jobId: string) => {
       const results = await getConnection<UnserializedJob>()(
@@ -296,7 +310,6 @@ export function createPostgresDriver({
           db.where("id", "=", workerId);
         })
         .limit(1);
-
       if (results > 0) {
         return;
       }
@@ -306,7 +319,6 @@ export function createPostgresDriver({
       );
     },
     setJobCancelled: async (jobId) => {
-      // Jobs can be set to cancel at any time
       await getConnection()<UnserializedJobEntity>(driver.workersTableName)
         .withSchema(driver.schema)
         .update({ status: "cancelled" })
@@ -314,12 +326,6 @@ export function createPostgresDriver({
         .limit(1);
     },
     setJobFailed: async (jobId) => {
-      const job = await driver.getJobByIdOrFail(jobId);
-      if (job.status !== "working") {
-        throw new Error(
-          `Job invariance violation. Cannot move a job to "failed" if it's not "working." Job ${job.id} (${job.name}) is in status ${job.status}`
-        );
-      }
       await getConnection()<UnserializedJobEntity>(driver.jobsTableName)
         .withSchema(driver.schema)
         .update({ status: "failed" })
@@ -327,12 +333,6 @@ export function createPostgresDriver({
         .limit(1);
     },
     setJobReady: async (jobId) => {
-      const job = await driver.getJobByIdOrFail(jobId);
-      if (job.status !== "waiting") {
-        throw new Error(
-          `Job invariance violation. Cannot move a job to "ready" if it's not "waiting." Job ${job.id} (${job.name}) is in status ${job.status}`
-        );
-      }
       await getConnection()<UnserializedJobEntity>(driver.workersTableName)
         .withSchema(driver.schema)
         .update({ status: "ready" })
@@ -340,30 +340,18 @@ export function createPostgresDriver({
         .limit(1);
     },
     setJobWorking: async (jobId) => {
-      const job = await driver.getJobByIdOrFail(jobId);
-      if (job.status !== "ready") {
-        throw new Error(
-          `Job invariance violation. Cannot move a job to "working" if it's not "ready." Job ${job.id} (${job.name}) is in status ${job.status}`
-        );
-      }
       const connection = getConnection();
-      await connection<UnserializedJobEntity>(driver.workersTableName)
+      await connection<UnserializedJobEntity>(driver.jobsTableName)
         .withSchema(driver.schema)
-        .update({ status: "ready", attempts: connection.raw("attempts + 1") })
+        .update({ status: "working", attempts: connection.raw("attempts + 1") })
         .where("id", "=", jobId)
         .limit(1);
     },
     setJobSuccess: async (jobId) => {
-      const job = await driver.getJobByIdOrFail(jobId);
-      if (job.status !== "working") {
-        throw new Error(
-          `Job invariance violation. Cannot move a job to "success" if it's not "working." Job ${job.id} (${job.name}) is in status ${job.status}`
-        );
-      }
       await getConnection()<UnserializedJobEntity>(driver.jobsTableName)
         .withSchema(driver.schema)
-        .update({ status: "ready" })
-        .where("id", "=", job.id)
+        .update({ status: "success" })
+        .where("id", "=", jobId)
         .limit(1);
     },
     setJobWaiting: async (jobId) => {
@@ -387,23 +375,38 @@ export function createPostgresDriver({
   };
 
   driver.resetJobForRetry = async (jobId) => {
+    driver.log(
+      "warn",
+      `Jobber: job ${jobId} failed. Resetting it for retrying`
+    );
     await driver.addJobHistory(jobId, "Jobber: retrying");
     return driver.setJobWaiting(jobId);
   };
 
   driver.schedulerTick = async (system) => {
     const driver = system.driver as JobberPostgresDriver;
+
+    // First: handle expired workers and orphan jobs
+    const orphanJobs = await driver.getOrphanJobs();
+    const workersToExpire = await driver.getExpiredWorkers();
+
+    await Promise.all([
+      ...workersToExpire.map((worker) => driver.setWorkerExpired(worker.id)),
+      ...orphanJobs.map((job) => system.maybeResetJobForRetry(job.id)),
+    ]);
+
+    // Then: schedule work
     const idleWorkers = await driver.getIdleWorkers();
 
     if (idleWorkers.length === 0) {
-      driver.log("debug", "Jobber: All workers busy, can't schedule work");
+      driver.log("debug", "Jobber: all workers busy, can't schedule work");
       return;
     }
 
     const jobsToSchedule = await driver.getOutstandingJobs();
 
     if (jobsToSchedule.length === 0) {
-      driver.log("debug", "Jobber: No jobs waiting to be scheduled");
+      driver.log("debug", "Jobber: no jobs waiting to be scheduled");
     }
 
     let i = 0;
@@ -413,14 +416,14 @@ export function createPostgresDriver({
       if (!job) {
         driver.log(
           "debug",
-          "More idle workers than jobs to do, skipping additional workers"
+          "Jobber: more idle workers than jobs to do, skipping additional workers"
         );
         break;
       }
       await driver.scheduleJob(job.id, worker.id);
     }
 
-    driver.log("debug", `Scheduled ${i} jobs`);
+    driver.log("debug", `Jobber: scheduled ${i} jobs`);
   };
 
   driver.workerPulse = async (workerId: string) => {

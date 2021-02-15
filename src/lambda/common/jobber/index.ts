@@ -12,6 +12,7 @@ export interface JobSystem<
     payload: Parameters<Jobs[Key]>[0]
   ) => Promise<void>;
   jobs: Jobs;
+  maybeResetJobForRetry: (jobId: string) => Promise<void>;
   performJob: (workerId: string, jobId: string) => Promise<void>;
   workerPulseInterval: number;
   workerTick: (workerId: string) => Promise<void>;
@@ -71,6 +72,6 @@ export interface UnserializedJob {
   history: string;
   attempts: number;
   retries: number;
-  startAfter: number;
+  startAfter: string;
   retryDelay: number;
 }

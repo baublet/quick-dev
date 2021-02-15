@@ -18,7 +18,7 @@ export type JobberDriver = {
   enqueueJob: (
     jobName: string,
     payload: JobPayload,
-    opts?: { startAfter?: number; retries?: number; retryDelay?: number }
+    opts?: { startAfter?: Date; retries?: number; retryDelayMs?: number }
   ) => Promise<Job>;
   getWorkerByIdOrFail: (id: string) => Promise<Worker>;
   getActiveWorkers: () => Promise<Worker[]>;

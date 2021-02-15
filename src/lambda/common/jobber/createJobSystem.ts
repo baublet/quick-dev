@@ -1,4 +1,4 @@
-import { JobMap, JobSystem, Worker } from "./index";
+import { JobMap, JobSystem } from "./index";
 import { JobberDriver } from "./driver/index";
 
 export function deseralizeError(error: Error) {
@@ -30,12 +30,31 @@ export async function createJobSystem<
     driver.log("info", `Job ${job} created`, { createdJob });
   };
 
+  const maybeResetJobForRetry = async (jobId: string) => {
+    const job = await driver.getJobByIdOrFail(jobId);
+    // Maybe retry
+    driver.log(
+      "warn",
+      `Jobber: Job ${job.name} (${job.id}) failed. Attempt ${job.attempts} of ${
+        job.retries + 1
+      }`
+    );
+    if (job.attempts >= job.retries) {
+      await driver.setJobFailed(job.id);
+    } else {
+      await driver.resetJobForRetry(job.id);
+    }
+  };
+
   const performJob = async (workerId: string, jobId: string) => {
     const job = await driver.getJobByIdOrFail(jobId);
     const worker = await driver.getWorkerByIdOrFail(workerId);
     const jobFunction = await driver.getJobFunctionOrFail(job, jobs);
 
-    driver.log("debug", `Performing job ${jobId} with worker ${worker.id}`);
+    driver.log(
+      "debug",
+      `Performing job ${job.name} (${jobId}) with worker ${worker.id}`
+    );
     await driver.workerPulse(worker.id);
     const interval = setInterval(async () => {
       await driver.workerPulse(worker.id);
@@ -56,7 +75,7 @@ export async function createJobSystem<
     } catch (e) {
       driver.log(
         "error",
-        `Worker ${worker.id} received error while performing job ${jobId}`,
+        `Worker ${worker.id} received error while performing job (${job.name}) ${jobId}`,
         {
           job,
           error: deseralizeError(e),
@@ -68,13 +87,7 @@ export async function createJobSystem<
         "Jobber: job failed with error\n\n" + deseralizeError(e)
       );
       await driver.setWorkerIdle(worker.id);
-
-      // Maybe retry
-      if (job.attempts <= job.retries) {
-        driver.setJobFailed(job.id);
-      } else {
-        await driver.resetJobForRetry(job.id);
-      }
+      await system.maybeResetJobForRetry(job.id);
     }
 
     clearInterval(interval);
@@ -83,14 +96,15 @@ export async function createJobSystem<
   const system: JobSystem<Driver, Jobs> = {
     driver,
     enqueueJob,
+    maybeResetJobForRetry,
     performJob,
     jobs,
     workerPulseInterval,
-    workerTick: async (workerId) => {
-      await driver.workerTick(system, workerId);
+    workerTick: (workerId) => {
+      return driver.workerTick(system, workerId);
     },
-    schedulerTick: async () => {
-      await driver.schedulerTick(system);
+    schedulerTick: () => {
+      return driver.schedulerTick(system);
     },
   };
 

@@ -4,7 +4,7 @@ import {
   createJobSystem,
   JobSystem,
   JobberPostgresDriver,
-} from "../../../jobber";
+} from "../jobber";
 
 import { JOB_MAP } from "./index";
 

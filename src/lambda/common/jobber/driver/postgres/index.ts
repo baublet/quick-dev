@@ -38,7 +38,7 @@ export interface UnserializedJobEntity {
   history: string;
   attempts: number;
   retries: number;
-  start_after: number;
+  start_after: string;
   retry_delay: number;
 }
 
@@ -52,8 +52,10 @@ export interface JobberPostgresDriver extends JobberDriver {
   migrationsTableName: string;
   workersTableName: string;
   jobsTableName: string;
+  jobHistoriesTableName: string;
   getConnection: () => knex<any, unknown[]>;
   getMigrationsTableName: () => string;
   getJobsTableName: () => string;
+  getJobHistoriesTableName: () => string;
   getWorkersTableName: () => string;
 }

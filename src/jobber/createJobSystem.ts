@@ -1,7 +1,7 @@
 import { JobMap, JobSystem, Worker } from "./index";
 import { JobberDriver } from "./driver/index";
 
-function unseralizeError(error: Error) {
+export function deseralizeError(error: Error) {
   return `${error.message}
 
 ${error.stack}`;
@@ -42,26 +42,30 @@ export async function createJobSystem<
     }, workerPulseInterval);
 
     try {
-      await driver.setWorkerWorking(worker.id);
-      await driver.setJobWorking(job.id);
-      await driver.addJobHistory(job.id, "Jobber: starting job");
+      await Promise.all([
+        driver.setWorkerWorking(worker.id),
+        driver.setJobWorking(job.id),
+        driver.addJobHistory(job.id, "Jobber: starting job"),
+      ]);
       await jobFunction(job.payload);
-      await driver.addJobHistory(job.id, "Jobber: job finished successfully");
-      await driver.setWorkerIdle(worker.id);
-      await driver.setJobSuccess(jobId);
+      await Promise.all([
+        driver.addJobHistory(job.id, "Jobber: job finished successfully"),
+        driver.setWorkerIdle(worker.id),
+        driver.setJobSuccess(jobId),
+      ]);
     } catch (e) {
       driver.log(
         "error",
         `Worker ${worker.id} received error while performing job ${jobId}`,
         {
           job,
-          error: unseralizeError(e),
+          error: deseralizeError(e),
         }
       );
 
       await driver.addJobHistory(
         job.id,
-        "Jobber: job failed with error\n\n" + unseralizeError(e)
+        "Jobber: job failed with error\n\n" + deseralizeError(e)
       );
       await driver.setWorkerIdle(worker.id);
 

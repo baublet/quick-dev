@@ -1,5 +1,6 @@
 import { ulid } from "ulid";
 import { JobberPostgresDriver, MigrationEntity } from ".";
+import { deseralizeError } from "../../createJobSystem";
 
 const migrations: string[] = [
   `CREATE TABLE $migrationsTable (
@@ -40,15 +41,24 @@ async function getMigrationsToRun(
   try {
     const connection = driver.getConnection();
     const existingMigrations = await connection<MigrationEntity>(
-      driver.getMigrationsTableName()
-    ).select("*");
+      driver.migrationsTableName
+    )
+      .withSchema(driver.schema)
+      .select("*");
     const newestIndex = existingMigrations.reduce(
       (latest, migration) =>
         migration.migration > latest ? migration.migration : latest,
       0
     );
+    driver.log("debug", "Jobber: migrations needed to run", {
+      newestIndex,
+      existingMigrations,
+    });
     return migrations.slice(newestIndex + 1);
   } catch (e) {
+    driver.log("warn", "Jobber: unexpected error migrating", {
+      error: deseralizeError(e),
+    });
     return migrations.slice(0);
   }
 }

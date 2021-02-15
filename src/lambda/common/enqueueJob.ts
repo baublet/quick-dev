@@ -2,6 +2,7 @@ import { job } from "./entities";
 import { JOB_MAP, JobKey } from "./jobs";
 import { ConnectionOrTransaction } from "./db";
 import { log } from "../../common/logger";
+import { getJobSystem } from "./jobs/getJobSystem";
 
 type JobFns = typeof JOB_MAP;
 
@@ -32,23 +33,6 @@ export async function enqueueJob<T extends JobKey>(
     retryDelaySeconds,
   }: JobOptions = {}
 ): Promise<void> {
-  const date = Date.now();
-  const cancelAfterTime = date + cancelAfter;
-  const startAfterTime = date + startAfter;
-  log.debug("Enqueueing job", {
-    type,
-    payload,
-    cancelAfterTime,
-    startAfterTime,
-    retries,
-    retryDelaySeconds,
-  });
-  await job.create(trx, {
-    type,
-    payload,
-    startAfter: startAfterTime,
-    cancelAfter: cancelAfterTime,
-    retryDelaySeconds,
-    retries,
-  });
+  const system = await getJobSystem();
+  await system.enqueueJob(type, payload);
 }

@@ -66,13 +66,15 @@ export function createPostgresDriver({
   });
 
   function getActiveWorkers() {
-    return getConnection<Worker>()(getWorkersTableName())
+    return getConnection<Worker>()(driver.workersTableName)
+      .withSchema(driver.schema)
       .select("*")
       .whereNot("status", "=", "expired");
   }
 
   function getExpiredWorkers() {
-    return getConnection<Worker>()(getWorkersTableName())
+    return getConnection<Worker>()(driver.workersTableName)
+      .withSchema(driver.schema)
       .select("*")
       .where("status", "=", "expired");
   }

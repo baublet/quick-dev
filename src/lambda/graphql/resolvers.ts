@@ -11,8 +11,6 @@ import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 
 import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolvers/environmentCommandLogs";
 
-import { jobs } from "./resolvers/jobs";
-
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
 import { deleteEnvironment } from "./resolvers/deleteEnvironment";
@@ -23,7 +21,6 @@ export const resolvers = {
     environment,
     ping: () => "pong",
     user,
-    jobs,
     environmentCommandLogs: environmentCommandLogsQuery,
   },
   Mutation: {

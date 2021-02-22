@@ -1,6 +1,8 @@
 import { EnvironmentCommand, EnvironmentCommandStatus } from "./index";
 import { Connection } from "../../db";
 import { log } from "../../../../common/logger";
+import { EnvironmentCommandLock } from "../environmentCommandLock";
+import { randomBetween0AndN } from "../../../../common/randomBetween0AndN";
 
 const processorStatusesThatNeedWork: EnvironmentCommandStatus[] = ["ready"];
 
@@ -10,18 +12,23 @@ export async function getEnvironmentCommandThatNeedsWork(
     currentProcessor: string;
   }
 ) {
-  const updatedRows = await db<EnvironmentCommand>("environmentCommands")
-    .update({ processor: input.currentProcessor, updated_at: db.fn.now() })
+  const lockSubQuery = db<EnvironmentCommandLock>(
+    "environmentCommandLocks"
+  ).select("environmentCommandId");
+  const results = await db<EnvironmentCommand>("environmentCommands")
+    .update({ updated_at: db.fn.now() })
     .andWhere((b) => {
       b.whereIn("status", processorStatusesThatNeedWork);
-      b.whereNull("processor");
-      b.where("updated_at", "<=", db.raw("NOW() - INTERVAL '10 seconds'"));
+      b.whereNotIn("id", lockSubQuery);
     })
     .limit(1)
     .returning("*");
 
-  if (updatedRows.length > 0) {
-    return updatedRows[0];
+  const rowNumber = randomBetween0AndN(results.length - 1);
+  const row = results[rowNumber];
+
+  if (row) {
+    return row;
   }
 
   log.debug("getEnvironmentCommandThatNeedsWork: no environment needs work");

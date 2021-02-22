@@ -1,5 +1,3 @@
-import { JobFunction } from "../../../jobber";
-
 import {
   environmentCommand as envCommandEntity,
   environment as envEntity,
@@ -7,7 +5,7 @@ import {
 import { getDatabaseConnection } from "../db";
 import { getCommandLogs } from "../environmentPassthrough";
 
-export const getEnvironmentCommandLogs: JobFunction = async (payload: {
+export const getEnvironmentCommandLogs = async (payload: {
   environmentCommandId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

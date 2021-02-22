@@ -24,7 +24,6 @@ export async function setErrorProvisioning({
 
   // Update the environment in the database
   await enqueueJob(
-    trx,
     "deleteEnvironmentInProvider",
     { environmentId: environment.id },
     { startAfter: 1000 * 60 * 60 * 2 }

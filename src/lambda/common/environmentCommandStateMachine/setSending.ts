@@ -75,14 +75,13 @@ export async function setSending({
   }
 
   await enqueueJob(
-    trx,
     "sendCommand",
     {
       environmentCommandId: environmentCommand.id,
     },
     // It should take almost no time to ping the downstream server. If it takes
     // more than 30 seconds, it probably failed to send, so try again.
-    { cancelAfter: 30000 }
+    { timeout: 30000 }
   );
 
   await envCommandEntity.update(trx, environmentCommand.id, {

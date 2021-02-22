@@ -16,7 +16,7 @@ esbuild.buildSync({
   platform: "node",
   bundle: true,
   target: ["node12"],
-  external: ["knex"],
+  external: ["knex", "bee-queue"],
 });
 
 console.log("Functions built");

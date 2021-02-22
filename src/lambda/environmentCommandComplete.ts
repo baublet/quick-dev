@@ -8,6 +8,8 @@ import {
   EnvironmentCommand,
   environment as envEntity,
   environmentCommand as envCommandEntity,
+  environmentCommandLock,
+  environmentLock,
 } from "./common/entities";
 import { environmentCommandStateMachine } from "./common/environmentCommandStateMachine";
 
@@ -78,6 +80,9 @@ export const handler = async (event: APIGatewayEvent) => {
         environmentCommand,
       });
     }
+
+    await environmentLock.del(trx, environment.id);
+    await environmentCommandLock.del(trx, environmentCommand.id);
 
     return {
       statusCode: 200,

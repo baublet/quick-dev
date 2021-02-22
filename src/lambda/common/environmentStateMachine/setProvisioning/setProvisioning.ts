@@ -12,7 +12,7 @@ export async function setProvisioning({
   // Update the environment in the database
   try {
     await trx.transaction(async (trx) => {
-      await enqueueJob(trx, "getEnvironmentStartupLogs", {
+      await enqueueJob("getEnvironmentStartupLogs", {
         environmentId: environment.id,
       });
       await envEntity.update(trx, environment.id, {

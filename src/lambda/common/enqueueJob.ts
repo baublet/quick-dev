@@ -1,10 +1,7 @@
-import { job } from "./entities";
-import { JOB_MAP, JobKey } from "./jobs";
-import { ConnectionOrTransaction } from "./db";
+import Queue from "bee-queue";
 import { log } from "../../common/logger";
-import { getJobSystem } from "./jobs/getJobSystem";
 
-type JobFns = typeof JOB_MAP;
+import { JOB_MAP, JobQueuePayload, JobKey, JobPayload } from "./jobs";
 
 interface JobOptions {
   /**
@@ -17,22 +14,108 @@ interface JobOptions {
    * For example, if you want your job to be cancelled after 15 seconds,
    * pass in 15000
    */
-  cancelAfter?: number;
+  timeout?: number;
   retries?: number;
   retryDelaySeconds?: number;
 }
 
+declare global {
+  module NodeJS {
+    interface Global {
+      queue?: Queue<JobQueuePayload>;
+    }
+  }
+}
+
+export function getQueue() {
+  if (!global.queue) {
+    global.queue = new Queue<JobQueuePayload>("strapyard", {
+      redis: process.env.REDIS_CREDENTIALS,
+    });
+  }
+
+  return global.queue;
+}
+
+export function processQueue() {
+  return getQueue().process(jobProcessor);
+}
+
+export function stopProcessingQueue() {
+  getQueue().close(10000);
+  delete global.queue;
+}
+
+export async function jobProcessor({
+  data: { job, payload },
+}: Queue.Job<JobQueuePayload>) {
+  if (!(job in JOB_MAP)) {
+    throw new Error(`Job type not found: ${JSON.stringify({ job, payload })}`);
+  }
+  try {
+    log.debug(`Running job ${job}`, { payload });
+    await JOB_MAP[job](payload as any);
+    log.debug(`Job ${job} failed!`, { payload });
+  } catch (e) {
+    log.error(`${job} failed!`, { payload, e: e.message, stack: e.stack });
+    throw e;
+  }
+}
+
+function getJob<T extends JobKey>(
+  job: T,
+  payload: JobPayload[T]
+): JobQueuePayload {
+  return ({
+    job,
+    payload,
+  } as unknown) as JobQueuePayload;
+}
+
 export async function enqueueJob<T extends JobKey>(
-  trx: ConnectionOrTransaction,
   type: T,
-  payload: Parameters<JobFns[T]>[1],
+  payload: JobPayload[T],
   {
     startAfter = 0,
-    cancelAfter = 1000 * 30,
-    retries,
-    retryDelaySeconds,
+    timeout = 1000 * 30,
+    retries = 2,
+    retryDelaySeconds = 1,
   }: JobOptions = {}
 ): Promise<void> {
-  const system = await getJobSystem();
-  await system.enqueueJob(type, payload);
+  const now = new Date();
+  const delayUntil = new Date(now.valueOf() + startAfter);
+
+  log.debug(`Queuing job ${type}`, {
+    payload,
+    options: {
+      startAfter,
+      timeout,
+      retries,
+      retryDelaySeconds,
+      delayUntil,
+    },
+  });
+
+  return new Promise((resolve) => {
+    const queue = getQueue();
+    const job = queue.createJob(getJob(type, payload));
+
+    job
+      .timeout(timeout)
+      .retries(retries)
+      // .delayUntil(delayUntil)
+      .timeout(timeout)
+      .backoff("fixed", retryDelaySeconds)
+      .save()
+      .then((job) => {
+        log.debug(`Job ${type} scheduled`, {
+          job: {
+            id: job.id,
+            status: job.status,
+            options: job.options,
+          },
+        });
+        resolve();
+      });
+  });
 }

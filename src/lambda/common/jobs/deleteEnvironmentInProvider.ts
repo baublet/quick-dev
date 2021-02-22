@@ -1,11 +1,9 @@
-import { JobFunction } from "../../../jobber";
-
 import { log } from "../../../common/logger";
 import { environmentDomainRecord, environment as env } from "../entities";
 import { getDatabaseConnection } from "../../common/db";
 import { destroyEnvironment } from "../../common/externalEnvironmentHandler/digitalOcean/destroyEnvironment";
 
-export const deleteEnvironmentInProvider: JobFunction = async (payload: {
+export const deleteEnvironmentInProvider = async (payload: {
   environmentId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

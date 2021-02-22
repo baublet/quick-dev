@@ -6,7 +6,7 @@ import {
   Environment,
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
-  environment as envEntity,
+  environmentLock,
 } from "../entities";
 
 interface SetSuccessArguments {
@@ -56,7 +56,7 @@ export async function setSuccess({
     }
   );
 
-  await enqueueJob(trx, "getEnvironmentCommandLogs", {
+  await enqueueJob("getEnvironmentCommandLogs", {
     environmentCommandId: environmentCommand.id,
   });
 
@@ -65,8 +65,6 @@ export async function setSuccess({
     status: environment.lifecycleStatus,
     updatedCommand,
   });
-
-  await envEntity.resetProcessorByEnvironmentId(trx, environment.id);
 
   return {
     errors: [],

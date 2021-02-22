@@ -1,12 +1,10 @@
-import { JobFunction } from "../../../jobber";
-
 import { environmentCommand, environment as env } from "../entities";
 import { getDatabaseConnection } from "../db";
 import { log } from "../../../common/logger";
 import { parseDefinition } from "../strapYardFile";
 import { createInitialCommands } from "../externalEnvironmentHandler/createInitialCommands";
 
-export const createEnvironmentCommands: JobFunction = async (payload: {
+export const createEnvironmentCommands = async (payload: {
   environmentId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

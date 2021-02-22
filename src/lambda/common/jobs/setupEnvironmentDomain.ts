@@ -1,5 +1,3 @@
-import { JobFunction } from "../../../jobber";
-
 import {
   environment as envEntity,
   environmentDomainRecord as envDomainEntity,
@@ -8,7 +6,7 @@ import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/dig
 import { getDatabaseConnection } from "../../common/db";
 import { log } from "../../../common/logger";
 
-export const setupEnvironmentDomain: JobFunction = async (payload: {
+export const setupEnvironmentDomain = async (payload: {
   environmentId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

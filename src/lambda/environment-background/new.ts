@@ -1,4 +1,4 @@
-import { Environment, environment as envEntity } from "../common/entities";
+import { Environment, environmentLock } from "../common/entities";
 import { Transaction } from "../common/db";
 import { environmentStateMachine } from "../common/environmentStateMachine";
 import { log } from "../../common/logger";
@@ -25,6 +25,5 @@ export async function processNewEnvironment(
       message: error.message,
       stack: error.stack,
     });
-    envEntity.resetProcessorByEnvironmentId(trx, environment.id);
   }
 }

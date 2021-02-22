@@ -1,6 +1,7 @@
 import {
   environmentCommand as envCommandEntity,
   environment as envEntity,
+  environmentCommandLock,
 } from "../common/entities";
 import { getDatabaseConnection } from "../common/db";
 import { log } from "../../common/logger";
@@ -21,6 +22,9 @@ export async function processEnvironmentCommand(currentProcessor: string) {
       );
       return;
     }
+
+    await environmentCommandLock.create(db, environmentCommand.id);
+
     await db.transaction(async (trx) => {
       const environmentCommands = await envCommandEntity.getByEnvironmentId(
         trx,

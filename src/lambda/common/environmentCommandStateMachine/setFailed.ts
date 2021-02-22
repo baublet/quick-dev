@@ -7,6 +7,7 @@ import {
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
   environment as envEntity,
+  environmentLock,
 } from "../entities";
 
 interface SetFailedArguments {
@@ -80,7 +81,7 @@ export async function setFailed({
     })
   );
 
-  await enqueueJob(trx, "getEnvironmentCommandLogs", {
+  await enqueueJob("getEnvironmentCommandLogs", {
     environmentCommandId: environmentCommand.id,
   });
 
@@ -89,8 +90,6 @@ export async function setFailed({
     status: environment.lifecycleStatus,
     updatedCommand,
   });
-
-  await envEntity.resetProcessorByEnvironmentId(trx, environment.id);
 
   return {
     errors: [],

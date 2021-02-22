@@ -1,15 +1,28 @@
 require("./common/initialize");
 
-import { getJobSystem } from "./common/jobs/getJobSystem";
+import {
+  stopProcessingQueue,
+  processQueue,
+  getQueue,
+} from "./common/enqueueJob";
 
-const maxBeats = 3;
-const workers = ["larry", "curly", "mo"];
-
-export const handler = async () => {
-  const jobSystem = await getJobSystem();
-
-  for (let i = 0; i < maxBeats; i++) {
-    await jobSystem.schedulerTick();
-    await Promise.all(workers.map((worker) => jobSystem.workerTick(worker)));
+declare global {
+  module NodeJS {
+    interface Global {
+      working: boolean;
+    }
   }
+}
+
+export const handler = () => {
+  return new Promise<void>((resolve) => {
+    if (global.working) return resolve();
+    global.working = true;
+    processQueue();
+    setTimeout(async () => {
+      await stopProcessingQueue();
+      global.working = false;
+      resolve();
+    }, 1000);
+  });
 };

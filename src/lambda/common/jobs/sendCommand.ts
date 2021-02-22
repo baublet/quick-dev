@@ -1,15 +1,13 @@
-import { JobFunction } from "../../../jobber";
-
 import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
 } from "../entities";
 import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
-import { getDatabaseConnection, Transaction } from "../db";
+import { getDatabaseConnection } from "../db";
 import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 import { log } from "../../../common/logger";
 
-export const sendCommand: JobFunction = async (payload: {
+export const sendCommand = async (payload: {
   environmentCommandId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

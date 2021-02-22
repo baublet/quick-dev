@@ -59,7 +59,7 @@ export async function setNew({
       user: user.email,
       userSource: user.source,
     });
-    await enqueueJob(trx, "createEnvironmentCommands", {
+    await enqueueJob("createEnvironmentCommands", {
       environmentId: environment.id,
     });
 

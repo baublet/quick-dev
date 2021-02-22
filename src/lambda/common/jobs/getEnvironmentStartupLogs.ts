@@ -1,10 +1,8 @@
-import { JobFunction } from "../../../jobber";
-
 import { environment as envEntity } from "../entities";
 import { getDatabaseConnection } from "../../common/db";
 import { getEnvironmentStartupLogs as getEnvironmentStartupLogsFromEnvironment } from "../environmentPassthrough";
 
-export const getEnvironmentStartupLogs: JobFunction = async (payload: {
+export const getEnvironmentStartupLogs = async (payload: {
   environmentId: string;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {

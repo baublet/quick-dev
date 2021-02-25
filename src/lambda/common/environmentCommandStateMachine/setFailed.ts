@@ -72,7 +72,7 @@ export async function setFailed({
         // Don't update commands _prior_ to this one
         return;
       }
-      if (command.status === "waiting") {
+      if (command.status === "ready") {
         log.debug("Cancelling command ", command);
         return envCommandEntity.update(trx, command.id, {
           status: "cancelled",

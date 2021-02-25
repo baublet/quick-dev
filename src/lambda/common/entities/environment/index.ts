@@ -45,3 +45,4 @@ export { getBySubdomain } from "./getBySubdomain";
 export { getBySecret } from "./getBySecret";
 export { del } from "./delete";
 export { touch } from "./touch";
+export { getProvisioningEnvironment } from "./getProvisioningEnvironment";

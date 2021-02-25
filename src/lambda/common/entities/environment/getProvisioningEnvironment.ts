@@ -1,11 +1,9 @@
-import { EnvironmentLifecycleStatus, Environment } from "./index";
+import { Environment } from "./index";
 import { Connection } from "../../db";
 import { EnvironmentLock } from "../environmentLock";
 import { randomBetween0AndN } from "../../../../common/randomBetween0AndN";
 
-const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = ["new"];
-
-export async function getEnvironmentThatNeedsWork(db: Connection) {
+export async function getProvisioningEnvironment(db: Connection) {
   const lockSubQuery = db<EnvironmentLock>("environmentLocks").select(
     "environmentId"
   );
@@ -13,7 +11,7 @@ export async function getEnvironmentThatNeedsWork(db: Connection) {
     .select()
     .andWhere((b) => {
       b.where("deleted", "=", false);
-      b.whereIn("lifecycleStatus", processorStatusesThatNeedWork);
+      b.where("lifecycleStatus", "=", "provisioning");
       b.whereNotIn("id", lockSubQuery);
     })
     .limit(25)

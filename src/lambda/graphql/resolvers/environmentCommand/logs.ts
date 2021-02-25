@@ -52,7 +52,7 @@ export async function environmentCommandLogs(
     .service(envEntity.loader)
     .load(parent.environmentId);
 
-  if (parent.status === "waiting") {
+  if (parent.status === "ready") {
     return null;
   }
 

@@ -24,7 +24,7 @@ export function EnvironmentLogs({
         commandId={"startup"}
         title={"Startup Logs"}
         logText={startupLogs}
-        status={startupLogs ? "success" : "waiting"}
+        status={startupLogs ? "success" : "ready"}
         dynamic={false}
         poll={false}
       />

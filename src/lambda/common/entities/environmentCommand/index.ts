@@ -1,5 +1,4 @@
 export type EnvironmentCommandStatus =
-  | "waiting"
   | "ready"
   | "sending"
   | "running"
@@ -27,5 +26,3 @@ export { getById } from "./getById";
 export { update } from "./update";
 export { createMany } from "./createMany";
 export { loader } from "./loader";
-export { getEnvironmentCommandThatNeedsWork } from "./getEnvironmentCommandThatNeedsWork";
-export { resetProcessorByEnvironmentCommandId } from "./resetProcessorByEnvironmentId";

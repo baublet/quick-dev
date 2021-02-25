@@ -44,13 +44,6 @@ export async function canSetSending({
     };
   }
 
-  if (!hasCommandInStatus(environmentCommands, "waiting")) {
-    return {
-      errors: ["No commands left waiting to be sent"],
-      operationSuccess: false,
-    };
-  }
-
   return {
     errors: [],
     operationSuccess: true,

@@ -11,7 +11,6 @@ function hasOneOrMoreCommandInIncompleteOrFailedStatus(
     if (command.status === "failed") return true;
     if (command.status === "ready") return true;
     if (command.status === "sending") return true;
-    if (command.status === "waiting") return true;
   }
   return false;
 }

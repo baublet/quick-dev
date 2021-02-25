@@ -16,7 +16,7 @@ export async function createMany(
   return trx<EnvironmentCommand>("environmentCommands")
     .insert(
       input.map((step) => ({
-        status: "waiting",
+        status: "ready",
         ...step,
         id: ulid(),
         environmentId,

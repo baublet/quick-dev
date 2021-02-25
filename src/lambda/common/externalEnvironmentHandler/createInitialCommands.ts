@@ -16,7 +16,7 @@ export async function createInitialCommands(
     environmentId: environment.id,
     title: "Clone Repository",
     adminOnly: true,
-    status: "waiting",
+    status: "ready",
   });
 
   await environmentCommand.create(trx, {
@@ -25,7 +25,7 @@ export async function createInitialCommands(
     environmentId: environment.id,
     title: "Install VS Code Server",
     adminOnly: true,
-    status: "waiting",
+    status: "ready",
   });
 
   await environmentCommand.create(trx, {
@@ -41,7 +41,7 @@ reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
     environmentId: environment.id,
     title: "Install Web Server",
     adminOnly: true,
-    status: "waiting",
+    status: "ready",
   });
 
   await environmentCommand.create(trx, {
@@ -54,6 +54,6 @@ cert: false" > /root/.config/code-server/config.yaml \
     environmentId: environment.id,
     title: "Configure Code Server",
     adminOnly: true,
-    status: "waiting",
+    status: "ready",
   });
 }

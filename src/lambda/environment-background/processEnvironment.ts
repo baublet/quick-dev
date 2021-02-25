@@ -29,9 +29,6 @@ export async function processEnvironment() {
         case "new":
           await processNewEnvironment(trx, environment);
           break;
-        case "provisioning":
-          await processProvisioningEnvironment(trx, environment);
-          break;
         default:
           break;
       }

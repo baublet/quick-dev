@@ -16,7 +16,6 @@ const allowedFromStatuses: EnvironmentCommand["status"][] = [
   "ready",
   "running",
   "sending",
-  "waiting",
 ];
 
 export async function canSetCancelled({

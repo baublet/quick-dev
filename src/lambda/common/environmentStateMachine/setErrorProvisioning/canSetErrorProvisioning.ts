@@ -31,23 +31,15 @@ export async function canSetErrorProvisioning({
     environment.id
   );
 
-  if (hasCommandInStatus(commands, "waiting")) {
-    log.debug(
-      "setErrorProvisioning: Environment has a command waiting, can't set error provisioning"
-    );
-    return {
-      operationSuccess: false,
-      errors: [],
-    };
-  }
-
   if (hasCommandInStatus(commands, "running")) {
     log.debug(
       "setErrorProvisioning: Environment has a command running, can't set error provisioning"
     );
     return {
       operationSuccess: false,
-      errors: [],
+      errors: [
+        "setErrorProvisioning: Environment has a command running, can't set error provisioning",
+      ],
     };
   }
 

@@ -17,15 +17,6 @@ export async function canSetReady({
   environment,
   environmentCommand,
 }: SetReadyArguments): Promise<EnvironmentCommandStateMachineReturn> {
-  if (environmentCommand.status !== "waiting") {
-    return {
-      errors: [
-        "Cannot ready command if the command is not in the 'waiting' status",
-      ],
-      operationSuccess: false,
-    };
-  }
-
   if (environment.lifecycleStatus !== "provisioning") {
     return {
       errors: ["Cannot ready a command if the environment is not provisioning"],

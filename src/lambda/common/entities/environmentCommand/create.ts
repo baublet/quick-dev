@@ -19,7 +19,7 @@ export async function create(
     .insert({
       ...input,
       id: ulid(),
-      status: "waiting",
+      status: "ready",
       order: nextOrder,
     })
     .returning("*");

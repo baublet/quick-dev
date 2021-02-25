@@ -18,7 +18,6 @@ export async function setProvisioning({
       await envEntity.update(trx, environment.id, {
         lifecycleStatus: "provisioning",
       });
-      await envEntity.resetProcessorByEnvironmentId(trx, environment.id);
     });
   } catch (e) {
     log.error("Unknown error setting environment to provisioning", {

@@ -80,6 +80,7 @@ export async function processEnvironmentCommand() {
         environmentCommands,
       });
     });
+    await environmentLock.del(db, environment.id);
   } catch (e) {
     log.error(
       `Environment command processor threw an error while processing environment command`,

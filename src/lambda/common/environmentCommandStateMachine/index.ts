@@ -3,7 +3,6 @@ import { setFailed, canSetFailed } from "./setFailed";
 import { setRunning, canSetRunning } from "./setRunning";
 import { setSending, canSetSending } from "./setSending";
 import { setCancelled, canSetCancelled } from "./setCancelled";
-import { setReady, canSetReady } from "./setReady";
 
 export interface EnvironmentCommandStateMachineReturn {
   operationSuccess: boolean;
@@ -31,10 +30,6 @@ export const transitions = {
     circuit: canSetCancelled,
     transition: setCancelled,
   },
-  ready: {
-    circuit: canSetReady,
-    transition: canSetReady,
-  },
 } as const;
 
 export const environmentCommandStateMachine = {
@@ -52,7 +47,4 @@ export const environmentCommandStateMachine = {
 
   canSetCancelled,
   setCancelled,
-
-  canSetReady,
-  setReady,
 };

@@ -38,6 +38,7 @@ type EnvironmentMutationPayload {
 
 enum EnvironmentCommandStatus {
   cancelled
+  ready
   running
   sending
   failed

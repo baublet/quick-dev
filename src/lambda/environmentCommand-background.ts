@@ -1,7 +1,5 @@
 require("./common/initialize");
 
-import { APIGatewayEvent } from "aws-lambda";
-
 import { log } from "../common/logger";
 import { processEnvironmentCommand } from "./environmentCommand-background/processEnvironmentCommand";
 

@@ -3,11 +3,17 @@ import bodyParser from "body-parser";
 
 import { logServer } from "./logServer";
 import { commandRunner } from "./commandRunner";
+import { log } from "./log";
 
 const express = require("express");
 const app: Application = express();
 const port = 8333;
 const secret = process.env.SECRET;
+
+log("Starting provisioner", {
+  secret: process.env.SECRET,
+  strapyardUrl: process.env.STRAPYARD_URL,
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

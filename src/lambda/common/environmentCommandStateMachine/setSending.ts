@@ -75,7 +75,7 @@ export async function setSending({
     status: "sending",
   });
 
-  await enqueueJob(
+  enqueueJob(
     "sendCommand",
     {
       environmentCommandId: environmentCommand.id,

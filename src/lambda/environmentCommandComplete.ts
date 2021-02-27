@@ -67,17 +67,29 @@ export const handler = async (event: APIGatewayEvent) => {
 
   return db.transaction(async (trx) => {
     if (status === "success") {
-      await environmentCommandStateMachine.setSuccess({
+      const result = await environmentCommandStateMachine.setSuccess({
         trx,
         environment,
         environmentCommand,
       });
+      if (!result.operationSuccess) {
+        log.error(
+          "Attempted to set command to 'success', but state machine disallowed it",
+          { result }
+        );
+      }
     } else {
-      await environmentCommandStateMachine.setFailed({
+      const result = await environmentCommandStateMachine.setFailed({
         trx,
         environment,
         environmentCommand,
       });
+      if (!result) {
+        log.error(
+          "Attempted to set command to 'failed', but state machine disallowed it",
+          { result }
+        );
+      }
     }
 
     await environmentLock.del(trx, environment.id);

@@ -1,6 +1,8 @@
 import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
+  Environment,
+  EnvironmentCommand,
 } from "../entities";
 import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
 import { getDatabaseConnection } from "../db";
@@ -10,7 +12,10 @@ import { log } from "../../../common/logger";
 export const sendCommand = async (payload: {
   environmentCommandId: string;
 }) => {
-  return getDatabaseConnection().transaction(async (trx) => {
+  let foundEnvironment: Environment | undefined;
+  let foundEnvironmentCommand: EnvironmentCommand | undefined;
+
+  await getDatabaseConnection().transaction(async (trx) => {
     const environmentCommandId = payload.environmentCommandId;
     const environmentCommand = await envCommandEntity.getById(
       trx,
@@ -53,11 +58,20 @@ export const sendCommand = async (payload: {
       );
     }
 
-    await sendCommandToEnvironment(environment, environmentCommand);
     await environmentCommandStateMachine.setRunning({
       trx,
       environment,
       environmentCommand,
     });
+
+    foundEnvironment = environment;
+    foundEnvironmentCommand = environmentCommand;
   });
+
+  if (!foundEnvironment || !foundEnvironmentCommand) {
+    // no op
+    return;
+  }
+
+  await sendCommandToEnvironment(foundEnvironment, foundEnvironmentCommand);
 };

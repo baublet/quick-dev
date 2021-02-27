@@ -43,7 +43,7 @@ cd /root
 sudo apt-get update
 
 # Hit our function to tell StrapYard that our environment is up
-echo "\n\nInforming StrapYard (${baseUrl}) that the environment is allocatedn\n\n"
+echo "\n\nInforming StrapYard (${baseUrl}) that the environment is allocated\n\n"
 IP_ADDRESS=$(curl http://checkip.amazonaws.com)
 curl --header "Content-Type: application/json" \
   --header "Authorization: ${environment.secret}" \
@@ -59,7 +59,17 @@ npm install pm2@latest -g
 # Pull down our bundled and fully packed provisioner server and boot it up 8)
 echo "\n\nDownloading provisioner from StrapYard (${baseUrl})n"
 curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
-SECRET=${environment.secret} STRAPYARD_URL=${baseUrl} sudo pm2 start ~/provisioner.js
+echo "module.exports = {
+  apps : [{
+    name: 'provisioner',
+    script: '/root/provisioner.js',
+    env: {
+      STRAPYARD_URL: '${baseUrl}',
+      SECRET: '${environment.secret}',
+    }
+  }]
+}" >> /ecosystem.config.js
+sudo pm2 start /ecosystem.config.js
 
 # Safe delay so pm2 has time to boot the server
 sleep 2

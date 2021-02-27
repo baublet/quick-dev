@@ -77,7 +77,7 @@ export async function enqueueJob<T extends JobKey>(
   type: T,
   payload: JobPayload[T],
   {
-    startAfter = 0,
+    startAfter = 3000,
     timeout = 1000 * 30,
     retries = 2,
     retryDelaySeconds = 1,

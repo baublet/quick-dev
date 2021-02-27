@@ -3,14 +3,13 @@ import fetch from "node-fetch";
 
 import { log } from "./log";
 
-const secret = process.env.SECRET;
-const strapYardUrl = process.env.STRAPYARD_URL;
-
 export async function reportComplete(
   commandId: string,
   logStreamPath: string,
   exitCode: number
 ): Promise<void> {
+  const secret = process.env.SECRET;
+  const strapYardUrl = process.env.STRAPYARD_URL;
   try {
     const status = exitCode === 0 ? "success" : "failed";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;

@@ -31,6 +31,7 @@ export function getQueue() {
   if (!global.queue) {
     global.queue = new Queue<JobQueuePayload>("strapyard", {
       redis: process.env.REDIS_CREDENTIALS,
+      activateDelayedJobs: true,
     });
   }
 
@@ -55,7 +56,7 @@ export async function jobProcessor({
   try {
     log.debug(`Running job ${job}`, { payload });
     await JOB_MAP[job](payload as any);
-    log.debug(`Job ${job} failed!`, { payload });
+    log.debug(`Job ${job} finished`, { payload });
   } catch (e) {
     log.error(`${job} failed!`, { payload, e: e.message, stack: e.stack });
     throw e;
@@ -85,17 +86,6 @@ export async function enqueueJob<T extends JobKey>(
   const now = new Date();
   const delayUntil = new Date(now.valueOf() + startAfter);
 
-  log.debug(`Queuing job ${type}`, {
-    payload,
-    options: {
-      startAfter,
-      timeout,
-      retries,
-      retryDelaySeconds,
-      delayUntil,
-    },
-  });
-
   return new Promise((resolve) => {
     const queue = getQueue();
     const job = queue.createJob(getJob(type, payload));
@@ -103,7 +93,7 @@ export async function enqueueJob<T extends JobKey>(
     job
       .timeout(timeout)
       .retries(retries)
-      // .delayUntil(delayUntil)
+      .delayUntil(delayUntil)
       .timeout(timeout)
       .backoff("fixed", retryDelaySeconds)
       .save()

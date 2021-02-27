@@ -20,7 +20,7 @@ export async function createInitialCommands(
   });
 
   await environmentCommand.create(trx, {
-    command: `(HOME="/root/" curl -fsSL https://code-server.dev/install.sh | sh) \
+    command: `(curl -fsSL https://code-server.dev/install.sh | sh) \
 && sudo systemctl enable --now code-server@$USER`,
     environmentId: environment.id,
     title: "Install VS Code Server",
@@ -29,13 +29,12 @@ export async function createInitialCommands(
   });
 
   await environmentCommand.create(trx, {
-    command: `( \
-  echo "deb [trusted=yes] https://apt.fury.io/caddy/ /" \
-    | sudo tee -a /etc/apt/sources.list.d/caddy-fury.list \
-  )\
+    command: `sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https \
+&& curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo apt-key add - \
+&& curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee -a /etc/apt/sources.list.d/caddy-stable.list \
 && sudo apt update \
 && sudo apt install caddy \
-&& echo "${environment.subdomain}.${process.env.STRAPYARD_DOMAIN} \
+&& echo "${environment.subdomain}.env.${process.env.STRAPYARD_DOMAIN} \
 reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
 && sudo systemctl reload caddy`,
     environmentId: environment.id,
@@ -45,12 +44,12 @@ reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
   });
 
   await environmentCommand.create(trx, {
-    command: `echo "bind-addr: 127.0.0.1:8080 \
+    command: `mkdir -p "$HOME/.config/code-server" && echo "bind-addr: 127.0.0.1:8080 \
 auth: password \
 password: aa82dd974de376d337fb0854 \
 home: ${process.env.STRAPYARD_URL}/environment/${environment.subdomain} \
 cert: false" > /root/.config/code-server/config.yaml \
-&& sudo systemctl restart code-server@$USER`,
+&& sudo systemctl restart code-server@root`,
     environmentId: environment.id,
     title: "Configure Code Server",
     adminOnly: true,

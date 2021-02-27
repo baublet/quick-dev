@@ -1,7 +1,7 @@
-import { Environment, environmentLock } from "../common/entities";
-import { Transaction } from "../common/db";
-import { environmentStateMachine } from "../common/environmentStateMachine";
-import { log } from "../../common/logger";
+import { Environment } from "../../entities";
+import { Transaction } from "../../db";
+import { environmentStateMachine } from "../../environmentStateMachine";
+import { log } from "../../../../common/logger";
 
 export async function processNewEnvironment(
   trx: Transaction,

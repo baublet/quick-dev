@@ -12,7 +12,7 @@ export async function digitalOceanApi<T = any>({
   path: string;
   method?: "post" | "delete" | "get";
   body?: Record<string, any>;
-  expectStatus: number;
+  expectStatus?: number;
   expectJson?: boolean;
   timeout?: number;
 }): Promise<T> {

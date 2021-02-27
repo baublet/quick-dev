@@ -5,7 +5,6 @@ export * as environmentDomainRecord from "./environmentDomainRecord";
 export * as providerSSHKey from "./providerSSHKey";
 export * as sshKey from "./sshKey";
 export * as token from "./tokens";
-export * as environmentCommandLock from "./environmentCommandLock";
 
 export {
   Environment,

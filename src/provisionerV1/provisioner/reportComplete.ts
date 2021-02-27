@@ -1,12 +1,10 @@
 import fs from "fs";
 import fetch from "node-fetch";
 
+import { log } from "./log";
+
 const secret = process.env.SECRET;
 const strapYardUrl = process.env.STRAPYARD_URL;
-
-function log(text: string) {
-  fs.appendFileSync(process.cwd() + "/error.log", text + "\n");
-}
 
 export async function reportComplete(
   commandId: string,

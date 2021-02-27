@@ -49,6 +49,7 @@ enum EnvironmentLifecycleStatus {
   new
   creating
   provisioning
+  finished_provisioning
   error_provisioning
   starting
 }

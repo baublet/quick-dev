@@ -19,7 +19,7 @@ export async function canSetRunning({
   if (environmentCommand.status !== "sending") {
     return {
       errors: [
-        "Cannot run command if the command is not in the 'sending' status",
+        `Cannot run command if the command is not in the 'sending' status. Status is ${environmentCommand.status}`,
       ],
       operationSuccess: false,
     };

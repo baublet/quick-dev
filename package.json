@@ -43,6 +43,7 @@
     "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "encoding": "^0.1.13",
+    "execa": "^5.0.0",
     "faker": "^5.2.0",
     "glob": "^7.1.6",
     "js-yaml": "^4.0.0",

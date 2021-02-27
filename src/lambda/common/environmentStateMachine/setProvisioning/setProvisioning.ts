@@ -11,13 +11,11 @@ export async function setProvisioning({
 }: SetProvisioningArguments): Promise<StateMachineReturnValue> {
   // Update the environment in the database
   try {
-    await trx.transaction(async (trx) => {
-      await enqueueJob("getEnvironmentStartupLogs", {
-        environmentId: environment.id,
-      });
-      await envEntity.update(trx, environment.id, {
-        lifecycleStatus: "provisioning",
-      });
+    await enqueueJob("getEnvironmentStartupLogs", {
+      environmentId: environment.id,
+    });
+    await envEntity.update(trx, environment.id, {
+      lifecycleStatus: "provisioning",
     });
   } catch (e) {
     log.error("Unknown error setting environment to provisioning", {

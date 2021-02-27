@@ -32,12 +32,13 @@ export interface Environment {
   updated_at: Date;
   user: string;
   userSource: EnvironmentUserSource;
+  working: boolean;
 }
 
 export { create } from "./create";
 export { get } from "./get";
 export { update } from "./update";
-export { getEnvironmentThatNeedsWork } from "./getEnvironmentThatNeedsWork";
+export { getEnvironmentsThatNeedsWork } from "./getEnvironmentsThatNeedsWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
 export { loader } from "./loader";
 export { getById } from "./getById";
@@ -46,3 +47,5 @@ export { getBySecret } from "./getBySecret";
 export { del } from "./delete";
 export { touch } from "./touch";
 export { getProvisioningEnvironment } from "./getProvisioningEnvironment";
+export { setNotWorking } from "./setNotWorking";
+export { setWorking } from "./setWorking";

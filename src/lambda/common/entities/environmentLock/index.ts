@@ -5,3 +5,4 @@ export interface EnvironmentLock {
 
 export { create } from "./create";
 export { del } from "./delete";
+export { deleteStuck } from "./deleteStuck";

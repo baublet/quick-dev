@@ -1,8 +1,9 @@
-import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
 import mkdirp from "mkdirp";
+import execa from "execa";
 
+import { log } from "./log";
 import { reportComplete } from "./reportComplete";
 
 export async function runCommand(
@@ -11,33 +12,29 @@ export async function runCommand(
   logStreamPath: string
 ): Promise<void> {
   return new Promise(async (resolve) => {
+    log("Running command", { command });
     const dirLocation = path.dirname(logStreamPath);
     mkdirp.sync(dirLocation);
     fs.writeFileSync(logStreamPath, "");
 
-    const process = spawn("bash", ["-c", command]);
-    console.log(`Streaming command ${command} to ${logStreamPath}`);
+    let processExitCode: number = 0;
 
-    process.stdout.on("data", (data) => {
-      const buffer = data.toString();
-      console.log("process.stdout.on", buffer);
-      fs.appendFileSync(logStreamPath, buffer);
-    });
+    try {
+      const subprocess = execa("bash", ["-c", command], { all: true });
+      subprocess.all?.pipe(fs.createWriteStream(logStreamPath));
+      await subprocess;
+      log(`Command executed successfully`);
+    } catch (error) {
+      const execaError: execa.ExecaError = error;
+      processExitCode = execaError.exitCode;
+      log(`Error running command: ${execaError.message}`, error);
+    }
 
-    process.stderr.on("data", (data) => {
-      const buffer = data.toString();
-      console.log("process.stderr.on", buffer);
-      fs.appendFileSync(logStreamPath, buffer);
-    });
-
-    process.on("error", (error) => {
-      console.log(`error: ${error.message}`);
-    });
-
-    process.on("exit", (code) => {
-      console.log("Reporting completion");
-      reportComplete(commandId, logStreamPath, code === null ? 0 : code);
-    });
+    await reportComplete(
+      commandId,
+      logStreamPath,
+      processExitCode === null ? 0 : processExitCode
+    );
 
     resolve();
   });

@@ -16,7 +16,7 @@ export async function fetch(
   options: {
     method: "get" | "post" | "patch" | "delete";
     headers: Record<string, string>;
-    expectStatus: number;
+    expectStatus?: number;
     timeoutMs: number;
     body?: string | Record<string, any>;
   }
@@ -47,16 +47,18 @@ export async function fetch(
   clearTimeout(timeout);
   const bodyText = await response.text();
 
-  if (response.status !== options.expectStatus) {
-    log.error(
-      `Error sending request to ${url}. Expected status ${options.expectStatus}. Received ${response.status}`,
-      {
-        url,
-        options,
-        bodyText,
-        status: response.status,
-      }
-    );
+  if (options.expectStatus !== undefined) {
+    if (response.status !== options.expectStatus) {
+      log.error(
+        `Error sending request to ${url}. Expected status ${options.expectStatus}. Received ${response.status}`,
+        {
+          url,
+          options,
+          bodyText,
+          status: response.status,
+        }
+      );
+    }
   }
 
   return {

@@ -37,7 +37,7 @@ export const handler = async (event: APIGatewayEvent) => {
       trx,
       environment,
     });
-    environmentLock.del(trx, environment.id);
+    await environmentLock.del(trx, environment.id);
     return result;
   });
 

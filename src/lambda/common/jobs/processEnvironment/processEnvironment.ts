@@ -1,22 +1,26 @@
-import { environmentLock } from "../common/entities";
-import { environment as envEntity } from "../common/entities";
-import { getDatabaseConnection } from "../common/db";
-import { log } from "../../common/logger";
+import { environment as envEntity } from "../../entities";
+import { getDatabaseConnection } from "../../db";
+import { log } from "../../../../common/logger";
 import { processNewEnvironment } from "./new";
 import { processProvisioningEnvironment } from "./provisioning";
 
-export async function processEnvironment() {
+export async function processEnvironment(payload: { environmentId: string }) {
   const db = getDatabaseConnection();
+
   let subdomain: string = "unknown";
   let id: string | undefined;
-  try {
-    const environment = await envEntity.getEnvironmentThatNeedsWork(db);
-    if (!environment) {
-      log.debug("processEnvironment.ts: No environments need processing...");
-      return;
-    }
 
-    await environmentLock.create(db, environment.id);
+  const environment = await envEntity.getById(db, payload.environmentId);
+  if (!environment) {
+    throw new Error(
+      "Invariant violation. processEnvironment job queued up with invalid environment ID: " +
+        payload.environmentId
+    );
+  }
+
+  await envEntity.touch(db, environment.id);
+
+  try {
     id = environment.id;
 
     await db.transaction(async (trx) => {
@@ -29,13 +33,18 @@ export async function processEnvironment() {
         case "new":
           await processNewEnvironment(trx, environment);
           break;
+        case "provisioning":
+          await processProvisioningEnvironment(trx, environment);
+          break;
         default:
           break;
       }
     });
+
+    await envEntity.setNotWorking(db, environment.id);
   } catch (e) {
     if (id) {
-      await environmentLock.del(db, id);
+      await envEntity.setNotWorking(db, environment.id);
     }
     log.error(
       `Environment processor threw an error while processing environment: ${subdomain}`,

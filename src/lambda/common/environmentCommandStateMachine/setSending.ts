@@ -19,7 +19,6 @@ export async function canSetSending({
   trx,
   environment,
   environmentCommand,
-  environmentCommands,
 }: SetSendingArguments): Promise<EnvironmentCommandStateMachineReturn> {
   if (environmentCommand.status !== "ready") {
     return {
@@ -36,6 +35,11 @@ export async function canSetSending({
       operationSuccess: false,
     };
   }
+
+  const environmentCommands = await envCommandEntity.getByEnvironmentId(
+    trx,
+    environment.id
+  );
 
   if (hasCommandInStatus(environmentCommands, "running")) {
     return {
@@ -67,6 +71,10 @@ export async function setSending({
     return canContinue;
   }
 
+  await envCommandEntity.update(trx, environmentCommand.id, {
+    status: "sending",
+  });
+
   await enqueueJob(
     "sendCommand",
     {
@@ -76,10 +84,6 @@ export async function setSending({
     // more than 30 seconds, it probably failed to send, so try again.
     { timeout: 30000 }
   );
-
-  await envCommandEntity.update(trx, environmentCommand.id, {
-    status: "sending",
-  });
 
   return {
     errors: [],

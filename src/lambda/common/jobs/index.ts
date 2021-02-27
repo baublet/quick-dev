@@ -4,14 +4,16 @@ import { deleteEnvironmentInProvider } from "./deleteEnvironmentInProvider";
 import { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";
 import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
 import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
+import { processEnvironment } from "./processEnvironment";
 
 export const JOB_MAP = {
-  sendCommand,
   createEnvironmentCommands,
   deleteEnvironmentInProvider,
   getEnvironmentCommandLogs,
-  setupEnvironmentDomain,
   getEnvironmentStartupLogs,
+  processEnvironment,
+  sendCommand,
+  setupEnvironmentDomain,
 } as const;
 
 export type JobKey = keyof typeof JOB_MAP;

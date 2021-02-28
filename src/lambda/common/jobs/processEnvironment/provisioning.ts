@@ -42,6 +42,16 @@ async function advanceIfPossible({
   }
 
   if (anotherCommandIsRunning(environmentCommands)) {
+    const runningCommand = environmentCommands.find(
+      (command) => command.status === "running"
+    );
+    if (!runningCommand) {
+      // no op
+      return false;
+    }
+    enqueueJob("checkEnvironmentCommandStatus", {
+      environmentCommandId: runningCommand.id,
+    });
     return true;
   }
 
@@ -101,13 +111,13 @@ export async function processProvisioningEnvironment(
   try {
     // Loop through the commands and advance their status if possible
     for (const command of environmentCommands) {
-      const result = await advanceIfPossible({
+      const done = await advanceIfPossible({
         trx,
         environment,
         environmentCommands,
         environmentCommand: command,
       });
-      if (result) break;
+      if (done) break;
     }
   } catch (error) {
     log.error("Unknown error advancing environment commands!", {

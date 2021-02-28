@@ -10,6 +10,7 @@ export async function reportComplete(
 ): Promise<void> {
   const secret = process.env.SECRET;
   const strapYardUrl = process.env.STRAPYARD_URL;
+
   try {
     const status = exitCode === 0 ? "success" : "failed";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;
@@ -27,5 +28,6 @@ export async function reportComplete(
     const data = `Error reporting a command completion... ${e.message} ${e.stack}`;
     log(data);
   }
-  fs.writeFileSync(logStreamPath + ".complete", Date.now().toString());
+
+  fs.writeFileSync(logStreamPath + ".complete", `$${exitCode}`);
 }

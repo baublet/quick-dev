@@ -5,8 +5,10 @@ import { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";
 import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
 import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 import { processEnvironment } from "./processEnvironment";
+import { checkEnvironmentCommandStatus } from "./checkEnvironmentCommandStatus";
 
 export const JOB_MAP = {
+  checkEnvironmentCommandStatus,
   createEnvironmentCommands,
   deleteEnvironmentInProvider,
   getEnvironmentCommandLogs,

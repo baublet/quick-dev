@@ -26,3 +26,4 @@ export { getById } from "./getById";
 export { update } from "./update";
 export { createMany } from "./createMany";
 export { loader } from "./loader";
+export { getByIdOrFail } from "./getByIdOrFail";

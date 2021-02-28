@@ -39,14 +39,14 @@ export const sendCommand = async (payload: {
       );
     }
 
-    const canContinue = await environmentCommandStateMachine.setRunning({
+    const canContinue = await environmentCommandStateMachine.canSetRunning({
       trx,
       environment,
       environmentCommand,
     });
     if (!canContinue.operationSuccess) {
       log.error(
-        "Unable to sent command to environment. State machine forbade it",
+        "Unable to send command to environment. State machine forbade it",
         {
           canContinue,
           method: "setRunning",

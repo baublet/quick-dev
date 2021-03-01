@@ -1,5 +1,4 @@
 export * as environment from "./environment";
-export * as environmentLock from "./environmentLock";
 export * as environmentCommand from "./environmentCommand";
 export * as environmentDomainRecord from "./environmentDomainRecord";
 export * as providerSSHKey from "./providerSSHKey";

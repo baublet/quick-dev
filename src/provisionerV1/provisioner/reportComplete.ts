@@ -3,14 +3,13 @@ import fetch from "node-fetch";
 
 import { log } from "./log";
 
-export async function reportComplete(
+async function sendCompleteNotification(
   commandId: string,
   logStreamPath: string,
   exitCode: number
-): Promise<void> {
+): Promise<boolean> {
   const secret = process.env.SECRET;
   const strapYardUrl = process.env.STRAPYARD_URL;
-
   try {
     const status = exitCode === 0 ? "success" : "failed";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;
@@ -24,10 +23,47 @@ export async function reportComplete(
     if (response.status !== 200) {
       throw new Error("Expect status to be 200! It was " + response.status);
     }
+    return true;
   } catch (e) {
-    const data = `Error reporting a command completion... ${e.message} ${e.stack}`;
-    log(data);
+    log(`Error reporting a command completion... ${e.message} ${e.stack}`);
+    return false;
   }
+}
 
-  fs.writeFileSync(logStreamPath + ".complete", `$${exitCode}`);
+export async function reportComplete(
+  commandId: string,
+  logStreamPath: string,
+  exitCode: number
+): Promise<void> {
+  return new Promise(async (resolve) => {
+    // Always write this ASAP. It's the canonical record this machine will
+    // use to determine whether to command completed or not.
+    fs.writeFileSync(logStreamPath + ".complete", `$${exitCode}`);
+
+    const secret = process.env.SECRET;
+    const strapYardUrl = process.env.STRAPYARD_URL;
+
+    const sent = await sendCompleteNotification(
+      commandId,
+      logStreamPath,
+      exitCode
+    );
+
+    if (sent) {
+      resolve();
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      const sent = await sendCompleteNotification(
+        commandId,
+        logStreamPath,
+        exitCode
+      );
+      if (sent) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 3000);
+  });
 }

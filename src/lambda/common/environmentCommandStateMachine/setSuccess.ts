@@ -6,7 +6,6 @@ import {
   Environment,
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
-  environmentLock,
 } from "../entities";
 
 interface SetSuccessArguments {

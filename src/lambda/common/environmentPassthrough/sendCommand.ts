@@ -24,7 +24,7 @@ export async function sendCommand(
         authorization: environment.secret,
       },
       expectStatus: 200,
-      timeoutMs: 10000,
+      timeoutMs: 1000,
     }
   );
 

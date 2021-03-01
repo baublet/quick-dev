@@ -4,7 +4,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
-import { environment as envEntity, environmentLock } from "./common/entities";
+import { environment as envEntity } from "./common/entities";
 import { environmentStateMachine } from "./common/environmentStateMachine";
 
 // Called by a box when it's up and starts running our provisioning scripts
@@ -37,7 +37,7 @@ export const handler = async (event: APIGatewayEvent) => {
       trx,
       environment,
     });
-    await environmentLock.del(trx, environment.id);
+    await envEntity.setNotWorking(trx, environment.id);
     return result;
   });
 

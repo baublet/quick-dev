@@ -4,12 +4,17 @@ import { ConnectionOrTransaction } from "../../db";
 export async function setWorking(
   trx: ConnectionOrTransaction,
   id: Environment["id"]
-): Promise<Environment> {
+): Promise<true> {
   const results = await trx<Environment>("environments")
     .update({ updated_at: trx.fn.now(), working: true })
-    .where({ id })
-    .limit(1)
-    .returning("*");
+    .where({ id, working: false })
+    .limit(1);
 
-  return results[0];
+  if (results > 0) {
+    return true;
+  }
+
+  throw new Error(
+    `Collision protection: can't set environment ${id} to working. It's already working.`
+  );
 }

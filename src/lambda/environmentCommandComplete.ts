@@ -8,7 +8,6 @@ import {
   EnvironmentCommand,
   environment as envEntity,
   environmentCommand as envCommandEntity,
-  environmentLock,
 } from "./common/entities";
 import { environmentCommandStateMachine } from "./common/environmentCommandStateMachine";
 
@@ -65,7 +64,7 @@ export const handler = async (event: APIGatewayEvent) => {
     };
   }
 
-  return db.transaction(async (trx) => {
+  await db.transaction(async (trx) => {
     if (status === "success") {
       const result = await environmentCommandStateMachine.setSuccess({
         trx,
@@ -91,11 +90,11 @@ export const handler = async (event: APIGatewayEvent) => {
         );
       }
     }
-
-    await environmentLock.del(trx, environment.id);
-
-    return {
-      statusCode: 200,
-    };
   });
+
+  await envEntity.setNotWorking(db, environment.id);
+
+  return {
+    statusCode: 200,
+  };
 };

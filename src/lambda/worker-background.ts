@@ -24,7 +24,6 @@ async function queueJobsForEnvironmentsThatNeedWork() {
   const environments = await environment.getEnvironmentsThatNeedsWork(db);
 
   if (environments.length === 0) {
-    log.debug("No environments need work...");
     return;
   }
 
@@ -41,13 +40,24 @@ async function queueJobsForEnvironmentsThatNeedWork() {
 
 export const handler = () => {
   return new Promise<void>(async (resolve) => {
-    await queueJobsForEnvironmentsThatNeedWork();
-    if (global.working) return resolve();
-    global.working = true;
-    processQueue();
+    // Environment processor
+    const environmentWatcherInterval = setInterval(async () => {
+      await queueJobsForEnvironmentsThatNeedWork();
+    }, 1000);
+
+    // Jobs processor
+    if (!global.working) {
+      global.working = true;
+      processQueue();
+    }
+
+    // Cleanup
     setTimeout(async () => {
-      await stopProcessingQueue();
-      global.working = false;
+      if (global.working) {
+        await stopProcessingQueue();
+        global.working = false;
+      }
+      clearInterval(environmentWatcherInterval);
       resolve();
     }, 5000);
   });

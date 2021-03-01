@@ -6,8 +6,6 @@ import {
   Environment,
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
-  environment as envEntity,
-  environmentLock,
 } from "../entities";
 
 interface SetFailedArguments {

@@ -51,7 +51,7 @@ enum EnvironmentLifecycleStatus {
   provisioning
   finished_provisioning
   error_provisioning
-  starting
+  ready
 }
 
 type Environment {
@@ -67,11 +67,13 @@ type Environment {
   size: String!
   subdomain: String!
   updated: Date!
+  url: String!
   working: Boolean!
 }
 
 type EnvironmentPermissions {
   canDelete: Boolean!
+  canOpen: Boolean!
 }
 
 type User {

@@ -7,6 +7,7 @@ module.exports = {
       env: {
         DEBUG: "true",
       },
+      max_memory_restart: "1G",
     },
     {
       name: "build-provisioner",

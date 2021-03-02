@@ -11,6 +11,7 @@ import {
   setFinishedProvisioning,
   canSetFinishedProvisioning,
 } from "./setFinishedProvisioning";
+import { canSetReady, setReady } from "./setReady";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -36,4 +37,7 @@ export const environmentStateMachine = {
 
   canSetDeleted,
   setDeleted,
+
+  canSetReady,
+  setReady,
 };

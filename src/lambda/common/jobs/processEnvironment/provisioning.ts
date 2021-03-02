@@ -75,6 +75,7 @@ async function advanceIfPossible({
         environmentCommand,
         environmentCommands,
       });
+      return false;
     }
 
     return true;

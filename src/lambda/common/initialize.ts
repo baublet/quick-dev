@@ -1,7 +1,18 @@
-if (process.env.NODE_ENV !== "production") {
-  require("longjohn");
+import { log } from "../../common/logger";
+
+export {};
+
+declare global {
+  module NodeJS {
+    interface Global {
+      initialized: boolean;
+    }
+  }
 }
 
-require("@babel/polyfill/noConflict");
-require("dotenv").config();
-require("source-map-support").install();
+if (!global.initialized) {
+  global.initialized = true;
+  log.debug("Initializing...");
+  require("dotenv").config();
+  require("source-map-support").install();
+}

@@ -3,6 +3,7 @@ import { getDatabaseConnection } from "../../db";
 import { log } from "../../../../common/logger";
 import { processNewEnvironment } from "./new";
 import { processProvisioningEnvironment } from "./provisioning";
+import { processFinishedProvisioningEnvironment } from "./finishedProvisioning";
 
 export async function processEnvironment(payload: { environmentId: string }) {
   const db = getDatabaseConnection();
@@ -35,6 +36,9 @@ export async function processEnvironment(payload: { environmentId: string }) {
           break;
         case "provisioning":
           await processProvisioningEnvironment(trx, environment);
+          break;
+        case "finished_provisioning":
+          await processFinishedProvisioningEnvironment(trx, environment);
           break;
         default:
           break;

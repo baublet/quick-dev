@@ -46,16 +46,14 @@ export const sendCommand = async (payload: {
     });
     if (!canContinue.operationSuccess) {
       log.error(
-        "Unable to send command to environment. State machine forbade it",
+        "Unable to send command to environment. State machine forbids it",
         {
           canContinue,
           method: "setRunning",
           environmentCommand,
         }
       );
-      throw new Error(
-        `Unable to send the command to running state! Errors: ${canContinue.errors}`
-      );
+      return;
     }
 
     await environmentCommandStateMachine.setRunning({

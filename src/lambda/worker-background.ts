@@ -5,7 +5,6 @@ import { getDatabaseConnection } from "./common/db";
 import {
   stopProcessingQueue,
   processQueue,
-  getQueue,
   enqueueJob,
 } from "./common/enqueueJob";
 import { environment } from "./common/entities";
@@ -27,28 +26,44 @@ async function queueJobsForEnvironmentsThatNeedWork() {
     return;
   }
 
-  return Promise.all(
+  await Promise.all(
     environments.map(async (env) => {
       log.debug(
         `Enqueuing process environment job for environment ${env.name}`
       );
-      await environment.setWorking(db, env.id);
-      await enqueueJob("processEnvironment", { environmentId: env.id });
+
+      // Collision protection here -- `setWorking` returns false if it's already
+      // working, so we don't want to work if it's already working
+      const canContinue = await environment.setWorking(db, env.id);
+      if (canContinue) {
+        await enqueueJob(
+          "processEnvironment",
+          { environmentId: env.id },
+          { startAfter: 0 }
+        );
+      }
     })
   );
 }
 
 export const handler = () => {
-  return new Promise<void>(async (resolve) => {
-    // Environment processor
-    const environmentWatcherInterval = setInterval(async () => {
-      await queueJobsForEnvironmentsThatNeedWork();
+  async function queueJobs() {
+    if (!global.working) {
+      return;
+    }
+    await queueJobsForEnvironmentsThatNeedWork();
+    setTimeout(async () => {
+      await queueJobs();
     }, 1000);
+  }
 
-    // Jobs processor
+  return new Promise<void>(async (resolve) => {
     if (!global.working) {
       global.working = true;
+      // Jobs processor
       processQueue();
+      // Environment processor
+      await queueJobs();
     }
 
     // Cleanup
@@ -57,7 +72,6 @@ export const handler = () => {
         await stopProcessingQueue();
         global.working = false;
       }
-      clearInterval(environmentWatcherInterval);
       resolve();
     }, 5000);
   });

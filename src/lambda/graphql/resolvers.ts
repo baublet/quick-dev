@@ -14,6 +14,7 @@ import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolve
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
 import { deleteEnvironment } from "./resolvers/deleteEnvironment";
+import { Environment } from "./generated";
 
 // Provide resolver functions for your schema fields
 export const resolvers = {
@@ -34,6 +35,8 @@ export const resolvers = {
     logs: environmentLogs,
     permissions: environmentPermissions,
     working: environmentWorking,
+    url: (parent: Environment) =>
+      `https://${parent.subdomain}.env.${process.env.STRAPYARD_DOMAIN}`,
   },
   User: {
     repositories,

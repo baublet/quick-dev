@@ -4,7 +4,8 @@ export type EnvironmentLifecycleStatus =
   | "provisioning"
   | "error_provisioning"
   | "finished_provisioning"
-  | "starting";
+  | "starting"
+  | "ready";
 
 export type EnvironmentUserSource = "github";
 

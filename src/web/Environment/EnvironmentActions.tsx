@@ -2,6 +2,7 @@ import React from "react";
 
 import { EnvironmentDetails } from "./useEnvironmentDetails";
 import { DeleteEnvironmentButton } from "./DeleteEnvironmentButton";
+import { OpenEnvironmentButton } from "./OpenEnvironmentButton";
 
 interface EnvironmentActionsProps {
   environment: EnvironmentDetails["environment"];
@@ -13,13 +14,17 @@ export function EnvironmentActions({ environment }: EnvironmentActionsProps) {
     show: boolean;
   }[] = [
     {
+      element: <OpenEnvironmentButton environment={environment} />,
+      show: Boolean(environment?.permissions?.canOpen),
+    },
+    {
       element: <DeleteEnvironmentButton environment={environment} />,
       show: Boolean(environment?.permissions?.canDelete),
     },
   ];
 
   return (
-    <>
+    <div className="space-y-4">
       {buttons.map((button, index) =>
         !button.show ? (
           <React.Fragment key={index}></React.Fragment>
@@ -27,6 +32,6 @@ export function EnvironmentActions({ environment }: EnvironmentActionsProps) {
           <React.Fragment key={index}>{button.element}</React.Fragment>
         )
       )}
-    </>
+    </div>
   );
 }

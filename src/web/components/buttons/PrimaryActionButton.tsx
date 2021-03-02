@@ -3,12 +3,13 @@ import cx from "classnames";
 
 import { ButtonSpinner } from "./ButtonSpinner";
 
-export function DestructiveActionButton({
+export function PrimaryActionButton({
   full,
   loading,
   children,
   variant = "normal",
   disabled = false,
+  href,
   ...props
 }: React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -16,19 +17,21 @@ export function DestructiveActionButton({
 > & {
   full?: boolean;
   loading?: boolean;
-  variant?: "inverted" | "normal";
   disabled?: boolean;
+  variant?: "inverted" | "normal";
+  href?: string;
 }) {
+  const Component = "href" in props ? "a" : "button";
   return (
-    <button
-      {...props}
+    <Component
+      {...(props as any)}
       className={cx(
         "p-2 rounded border text-s font-bold relative",
         {
-          "border-red-500 bg-red-500 text-white hover:bg-red-700":
+          "border-blue-500 bg-blue-500 text-white hover:bg-blue-700":
             variant === "normal",
           "w-full": Boolean(full),
-          "bg-transparent border-red-500 text-red-500 hover:bg-red-50":
+          "bg-transparent border-blue-500 text-blue-500 hover:bg-blue-50":
             variant === "inverted",
           "pointer-events-none": loading || disabled,
         },
@@ -37,6 +40,6 @@ export function DestructiveActionButton({
     >
       {loading && <ButtonSpinner />}
       <span className={cx({ "opacity-0": loading })}>{children}</span>
-    </button>
+    </Component>
   );
 }

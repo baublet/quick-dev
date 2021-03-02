@@ -19,6 +19,7 @@ export async function environmentLogs(
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {
+  return null;
   if (!parent.ipv4) {
     return null;
   }

@@ -14,7 +14,6 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
   await digitalOceanApi({
     path: `droplets/${environment.sourceId}`,
     method: "delete",
-    expectStatus: 204,
     expectJson: false,
   });
 
@@ -23,7 +22,6 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
       digitalOceanApi({
         path: `domains/${process.env.STRAPYARD_DOMAIN}/records/${record.providerId}`,
         method: "delete",
-        expectStatus: 204,
         expectJson: false,
       })
     )

@@ -13,7 +13,8 @@ const baseClassNames =
   "shadow-sm block p-4 border rounded-sm border-gray-400 text-gray-800 leading-5";
 
 const boxClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
-  waiting: baseClassNames,
+  ready: baseClassNames,
+  sending: baseClassNames,
   cancelled: baseClassNames,
   failed: cx(baseClassNames, "border-red-500"),
   running: cx(baseClassNames, "border-yellow-600"),
@@ -23,7 +24,8 @@ const boxClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
 const baseTextClassNames = "";
 
 const textClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
-  waiting: baseTextClassNames,
+  ready: baseTextClassNames,
+  sending: baseTextClassNames,
   cancelled: baseTextClassNames,
   failed: cx(baseTextClassNames, "text-red-500"),
   running: cx(baseTextClassNames, "text-yellow-600"),

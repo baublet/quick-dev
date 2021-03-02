@@ -4,6 +4,7 @@ import { Connection } from "../../db";
 const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
   "new",
   "provisioning",
+  "finished_provisioning",
 ];
 
 export async function getEnvironmentsThatNeedsWork(db: Connection) {

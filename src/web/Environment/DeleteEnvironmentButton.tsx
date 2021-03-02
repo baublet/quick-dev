@@ -35,6 +35,7 @@ export function DeleteEnvironmentButton({
       full={true}
       onClick={deleteEnvironment}
       loading={loading}
+      variant="inverted"
     >
       Delete
     </DestructiveActionButton>

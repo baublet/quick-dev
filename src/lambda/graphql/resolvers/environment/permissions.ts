@@ -15,5 +15,14 @@ export async function environmentPermissions(
           environment: parent,
         })
       ).operationSuccess,
+    canOpen: async () => {
+      if (parent.lifecycleStatus !== "ready") {
+        return false;
+      }
+      if (context.user?.email !== parent.user) {
+        return false;
+      }
+      return true;
+    },
   };
 }

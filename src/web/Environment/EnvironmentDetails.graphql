@@ -3,11 +3,13 @@ query EnvironmentDetails($id: ID!) {
     id
     name
     subdomain
+    url
     ipv4
     lifecycleStatus
     working
     permissions {
       canDelete
+      canOpen
     }
     logs {
       startupLogs

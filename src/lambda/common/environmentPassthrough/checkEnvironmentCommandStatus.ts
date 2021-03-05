@@ -1,8 +1,13 @@
-import { Environment, EnvironmentCommand } from "../entities";
+import {
+  Environment,
+  EnvironmentCommand,
+  environmentCommand as environmentCommandEntity,
+} from "../entities";
 import { getDatabaseConnection } from "../db";
 import { log } from "../../../common/logger";
 import { fetch } from "../fetch";
 import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
+import { enqueueJob } from "../enqueueJob";
 
 function safelyGetJson<T>(text: string): undefined | T {
   try {
@@ -39,9 +44,9 @@ export async function getEnvironmentCommandStatus(
     }
   );
 
-  log.debug("Log response from environment", {
+  log.debug("Status check response from environment", {
     environment,
-    responseBodyFirst50: response.bodyText.substr(0, 50),
+    responseBodyLast50: response.bodyText.substr(-50),
     status: response.status,
   });
 
@@ -56,13 +61,16 @@ export async function getEnvironmentCommandStatus(
   }
 
   if (!responseJson.started) {
-    log.debug(
+    log.error(
       `Expected command ID ${environmentCommand.id} to have started, but it's not!`
     );
     return;
   }
 
-  if (responseJson.isComplete) {
+  if (!responseJson.isComplete) {
+    await enqueueJob("getEnvironmentCommandLogs", {
+      environmentCommandId: environmentCommand.id,
+    });
     log.debug(`Command ${environmentCommand.id} not finished, yet`);
     return;
   }

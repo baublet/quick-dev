@@ -4,7 +4,8 @@ import { fetch } from "../fetch";
 
 export async function getEnvironmentCommandLogs(
   environment: Environment,
-  environmentCommand: EnvironmentCommand
+  environmentCommand: EnvironmentCommand,
+  after: number = 0
 ): Promise<string | null> {
   if (!environment.ipv4) {
     log.warn(
@@ -22,7 +23,7 @@ export async function getEnvironmentCommandLogs(
   }
 
   const response = await fetch(
-    `http://${environment.ipv4}:8333/command/${environmentCommand.id}`,
+    `http://${environment.ipv4}:8333/command/${environmentCommand.id}?after=${after}`,
     {
       method: "get",
       headers: {

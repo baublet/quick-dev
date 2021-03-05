@@ -6,12 +6,20 @@ export async function sendCommand(
   environment: Environment,
   environmentCommand: EnvironmentCommand
 ) {
+  if (environment.deleted) {
+    log.debug(
+      `Environment prompted to send command, but environment is deleted. Skipping`,
+      { environment: environment.subdomain }
+    );
+    return;
+  }
+
   if (!environment.ipv4) {
     log.error(
       "Environment prompted to receive a command, but has no IPv4 address",
       { environment, environmentCommand }
     );
-    throw new Error("Environment is not ready for commands");
+    return;
   }
 
   await fetch(

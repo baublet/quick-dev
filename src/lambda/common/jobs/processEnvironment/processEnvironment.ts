@@ -19,6 +19,14 @@ export async function processEnvironment(payload: { environmentId: string }) {
     );
   }
 
+  if (environment.deleted) {
+    log.debug(
+      "Environment process job cancelled because environment was deleted",
+      { environment: environment.subdomain }
+    );
+    return;
+  }
+
   await envEntity.touch(db, environment.id);
 
   try {

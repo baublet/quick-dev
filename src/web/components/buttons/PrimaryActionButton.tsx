@@ -9,7 +9,6 @@ export function PrimaryActionButton({
   children,
   variant = "normal",
   disabled = false,
-  href,
   ...props
 }: React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -26,7 +25,7 @@ export function PrimaryActionButton({
     <Component
       {...(props as any)}
       className={cx(
-        "p-2 rounded border text-s font-bold relative",
+        "p-2 rounded border text-s font-bold relative block",
         {
           "border-blue-500 bg-blue-500 text-white hover:bg-blue-700":
             variant === "normal",

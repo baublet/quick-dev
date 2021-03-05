@@ -1,3 +1,4 @@
 export { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 export { sendCommand } from "./sendCommand";
-export { getCommandLogs } from "./getCommandLogs";
+export { getEnvironmentCommandStatus } from "./checkEnvironmentCommandStatus";
+export { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";

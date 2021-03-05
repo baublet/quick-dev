@@ -15,27 +15,16 @@ export async function environmentLogs(
   | null
   | string
   | {
-      startupLogs: string | (() => Promise<string | null>);
+      startupLogs: string | null | (() => Promise<string | null>);
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {
-  return null;
   if (!parent.ipv4) {
     return null;
   }
 
-  const startupLogs = async () => {
-    try {
-      const logs = await getEnvironmentStartupLogs(parent);
-      await envEntity.update(context.db, parent.id, { startupLogs: logs });
-      return logs;
-    } catch (e) {
-      return "";
-    }
-  };
-
   return {
-    startupLogs: parent.startupLogs || startupLogs,
+    startupLogs: parent.startupLogs || null,
     commands: () => envCommandEntity.getByEnvironmentId(context.db, parent.id),
   };
 }

@@ -14,5 +14,5 @@ if (!global.initialized) {
   global.initialized = true;
   log.debug("Initializing...");
   require("dotenv").config();
-  require("source-map-support").install();
+  // require("source-map-support").install();
 }

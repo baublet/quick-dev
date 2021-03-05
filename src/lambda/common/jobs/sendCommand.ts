@@ -39,13 +39,21 @@ export const sendCommand = async (payload: {
       );
     }
 
+    if (environment.deleted) {
+      log.debug(
+        `Environment attempted to end command, but environment is deleted. Skipping`,
+        { environment: environment.subdomain }
+      );
+      return;
+    }
+
     const canContinue = await environmentCommandStateMachine.canSetRunning({
       trx,
       environment,
       environmentCommand,
     });
     if (!canContinue.operationSuccess) {
-      log.error(
+      log.debug(
         "Unable to send command to environment. State machine forbids it",
         {
           canContinue,

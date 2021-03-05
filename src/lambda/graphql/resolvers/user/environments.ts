@@ -34,15 +34,11 @@ export async function environments(
     throw unauthorizedError(context);
   }
 
-  log.scream("Here 1");
-
   const environments = await envEntity.get(context.db, {
     user: context.user.email,
     page: currentPage,
     perPage: perPage + 1,
   });
-
-  log.scream("Here 1a");
 
   const hasPreviousPage = currentPage > 1;
   const hasNextPage = environments.length > perPage;
@@ -50,8 +46,6 @@ export async function environments(
   if (hasNextPage) {
     environments.pop();
   }
-
-  log.scream("Here 2");
 
   return {
     currentPage,

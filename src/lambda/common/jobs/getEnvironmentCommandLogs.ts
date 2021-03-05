@@ -3,7 +3,7 @@ import {
   environment as envEntity,
 } from "../entities";
 import { getDatabaseConnection } from "../db";
-import { getCommandLogs } from "../environmentPassthrough";
+import { getEnvironmentCommandLogs as getCommandLogs } from "../environmentPassthrough";
 
 export const getEnvironmentCommandLogs = async (payload: {
   environmentCommandId: string;
@@ -35,13 +35,16 @@ export const getEnvironmentCommandLogs = async (payload: {
 
     const environmentCommandLogs = await getCommandLogs(
       environment,
-      environmentCommandId
+      environmentCommand,
+      environmentCommand.logs?.length
     );
 
     if (environmentCommandLogs) {
-      await envCommandEntity.update(trx, environmentCommand.id, {
-        logs: environmentCommandLogs,
-      });
+      await envCommandEntity.appendLog(
+        trx,
+        environmentCommand.id,
+        environmentCommandLogs
+      );
     }
   });
 };

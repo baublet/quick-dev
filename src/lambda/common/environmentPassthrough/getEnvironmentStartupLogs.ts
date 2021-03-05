@@ -11,11 +11,6 @@ function isFetchableStatus(status: Environment["lifecycleStatus"]): boolean {
 export async function getEnvironmentStartupLogs(
   environment: Environment
 ): Promise<string | null> {
-  // If the startup logs exist on the environment, send those
-  if (environment.startupLogs) {
-    return environment.startupLogs;
-  }
-
   if (!environment.ipv4) {
     log.warn(
       "Tried to get environment startup logs for an environment that doesn't have an IP!",

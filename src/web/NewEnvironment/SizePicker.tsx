@@ -1,13 +1,15 @@
 import React from "react";
 import cx from "classnames";
 
+import type { EnvironmentSize } from "../../lambda/common/entities";
+
 import { H4 } from "../components/H4";
 import { FormState } from "./useFormState";
-import type { EnvironmentSize } from "../../lambda/common/entities";
+import { MachineSize } from "../components/MachineSize";
 
 const sizes: Record<EnvironmentSize, string> = {
   s: "Standard",
-  m: "Power",
+  m: "Speedy",
   l: "Professional",
   xl: "Advanced",
   xxl: "Elite",
@@ -32,8 +34,15 @@ function SizeButton({
   );
   return (
     <>
-      <label htmlFor={id} className={className}>
-        {size}
+      <label htmlFor={id} className={className} title={sizes[size]}>
+        <div
+          className={cx("w-2/3 mx-auto text-gray-300 hover:text-gray-700", {
+            "text-gray-600": checked,
+          })}
+        >
+          <MachineSize size={size} />
+        </div>
+        {sizes[size]}
       </label>
       <input
         id={id}

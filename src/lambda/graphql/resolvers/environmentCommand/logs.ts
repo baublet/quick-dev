@@ -1,8 +1,6 @@
 import { Context } from "../../../common/context";
-import {
-  environment as envEntity,
-  EnvironmentCommand,
-} from "../../../common/entities";
+import { enqueueJob } from "../../../common/enqueueJob";
+import { EnvironmentCommand } from "../../../common/entities";
 import { EnvironmentCommandLogsNodeInput } from "../../generated";
 
 export async function environmentCommandLogs(
@@ -15,10 +13,6 @@ export async function environmentCommandLogs(
     return parent.logs.substr(after);
   }
 
-  const environment = await context
-    .service(envEntity.loader)
-    .load(parent.environmentId);
-
   if (parent.status === "ready") {
     return null;
   }
@@ -27,8 +21,9 @@ export async function environmentCommandLogs(
     return null;
   }
 
-  if (!parent.logs) {
-    return "";
-  }
-  return parent.logs.substring(0, after);
+  await enqueueJob("getEnvironmentCommandLogs", {
+    environmentCommandId: parent.id,
+  });
+
+  return "";
 }

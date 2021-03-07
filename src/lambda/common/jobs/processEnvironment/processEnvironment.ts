@@ -48,6 +48,8 @@ export async function processEnvironment(payload: { environmentId: string }) {
         case "finished_provisioning":
           await processFinishedProvisioningEnvironment(trx, environment);
           break;
+        case "stopping":
+        //
         default:
           break;
       }

@@ -5,7 +5,11 @@ export type EnvironmentLifecycleStatus =
   | "error_provisioning"
   | "finished_provisioning"
   | "starting"
-  | "ready";
+  | "starting_from_snapshot"
+  | "ready"
+  | "stopping"
+  | "snapshotting"
+  | "stopped";
 
 export type EnvironmentUserSource = "github";
 

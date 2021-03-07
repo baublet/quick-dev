@@ -74,7 +74,7 @@ echo "module.exports = {
     }
   }]
 }" >> /ecosystem.config.js
-sudo pm2 start /ecosystem.config.js
+PM2_HOME=.strapyard_pm2 sudo pm2 start /ecosystem.config.js
 
 echo "\n\nNotifying StrapYard (${baseUrl}) that provisioner is ready to go\n\n"
 curl --header "Content-Type: application/json" \
@@ -101,7 +101,10 @@ echo "~fin~"
       tags: [environment.id],
     };
 
-    log.info("Creating a new DigitalOcean environment", { body, environment });
+    log.info("Creating a new DigitalOcean environment", {
+      body,
+      environment: environment.subdomain,
+    });
 
     const createdDroplet = await digitalOceanApi<{
       droplet?: {

@@ -15,13 +15,6 @@ export async function getEnvironmentCommandLogs(
     return null;
   }
 
-  if (
-    environmentCommand.status === "success" ||
-    environmentCommand.status === "failed"
-  ) {
-    return environmentCommand.logs || null;
-  }
-
   const response = await fetch(
     `http://${environment.ipv4}:8333/command/${environmentCommand.id}?after=${after}`,
     {
@@ -35,7 +28,7 @@ export async function getEnvironmentCommandLogs(
   );
 
   log.debug("Log response from environment", {
-    environment,
+    environment: environment.subdomain,
     responseBodyFirst50: response.bodyText.substr(0, 50),
     status: response.status,
   });

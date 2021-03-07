@@ -33,8 +33,8 @@ export async function getEnvironmentStartupLogs(
     timeoutMs: 500,
   });
 
-  log.debug("Log response from environment", {
-    environment,
+  log.debug("Log response from environment for startup logs", {
+    environment: environment.subdomain,
     responseBodyFirst50: response.bodyText.substr(0, 50),
     status: response.status,
   });

@@ -64,6 +64,8 @@ type Environment {
   name: String!
   permissions: EnvironmentPermissions!
   processor: String
+  repositoryUrl: String!
+  repositoryHttpUrl: String!
   size: String!
   subdomain: String!
   updated: Date!

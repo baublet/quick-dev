@@ -35,6 +35,8 @@ export const resolvers = {
     logs: environmentLogs,
     permissions: environmentPermissions,
     working: environmentWorking,
+    repositoryHttpUrl: (parent: Environment) =>
+      parent.repositoryUrl.replace("git://", "https://"),
     url: (parent: Environment) =>
       `https://${parent.subdomain}.env.${process.env.STRAPYARD_DOMAIN}`,
   },

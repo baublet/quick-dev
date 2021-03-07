@@ -2,11 +2,15 @@ import React from "react";
 import { Link as RRLink, LinkProps } from "react-router-dom";
 import cx from "classnames";
 
-export function Link(props: LinkProps) {
-  return (
-    <RRLink
-      {...props}
-      className={cx("text-blue-600 hover:underline", props.className)}
-    />
-  );
+interface StrapYardLinkProps extends LinkProps {
+  external?: boolean;
+  to: string;
+}
+
+export function Link(props: StrapYardLinkProps) {
+  const className = cx("text-blue-600 hover:underline", props.className);
+  if (props.external) {
+    return <a {...props} href={props.to} className={className} />;
+  }
+  return <RRLink {...props} className={className} />;
 }

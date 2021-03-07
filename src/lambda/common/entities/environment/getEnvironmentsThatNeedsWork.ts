@@ -5,6 +5,8 @@ const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
   "new",
   "provisioning",
   "finished_provisioning",
+  "stopping",
+  "snapshotting",
 ];
 
 export async function getEnvironmentsThatNeedsWork(db: Connection) {
@@ -14,7 +16,7 @@ export async function getEnvironmentsThatNeedsWork(db: Connection) {
       b.where("deleted", "=", false);
       b.whereIn("lifecycleStatus", processorStatusesThatNeedWork);
       b.where("working", "=", false);
-      b.where("updated_at", "<", new Date(Date.now() - 1000 * 1));
+      b.where("updated_at", "<", new Date(Date.now() - 1000 * 3));
     })
     .returning("*");
 }

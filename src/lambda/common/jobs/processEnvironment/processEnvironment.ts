@@ -4,6 +4,8 @@ import { log } from "../../../../common/logger";
 import { processNewEnvironment } from "./new";
 import { processProvisioningEnvironment } from "./provisioning";
 import { processFinishedProvisioningEnvironment } from "./finishedProvisioning";
+import { processStoppingEnvironment } from "./stopping";
+import { processSnapshottingEnvironment } from "./snapshotting";
 
 export async function processEnvironment(payload: { environmentId: string }) {
   const db = getDatabaseConnection();
@@ -49,7 +51,11 @@ export async function processEnvironment(payload: { environmentId: string }) {
           await processFinishedProvisioningEnvironment(trx, environment);
           break;
         case "stopping":
-        //
+          await processStoppingEnvironment(trx, environment);
+          break;
+        case "snapshotting":
+          await processSnapshottingEnvironment(trx, environment);
+          break;
         default:
           break;
       }

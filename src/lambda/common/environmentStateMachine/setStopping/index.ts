@@ -1,9 +1,10 @@
 import { Transaction } from "../../db";
-import { Environment } from "../../entities";
+import { Environment, EnvironmentDomainRecord } from "../../entities";
 
-export interface SetReadyArguments {
+export interface SetStoppingArguments {
   trx: Transaction;
   environment: Environment;
+  environmentDomainRecords: EnvironmentDomainRecord[];
 }
 
 export { canSetStopping } from "./canSetStopping";

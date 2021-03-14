@@ -1,9 +1,9 @@
-import { SetReadyArguments } from ".";
+import { SetStoppingArguments } from ".";
 import { StateMachineReturnValue } from "../index";
 
 export async function canSetStopping({
   environment,
-}: SetReadyArguments): Promise<StateMachineReturnValue> {
+}: SetStoppingArguments): Promise<StateMachineReturnValue> {
   if (environment.lifecycleStatus !== "ready") {
     return {
       errors: ["Environment cannot be set to stopping unless it's 'ready'"],

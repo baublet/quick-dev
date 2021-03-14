@@ -1,20 +1,23 @@
 import { environment as envEntity } from "../../entities";
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
-import { SetReadyArguments } from ".";
+import { SetStoppingArguments } from ".";
 import { canSetStopping } from "./canSetStopping";
+import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
 
 export async function setStopping({
   trx,
   environment,
-}: SetReadyArguments): Promise<StateMachineReturnValue> {
-  log.debug("setStarted: Setting environment to status: started", {
+  environmentDomainRecords,
+}: SetStoppingArguments): Promise<StateMachineReturnValue> {
+  log.debug("setStopping: Setting environment to status: stopping", {
     environment: environment.name,
   });
 
   const canContinue = await canSetStopping({
     trx,
     environment,
+    environmentDomainRecords,
   });
 
   if (!canContinue.operationSuccess) {
@@ -22,6 +25,10 @@ export async function setStopping({
   }
 
   // Tell our environment provider to shut it down and record the action
+  await DigitalOceanHandler.shutdownEnvironment(
+    environment,
+    environmentDomainRecords
+  );
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "stopping",

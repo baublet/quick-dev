@@ -1,12 +1,18 @@
 import { Environment, EnvironmentDomainRecord } from "../entities";
 import { EnvironmentAction } from "../entities/environmentAction";
 
-interface ExternalEnvironment {
+export interface ExternalEnvironment {
   id: string;
   name: string;
-  memory: number; // in GB
+  /**
+   * In gigabytes
+   */
+  memory: number;
   cpus: number;
-  disk: number; // in GB
+  /**
+   * In gigabytes
+   */
+  disk: number;
   locked: boolean;
   status: "new" | "active" | "off" | "archive";
   sizeSlug: string;
@@ -14,7 +20,13 @@ interface ExternalEnvironment {
   ipv4?: string;
 }
 
-interface ExternalEnvironmentAction {
+export interface ExternalEnvironmentSnapshot {
+  id: string;
+  name: string;
+  status: "available" | "pending" | "deleted";
+}
+
+export interface ExternalEnvironmentAction {
   id: string;
   status: "in-progress" | "completed" | "errored";
   type: string;
@@ -48,4 +60,10 @@ export interface ExternalEnvironmentHandler {
     name: string,
     data: string
   ) => Promise<{ providerId: string }>;
+  snapshotEnvironment: (
+    environment: Environment
+  ) => Promise<{ snapshotId: string }>;
+  getSnapshot: (
+    environment: Environment
+  ) => Promise<ExternalEnvironmentSnapshot | undefined>;
 }

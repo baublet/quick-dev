@@ -30,6 +30,7 @@ export interface Environment {
   size: EnvironmentSize;
   source: EnvironmentSource;
   sourceId?: string;
+  sourceSnapshotId?: string;
   sshKeyId: string;
   startupLogs?: string | null;
   strapYardFile: string;

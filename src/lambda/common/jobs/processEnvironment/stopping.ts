@@ -4,9 +4,9 @@ import {
   environmentDomainRecord,
 } from "../../entities";
 import { Transaction } from "../../db";
-import { environmentStateMachine } from "../../environmentStateMachine";
 import { log } from "../../../../common/logger";
 import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { environmentStateMachine } from "../../environmentStateMachine";
 
 export async function processStoppingEnvironment(
   trx: Transaction,
@@ -18,7 +18,7 @@ export async function processStoppingEnvironment(
   );
 
   if (!existingAction) {
-    // Create it! Rare that it can get here, but possible
+    // Create it! Unusual that it can get here, but possible
     const domains = await environmentDomainRecord.getByEnvironmentId(
       trx,
       environment.id
@@ -38,28 +38,38 @@ export async function processStoppingEnvironment(
     return;
   }
 
-  if (existingAction) {
-    // Check the action status
-    const action = await DigitalOceanHandler.getAction(
-      environment,
-      existingAction
-    );
-    switch (action.status) {
-      case "completed": {
-        // TODO: delete the old action from the local DB, send the snapshot
-        // TODO: action to the source, save the new action, and advance to
-        // TODO: the environment to the next state.
-      }
-      case "in-progress":
-        return;
-      default:
+  // Check the action status
+  const action = await DigitalOceanHandler.getAction(
+    environment,
+    existingAction
+  );
+  switch (action.status) {
+    case "completed": {
+      const result = await environmentStateMachine.setSnapshotting({
+        trx,
+        environment,
+      });
+      if (!result.operationSuccess) {
         log.error(
-          `Unhandled source action status type while waiting for stop action for ${environment.subdomain}`,
+          "Unexpected error. Environment could not be set to 'snapshotting' after being shut down",
           {
-            action,
-            existingAction,
+            errors: result.errors,
+            environment: environment.subdomain,
           }
         );
+        return;
+      }
+      break;
     }
+    case "in-progress":
+      return;
+    default:
+      log.error(
+        `Unhandled source action status type while waiting for stop action for ${environment.subdomain}`,
+        {
+          action,
+          existingAction,
+        }
+      );
   }
 }

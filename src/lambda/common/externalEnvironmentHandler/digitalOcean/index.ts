@@ -7,6 +7,8 @@ import { getAction } from "./getAction";
 import { getEnvironment } from "./getEnvironment";
 import { newEnvironment } from "./newEnvironment";
 import { shutdownEnvironment } from "./shutdownEnvironment";
+import { snapshotEnvironment } from "./snapshotEnvironment";
+import { getSnapshot } from "./getSnapshot";
 
 export const DigitalOceanHandler: ExternalEnvironmentHandler = {
   createEnvironmentDomainRecord,
@@ -14,6 +16,8 @@ export const DigitalOceanHandler: ExternalEnvironmentHandler = {
   environmentExists,
   getAction,
   getEnvironment,
+  getSnapshot,
   newEnvironment,
   shutdownEnvironment,
+  snapshotEnvironment,
 };

@@ -13,6 +13,8 @@ import {
 } from "./setFinishedProvisioning";
 import { canSetReady, setReady } from "./setReady";
 import { canSetStopping, setStopping } from "./setStopping";
+import { canSetSnapshotting, setSnapshotting } from "./setSnapshotting";
+import { canSetStopped, setStopped } from "./setStopped";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -44,4 +46,10 @@ export const environmentStateMachine = {
 
   canSetStopping,
   setStopping,
+
+  canSetSnapshotting,
+  setSnapshotting,
+
+  canSetStopped,
+  setStopped,
 };

@@ -2,14 +2,15 @@ import fs from "fs";
 import fetch from "node-fetch";
 
 import { log } from "./log";
+import { config } from "./config";
 
 async function sendCompleteNotification(
   commandId: string,
   logStreamPath: string,
   exitCode: number
 ): Promise<boolean> {
-  const secret = process.env.SECRET;
-  const strapYardUrl = process.env.STRAPYARD_URL;
+  const secret = config.getSecret();
+  const strapYardUrl = config.getStrapYardUrl();
   try {
     const status = exitCode === 0 ? "success" : "failed";
     const url = `${strapYardUrl}/.netlify/functions/environmentCommandComplete?commandId=${commandId}&status=${status}`;
@@ -39,9 +40,6 @@ export async function reportComplete(
     // Always write this ASAP. It's the canonical record this machine will
     // use to determine whether to command completed or not.
     fs.writeFileSync(logStreamPath + ".complete", `$${exitCode}`);
-
-    const secret = process.env.SECRET;
-    const strapYardUrl = process.env.STRAPYARD_URL;
 
     const sent = await sendCompleteNotification(
       commandId,

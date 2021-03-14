@@ -3,16 +3,18 @@ import bodyParser from "body-parser";
 
 import { logServer } from "./logServer";
 import { commandRunner } from "./commandRunner";
+import { admin } from "./admin";
 import { log } from "./log";
+import { config } from "./config";
 
 const express = require("express");
 const app: Application = express();
 const port = 8333;
-const secret = process.env.SECRET;
+const secret = config.getSecret();
 
 log("Starting provisioner", {
-  secret: process.env.SECRET,
-  strapyardUrl: process.env.STRAPYARD_URL,
+  secret: config.getSecret(),
+  strapYardUrl: config.getSecret(),
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,6 +35,7 @@ app.get("/", (req, res) => {
 
 logServer(app);
 commandRunner(app);
+admin(app);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

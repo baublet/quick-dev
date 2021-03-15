@@ -4,7 +4,6 @@ import {
   Environment,
   EnvironmentCommand,
 } from "../entities";
-import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
 import { getDatabaseConnection } from "../db";
 import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 import { log } from "../../../common/logger";
@@ -69,15 +68,5 @@ export const sendCommand = async (payload: {
       environment,
       environmentCommand,
     });
-
-    foundEnvironment = environment;
-    foundEnvironmentCommand = environmentCommand;
   });
-
-  if (!foundEnvironment || !foundEnvironmentCommand) {
-    // no op
-    return;
-  }
-
-  await sendCommandToEnvironment(foundEnvironment, foundEnvironmentCommand);
 };

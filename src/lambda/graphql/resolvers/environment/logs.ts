@@ -1,10 +1,8 @@
 import {
-  environment as envEntity,
   environmentCommand as envCommandEntity,
   Environment,
   EnvironmentCommand,
 } from "../../../common/entities";
-import { getEnvironmentStartupLogs } from "../../../common/environmentPassthrough";
 import { Context } from "../../../common/context";
 
 export async function environmentLogs(

@@ -7,6 +7,7 @@ import { getEnvironmentCommandLogs as getCommandLogs } from "../environmentPasst
 
 export const getEnvironmentCommandLogs = async (payload: {
   environmentCommandId: string;
+  full?: boolean;
 }) => {
   return getDatabaseConnection().transaction(async (trx) => {
     const environmentCommandId = payload.environmentCommandId;
@@ -24,10 +25,12 @@ export const getEnvironmentCommandLogs = async (payload: {
       return;
     }
 
+    const after = payload.full ? 0 : environmentCommand.logs?.length || 0;
+
     const environmentCommandLogs = await getCommandLogs(
       environment,
       environmentCommand,
-      environmentCommand.logs?.length
+      after
     );
 
     if (environmentCommandLogs) {

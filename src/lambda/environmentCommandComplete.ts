@@ -4,6 +4,7 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
+import { enqueueJob } from "./common/enqueueJob";
 import {
   EnvironmentCommand,
   environment as envEntity,
@@ -63,6 +64,17 @@ export const handler = async (event: APIGatewayEvent) => {
       statusCode: 404,
     };
   }
+
+  await enqueueJob(
+    "getEnvironmentCommandLogs",
+    {
+      environmentCommandId: environmentCommand.id,
+      full: true,
+    },
+    {
+      retries: 0,
+    }
+  );
 
   await db.transaction(async (trx) => {
     if (status === "success") {

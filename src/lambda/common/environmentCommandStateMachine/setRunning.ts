@@ -5,6 +5,7 @@ import {
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
 } from "../entities";
+import { sendCommand } from "../environmentPassthrough";
 
 interface SetRunningArguments {
   trx: Transaction;
@@ -52,6 +53,8 @@ export async function setRunning({
   if (canContinue.operationSuccess === false) {
     return canContinue;
   }
+
+  await sendCommand(environment, environmentCommand);
 
   await envCommandEntity.update(trx, environmentCommand.id, {
     status: "running",

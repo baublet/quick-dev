@@ -33,7 +33,7 @@ export async function getOrCreateSSHKey(
     return extant;
   }
 
-  log.scream("No provider key for ", { user, userSource });
+  log.debug("No provider key for ", { user, userSource });
 
   // Get/create an SSH key for this context
   const sshKey = await getOrCreateGitHubKey(trx, context);

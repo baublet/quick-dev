@@ -21,6 +21,7 @@ export async function fetch(
     body?: string | Record<string, any>;
   }
 ) {
+  log.debug(`Fetching ${url}`);
   const controller = new AbortController();
   const timeout = setTimeout(() => {
     controller.abort();

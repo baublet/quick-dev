@@ -12,11 +12,11 @@ const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
 export async function getEnvironmentsThatNeedsWork(db: Connection) {
   return db<Environment>("environments")
     .select()
-    .andWhere((b) => {
-      b.where("deleted", "=", false);
-      b.whereIn("lifecycleStatus", processorStatusesThatNeedWork);
-      b.where("working", "=", false);
-      b.where("updated_at", "<", new Date(Date.now() - 1000 * 3));
+    .andWhere((db) => {
+      db.where("deleted", "=", false);
+      db.whereIn("lifecycleStatus", processorStatusesThatNeedWork);
+      db.where("updated_at", "<", new Date(Date.now() - 1000 * 3));
+      db.where("working", "=", "false");
     })
     .returning("*");
 }

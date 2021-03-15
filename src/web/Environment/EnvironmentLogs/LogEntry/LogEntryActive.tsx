@@ -73,8 +73,6 @@ export function LogEntryActive({
   });
 
   React.useEffect(() => {
-    console.log("Log entry");
-
     if (!inView) {
       return;
     }
@@ -101,7 +99,7 @@ export function LogEntryActive({
         },
       });
       setPolling(true);
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [inView]);
@@ -112,7 +110,11 @@ export function LogEntryActive({
         <div className="inline-block mr-4">
           <Status status={status as EnvironmentCommand["status"]} />
         </div>
-        <Link to={logExpandedPath} className={textClassNamesByStatus[status]}>
+        <Link
+          to={logExpandedPath}
+          className={textClassNamesByStatus[status]}
+          replace
+        >
           {title}
         </Link>
       </div>

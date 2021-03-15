@@ -23,7 +23,7 @@ function safelyGetJson<T>(text: string): undefined | T {
 export async function getEnvironmentCommandStatus(
   environment: Environment,
   environmentCommand: EnvironmentCommand
-): Promise<void> {
+) {
   const db = getDatabaseConnection();
   if (!environment.ipv4) {
     log.warn(
@@ -45,7 +45,7 @@ export async function getEnvironmentCommandStatus(
   );
 
   log.debug("Status check response from environment", {
-    environment,
+    environment: environment.subdomain,
     responseBodyLast50: response.bodyText.substr(-50),
     status: response.status,
   });
@@ -60,38 +60,5 @@ export async function getEnvironmentCommandStatus(
     return;
   }
 
-  if (!responseJson.started) {
-    log.error(
-      `Expected command ID ${environmentCommand.id} to have started, but it's not!`
-    );
-    return;
-  }
-
-  if (!responseJson.isComplete) {
-    await enqueueJob("getEnvironmentCommandLogs", {
-      environmentCommandId: environmentCommand.id,
-    });
-    log.debug(`Command ${environmentCommand.id} not finished, yet`);
-    return;
-  }
-
-  if (responseJson.exitCode === 0) {
-    log.debug(`Command ${environmentCommand.id} success! Updating...`);
-    await db.transaction((trx) => {
-      return environmentCommandStateMachine.setSuccess({
-        trx,
-        environment,
-        environmentCommand,
-      });
-    });
-  } else {
-    log.debug(`Command ${environmentCommand.id} has failed... ruh oh`);
-    await db.transaction((trx) => {
-      return environmentCommandStateMachine.setFailed({
-        trx,
-        environment,
-        environmentCommand,
-      });
-    });
-  }
+  return responseJson;
 }

@@ -15,7 +15,5 @@ export async function create(
   const created = await trx<ProviderSSHKey>("providerSSHKeys")
     .insert({ ...input, id: ulid() })
     .returning("*");
-  if (created.length > 0) {
-    return created[0];
-  }
+  return created[0];
 }

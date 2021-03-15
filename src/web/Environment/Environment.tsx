@@ -34,24 +34,18 @@ export function Environment({ id }: EnvironmentProps) {
         content={
           <>
             <div className="mb-4 flex">
-              <LoaderInline
-                className="mr-2"
-                display={environment.working === true}
-              />
-              {environment.working !== false ? null : (
-                <div
-                  className={cx(
-                    "rounded-full p-2 inline-block w-16 mr-6 text-white",
-                    {
-                      "bg-green-500": environment.lifecycleStatus === "ready",
-                      "bg-yellow-500 animate-pulse":
-                        environment.lifecycleStatus === "finished_provisioning",
-                    }
-                  )}
-                >
-                  <MachineSize size={environment.size as EnvironmentSize} />
-                </div>
-              )}
+              <div
+                className={cx(
+                  "rounded-full p-2 inline-block w-16 mr-6 text-white",
+                  {
+                    "bg-green-500": environment.lifecycleStatus === "ready",
+                    "bg-yellow-500 animate-pulse":
+                      environment.lifecycleStatus === "finished_provisioning",
+                  }
+                )}
+              >
+                <MachineSize size={environment.size as EnvironmentSize} />
+              </div>
               <div className="flex flex-col">
                 <H3>{environment?.name || ""}</H3>
                 <span>

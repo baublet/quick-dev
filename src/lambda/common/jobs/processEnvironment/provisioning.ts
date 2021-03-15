@@ -100,7 +100,7 @@ export async function processProvisioningEnvironment(
   });
 
   if (isComplete.operationSuccess) {
-    log.scream("Environment provisioning is complete", { isComplete });
+    log.debug("Environment provisioning is complete", { isComplete });
     await environmentStateMachine.setFinishedProvisioning({
       trx,
       environment,

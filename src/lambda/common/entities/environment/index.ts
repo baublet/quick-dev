@@ -56,3 +56,5 @@ export { getProvisioningEnvironment } from "./getProvisioningEnvironment";
 export { setNotWorking } from "./setNotWorking";
 export { setWorking } from "./setWorking";
 export { getByIdOrFail } from "./getByIdOrFail";
+export { getEnvironmentsWhoseUrlsNeedUpdating } from "./getEnvironmentsWhoseUrlsNeedUpdating";
+export { rescueEnvironments } from "./rescueEnvironments";

@@ -46,7 +46,9 @@ async function queueJobsForEnvironmentsThatNeedWork() {
   );
 }
 
-export const handler = () => {
+export const handler = async () => {
+  await enqueueJob("rescueStuckEnvironments", undefined);
+
   async function queueJobs() {
     if (!global.working) {
       return;

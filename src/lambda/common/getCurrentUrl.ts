@@ -7,6 +7,22 @@ const STRAPYARD_URL = process.env.STRAPYARD_URL;
 const STRAPYARD_PUBLIC_URL = process.env.STRAPYARD_PUBLIC_URL;
 const NGROK_PATH = resolve(process.cwd(), ".ngrokDomain");
 
+export function waitForNgrok() {
+  return new Promise<void>((resolve) => {
+    const interval = setInterval(async () => {
+      if (process.env.STRAPYARD_PUBLIC_URL === "ngrok") {
+        if (existsSync(NGROK_PATH)) {
+          clearInterval(interval);
+          resolve();
+          return;
+        }
+      } else {
+        resolve();
+      }
+    }, 1000);
+  });
+}
+
 export function getCurrentUrl(
   which: "public" | "internal" = "public"
 ): Promise<string> {

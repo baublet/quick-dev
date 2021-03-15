@@ -1,11 +1,13 @@
-import { sendCommand } from "./sendCommand";
+import { checkEnvironmentCommandStatus } from "./checkEnvironmentCommandStatus";
 import { createEnvironmentCommands } from "./createEnvironmentCommands";
 import { deleteEnvironmentInProvider } from "./deleteEnvironmentInProvider";
 import { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";
-import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
 import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 import { processEnvironment } from "./processEnvironment";
-import { checkEnvironmentCommandStatus } from "./checkEnvironmentCommandStatus";
+import { rescueStuckEnvironments } from "./rescueStuckEnvironments";
+import { sendCommand } from "./sendCommand";
+import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
+import { updateEnvironmentStrapYardUrls } from "./updateEnvironmentStrapYardUrls";
 
 export const JOB_MAP = {
   checkEnvironmentCommandStatus,
@@ -14,8 +16,10 @@ export const JOB_MAP = {
   getEnvironmentCommandLogs,
   getEnvironmentStartupLogs,
   processEnvironment,
+  rescueStuckEnvironments,
   sendCommand,
   setupEnvironmentDomain,
+  updateEnvironmentStrapYardUrls,
 } as const;
 
 export type JobKey = keyof typeof JOB_MAP;

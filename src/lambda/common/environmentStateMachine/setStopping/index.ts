@@ -1,8 +1,8 @@
-import { Transaction } from "../../db";
+import { ConnectionOrTransaction } from "../../db";
 import { Environment, EnvironmentDomainRecord } from "../../entities";
 
 export interface SetStoppingArguments {
-  trx: Transaction;
+  trx: ConnectionOrTransaction;
   environment: Environment;
   environmentDomainRecords: EnvironmentDomainRecord[];
 }

@@ -13,13 +13,7 @@ export async function processEnvironment(payload: { environmentId: string }) {
   let subdomain: string = "unknown";
   let id: string | undefined;
 
-  const environment = await envEntity.getById(db, payload.environmentId);
-  if (!environment) {
-    throw new Error(
-      "Invariant violation. processEnvironment job queued up with invalid environment ID: " +
-        payload.environmentId
-    );
-  }
+  const environment = await envEntity.getByIdOrFail(db, payload.environmentId);
 
   if (environment.deleted) {
     log.debug(

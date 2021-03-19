@@ -9,7 +9,7 @@ const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
   "snapshotting",
 ];
 
-export async function getEnvironmentsThatNeedsWork(db: Connection) {
+export async function getEnvironmentsThatNeedWork(db: Connection) {
   return db<Environment>("environments")
     .select()
     .andWhere((db) => {

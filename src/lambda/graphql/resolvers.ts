@@ -1,3 +1,5 @@
+import { Environment } from "./generated";
+
 import { user } from "./resolvers/user";
 import { repositories } from "./resolvers/user/repositories";
 import { gitHub } from "./resolvers/user/repositories/gitHub";
@@ -14,7 +16,7 @@ import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolve
 // Mutations
 import { createEnvironment } from "./resolvers/createEnvironment";
 import { deleteEnvironment } from "./resolvers/deleteEnvironment";
-import { Environment } from "./generated";
+import { stopEnvironment } from "./resolvers/stopEnvironment";
 
 // Provide resolver functions for your schema fields
 export const resolvers = {
@@ -27,6 +29,7 @@ export const resolvers = {
   Mutation: {
     createEnvironment,
     deleteEnvironment,
+    stopEnvironment,
   },
   EnvironmentCommand: {
     logs: environmentCommandLogs,

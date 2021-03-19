@@ -8,6 +8,9 @@ export function H4(
   >
 ) {
   return (
-    <h4 {...props} className={cx("font-bold text-lg", props.className)} />
+    <h4
+      {...props}
+      className={cx("font-bold text-lg leading-5", props.className)}
+    />
   );
 }

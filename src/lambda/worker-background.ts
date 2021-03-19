@@ -20,16 +20,17 @@ declare global {
 async function queueJobsForEnvironmentsThatNeedWork() {
   const db = getDatabaseConnection();
 
-  const environments = await environment.getEnvironmentsThatNeedsWork(db);
+  const environments = await environment.getEnvironmentsThatNeedWork(db);
 
   if (environments.length === 0) {
+    log.debug("worker-background: No environments need work");
     return;
   }
 
   await Promise.all(
     environments.map(async (env) => {
       log.debug(
-        `Enqueuing process environment job for environment ${env.name}`
+        `worker-background: Enqueuing process environment job for environment ${env.name}`
       );
 
       // Collision protection here -- `setWorking` returns false if it's already
@@ -40,6 +41,11 @@ async function queueJobsForEnvironmentsThatNeedWork() {
           "processEnvironment",
           { environmentId: env.id },
           { startAfter: 0 }
+        );
+      } else {
+        log.warn(
+          "worker-background: COLLISION DETECTED! Can't process an environment that's working",
+          { canContinue, environment: env.subdomain }
         );
       }
     })

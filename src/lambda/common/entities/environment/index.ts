@@ -44,7 +44,7 @@ export interface Environment {
 export { create } from "./create";
 export { get } from "./get";
 export { update } from "./update";
-export { getEnvironmentsThatNeedsWork } from "./getEnvironmentsThatNeedsWork";
+export { getEnvironmentsThatNeedWork } from "./getEnvironmentsThatNeedWork";
 export { getEnvironmentCount } from "./getEnvironmentCount";
 export { loader } from "./loader";
 export { getById } from "./getById";

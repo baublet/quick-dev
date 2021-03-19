@@ -56,38 +56,6 @@ curl --header "Content-Type: application/json" \
   --data "{\\"subdomain\\":\\"${environment.subdomain}\\", \\"ipv4\\": \\"$IP_ADDRESS\\"}" \
   "${baseUrl}/.netlify/functions/environmentCreated"
 
-# install Node so we can start our dev server
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt-get install -y nodejs
-npm install pm2@latest -g
-
-# Pull down our bundled and fully packed provisioner server and boot it up 8)
-echo "\n\nDownloading provisioner from StrapYard (${baseUrl})n"
-curl "${baseUrl}/.netlify/functions/getProvisioner" -o ~/provisioner.js
-echo "module.exports = {
-  apps : [{
-    name: 'provisioner',
-    script: '/root/provisioner.js',
-    env: {
-      STRAPYARD_URL: '${baseUrl}',
-      SECRET: '${environment.secret}',
-    }
-  }]
-}" >> /ecosystem.config.js
-PM2_HOME=.strapyard_pm2 sudo pm2 start /ecosystem.config.js
-
-echo "\n\nNotifying StrapYard (${baseUrl}) that provisioner is ready to go\n\n"
-curl --header "Content-Type: application/json" \
-  --header "Authorization: ${environment.secret}" \
-  --request POST \
-  --connect-timeout 5 \
-  --max-time 10 \
-  --retry 5 \
-  --retry-delay 3 \
-  --retry-max-time 40 \
-  --data "{\\"subdomain\\":\\"${environment.subdomain}\\"}" \
-  "${baseUrl}/.netlify/functions/environmentReadyToProvision"
-
 echo "~fin~"
   `;
 

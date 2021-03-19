@@ -1,15 +1,11 @@
-import { Environment } from "../entities";
+import { Environment, SSHKey } from "../entities";
 import { log } from "../../../common/logger";
-import { fetch } from "../fetch";
 
-function isFetchableStatus(status: Environment["lifecycleStatus"]): boolean {
-  if (status === "provisioning") return true;
-  if (status === "starting") return true;
-  return false;
-}
+import { sendSshCommand } from "./sendSshCommand";
 
 export async function getEnvironmentStartupLogs(
-  environment: Environment
+  environment: Environment,
+  sshKey: SSHKey
 ): Promise<string | null> {
   if (!environment.ipv4) {
     log.warn(
@@ -19,25 +15,17 @@ export async function getEnvironmentStartupLogs(
     return null;
   }
 
-  // Only ping the environment if it's in provisioning
-  if (!isFetchableStatus(environment.lifecycleStatus)) {
-    return "";
+  const result = await sendSshCommand({
+    ipv4: environment.ipv4,
+    command: "cat /var/log/cloud-init-output.log",
+    privateKey: sshKey.privateKey,
+    timeoutInMs: 5000,
+  });
+
+  if (result.error) {
+    log.error("Error getting environment startup logs!", { result });
+    return null;
   }
 
-  const response = await fetch(`http://${environment.ipv4}:8333/startupLogs`, {
-    method: "get",
-    headers: {
-      authorization: environment.secret,
-    },
-    expectStatus: 200,
-    timeoutMs: 500,
-  });
-
-  log.debug("Log response from environment for startup logs", {
-    environment: environment.subdomain,
-    responseBodyFirst50: response.bodyText.substr(0, 50),
-    status: response.status,
-  });
-
-  return response.bodyText;
+  return result.buffer || null;
 }

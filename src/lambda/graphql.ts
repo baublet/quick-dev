@@ -7,31 +7,43 @@ import path from "path";
 import { resolvers } from "./graphql/resolvers";
 import { contextFactory as context } from "./graphql/contextFactory";
 
-const schemaPath = path.resolve(
-  process.cwd(),
-  "src",
-  "lambda",
-  "graphql",
-  "schema.graphql"
-);
-const typeDefs = fs.readFileSync(schemaPath).toString();
+declare global {
+  module NodeJS {
+    interface Global {
+      graphqlHandlerFunction: Function;
+    }
+  }
+}
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context,
-  introspection: true,
-  playground: {
-    endpoint: "/.netlify/functions/graphql",
-    settings: {
-      "request.credentials": "same-origin",
+if (!global.graphqlHandlerFunction) {
+  const schemaPath = path.resolve(
+    process.cwd(),
+    "src",
+    "lambda",
+    "graphql",
+    "schema.graphql"
+  );
+  const typeDefs = fs.readFileSync(schemaPath).toString();
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context,
+    introspection: true,
+    playground: {
+      endpoint: "/.netlify/functions/graphql",
+      settings: {
+        "request.credentials": "same-origin",
+      },
     },
-  },
-});
+  });
 
-exports.handler = server.createHandler({
-  cors: {
-    origin: "*",
-    credentials: true,
-  },
-});
+  global.graphqlHandlerFunction = server.createHandler({
+    cors: {
+      origin: "*",
+      credentials: true,
+    },
+  });
+}
+
+exports.handler = global.graphqlHandlerFunction;

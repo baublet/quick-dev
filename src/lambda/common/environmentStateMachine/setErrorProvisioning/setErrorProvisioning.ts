@@ -1,9 +1,10 @@
-import { environment as envEntity } from "../../entities";
+import { environment as envEntity, environmentCommand } from "../../entities";
 import { log } from "../../../../common/logger";
 import { enqueueJob } from "../../enqueueJob";
 import { StateMachineReturnValue } from "..";
 import { SetProvisioningArguments } from ".";
 import { canSetErrorProvisioning } from "./canSetErrorProvisioning";
+import { environmentCommandStateMachine } from "../../environmentCommandStateMachine";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export async function setErrorProvisioning({
@@ -31,6 +32,20 @@ export async function setErrorProvisioning({
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "error_provisioning",
   });
+
+  const commands = await environmentCommand.getByEnvironmentId(
+    trx,
+    environment.id
+  );
+  await Promise.all(
+    commands.map((command) =>
+      environmentCommandStateMachine.setCancelled({
+        trx,
+        environment,
+        environmentCommand: command,
+      })
+    )
+  );
 
   log.debug("setErrorProvisioning: Updated environment to error provisioning", {
     environment: environment.subdomain,

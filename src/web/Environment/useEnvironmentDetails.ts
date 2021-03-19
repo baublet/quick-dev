@@ -1,7 +1,9 @@
 import React from "react";
 
 import { useEnvironmentDetailsQuery } from "../generated";
-import type { EnvironmentLifecycleStatus } from "../../lambda/common/entities";
+import type { EnvironmentLifecycleStatus as EnvironmentLifecycleStatusEnum } from "../../lambda/common/entities";
+
+export type EnvironmentLifecycleStatus = EnvironmentLifecycleStatusEnum;
 
 function shouldPoll(status: undefined | EnvironmentLifecycleStatus): boolean {
   if (!status) return true;

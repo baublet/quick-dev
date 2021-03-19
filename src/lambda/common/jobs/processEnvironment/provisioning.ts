@@ -1,17 +1,12 @@
 import {
   Environment,
   environmentCommand as envCommandEntity,
-  environmentCommand,
   EnvironmentCommand,
 } from "../../entities";
 import { Transaction } from "../../db";
 import { environmentStateMachine } from "../../environmentStateMachine";
-import {
-  environmentCommandStateMachine,
-  transitions,
-} from "../../environmentCommandStateMachine";
+import { environmentCommandStateMachine } from "../../environmentCommandStateMachine";
 import { log } from "../../../../common/logger";
-import { enqueueJob } from "../../enqueueJob";
 
 function isFinalStatus(status: EnvironmentCommand["status"]) {
   return ([
@@ -21,8 +16,14 @@ function isFinalStatus(status: EnvironmentCommand["status"]) {
   ] as EnvironmentCommand["status"][]).includes(status);
 }
 
-function anotherCommandIsRunning(environmentCommands: EnvironmentCommand[]) {
-  return environmentCommands.some((command) => command.status === "running");
+function anyCommandIsRunning(environmentCommands: EnvironmentCommand[]) {
+  return environmentCommands.find((command) => command.status === "running");
+}
+
+function commandTimedOut(environmentCommand: EnvironmentCommand): boolean {
+  const timeout =
+    environmentCommand.updated_at.getMilliseconds() + 1000 * 60 * 5;
+  return Date.now() >= timeout;
 }
 
 // Returns true if we did work, and need to stop advancing through commands
@@ -41,17 +42,23 @@ async function advanceIfPossible({
     return false;
   }
 
-  if (anotherCommandIsRunning(environmentCommands)) {
-    const runningCommand = environmentCommands.find(
-      (command) => command.status === "running"
-    );
-    if (!runningCommand) {
-      // no op
-      return false;
+  const runningCommand = anyCommandIsRunning(environmentCommands);
+  if (runningCommand) {
+    if (commandTimedOut(runningCommand)) {
+      const result = await environmentCommandStateMachine.setCancelled({
+        trx,
+        environment,
+        environmentCommand,
+      });
+      if (!result.operationSuccess) {
+        log.error("Unable to set command to cancelled (TIMEOUT)", {
+          result,
+          environmentCommand,
+        });
+        return false;
+      }
+      return true;
     }
-    enqueueJob("checkEnvironmentCommandStatus", {
-      environmentCommandId: runningCommand.id,
-    });
     return true;
   }
 
@@ -106,6 +113,23 @@ export async function processProvisioningEnvironment(
       environment,
       environmentCommands,
     });
+    return;
+  }
+
+  if (environmentCommands.some((command) => command.status === "cancelled")) {
+    log.debug("Environment provisioning is cancelled", {
+      environment: environment.subdomain,
+    });
+    const result = await environmentStateMachine.setErrorProvisioning({
+      trx,
+      environment,
+    });
+    if (result.operationSuccess) {
+      log.error("Unknown error setting environment to error cancelled", {
+        result,
+        environment: environment.subdomain,
+      });
+    }
     return;
   }
 

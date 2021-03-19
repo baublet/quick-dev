@@ -1,7 +1,6 @@
 import { EnvironmentCommandStateMachineReturn } from ".";
 import { log } from "../../../common/logger";
-import { Transaction } from "../db";
-import { enqueueJob } from "../enqueueJob";
+import { ConnectionOrTransaction } from "../db";
 import {
   Environment,
   EnvironmentCommand,
@@ -9,7 +8,7 @@ import {
 } from "../entities";
 
 interface SetFailedArguments {
-  trx: Transaction;
+  trx: ConnectionOrTransaction;
   environment: Environment;
   environmentCommand: EnvironmentCommand;
 }
@@ -78,10 +77,6 @@ export async function setFailed({
       }
     })
   );
-
-  await enqueueJob("getEnvironmentCommandLogs", {
-    environmentCommandId: environmentCommand.id,
-  });
 
   log.debug("Updated environment command to failed", {
     environment: environment.name,

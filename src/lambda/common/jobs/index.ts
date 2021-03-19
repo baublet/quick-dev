@@ -1,25 +1,19 @@
-import { checkEnvironmentCommandStatus } from "./checkEnvironmentCommandStatus";
 import { createEnvironmentCommands } from "./createEnvironmentCommands";
 import { deleteEnvironmentInProvider } from "./deleteEnvironmentInProvider";
-import { getEnvironmentCommandLogs } from "./getEnvironmentCommandLogs";
 import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 import { processEnvironment } from "./processEnvironment";
 import { rescueStuckEnvironments } from "./rescueStuckEnvironments";
 import { sendCommand } from "./sendCommand";
 import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
-import { updateEnvironmentStrapYardUrls } from "./updateEnvironmentStrapYardUrls";
 
 export const JOB_MAP = {
-  checkEnvironmentCommandStatus,
   createEnvironmentCommands,
   deleteEnvironmentInProvider,
-  getEnvironmentCommandLogs,
   getEnvironmentStartupLogs,
   processEnvironment,
   rescueStuckEnvironments,
   sendCommand,
   setupEnvironmentDomain,
-  updateEnvironmentStrapYardUrls,
 } as const;
 
 export type JobKey = keyof typeof JOB_MAP;

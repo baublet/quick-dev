@@ -5,7 +5,6 @@ export interface LogEntryProps {
   dynamic: boolean;
   environmentId: string;
   logText?: string;
-  poll: boolean;
   status: EnvironmentCommand["status"];
   title: string;
 }

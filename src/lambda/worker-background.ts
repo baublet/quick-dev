@@ -63,7 +63,7 @@ export const handler = async () => {
     if (!global.working) {
       global.working = true;
       // Jobs processor
-      processQueue();
+      await processQueue();
       // Environment processor
       await queueJobs();
     }

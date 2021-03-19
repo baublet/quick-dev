@@ -3,26 +3,53 @@ import cx from "classnames";
 
 import type { EnvironmentSize } from "../../lambda/common/entities/environment";
 
-import { useEnvironmentDetails } from "./useEnvironmentDetails";
+import {
+  useEnvironmentDetails,
+  EnvironmentLifecycleStatus,
+} from "./useEnvironmentDetails";
 import { EnvironmentLogs } from "./EnvironmentLogs";
 
 import { H3 } from "../components/H3";
 import { RightNavigationLayout } from "../components/RightNavigationLayout";
-import { LoaderInline } from "../components/LoaderInline";
 import { EnvironmentActions } from "./EnvironmentActions";
 import { EnvironmentBuilding } from "./EnvironmentBuilding";
 import { MachineSize } from "../components/MachineSize";
 import { Link } from "../components/Link";
+import { Loader } from "../components/Loader";
 
 interface EnvironmentProps {
   id: string;
 }
 
+const StatusMap: Record<
+  EnvironmentLifecycleStatus,
+  "red" | "green" | "yellow" | "gray"
+> = {
+  creating: "yellow",
+  error_provisioning: "red",
+  finished_provisioning: "yellow",
+  new: "yellow",
+  provisioning: "yellow",
+  ready: "green",
+  snapshotting: "yellow",
+  starting: "yellow",
+  starting_from_snapshot: "yellow",
+  stopped: "green",
+  stopping: "yellow",
+};
+
+const StatusClassNames: Record<"red" | "green" | "yellow" | "gray", string> = {
+  gray: "bg-gray-300",
+  green: "bg-green-500",
+  red: "bg-red-500",
+  yellow: "bg-yellow-500 animate-pulse",
+};
+
 export function Environment({ id }: EnvironmentProps) {
   const { loading, environment } = useEnvironmentDetails(id);
 
   if (loading || !environment) {
-    return null;
+    return <Loader />;
   }
 
   const hasLogs = Boolean(environment && environment.logs);
@@ -37,11 +64,7 @@ export function Environment({ id }: EnvironmentProps) {
               <div
                 className={cx(
                   "rounded-full p-2 inline-block w-16 mr-6 text-white",
-                  {
-                    "bg-green-500": environment.lifecycleStatus === "ready",
-                    "bg-yellow-500 animate-pulse":
-                      environment.lifecycleStatus === "finished_provisioning",
-                  }
+                  StatusClassNames[StatusMap[environment.lifecycleStatus]]
                 )}
               >
                 <MachineSize size={environment.size as EnvironmentSize} />

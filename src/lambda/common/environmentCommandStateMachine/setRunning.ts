@@ -1,16 +1,18 @@
 import { EnvironmentCommandStateMachineReturn } from ".";
-import { Transaction } from "../db";
+import { ConnectionOrTransaction } from "../db";
 import {
   Environment,
   EnvironmentCommand,
   environmentCommand as envCommandEntity,
+  SSHKey,
 } from "../entities";
 import { sendCommand } from "../environmentPassthrough";
 
 interface SetRunningArguments {
-  trx: Transaction;
+  trx: ConnectionOrTransaction;
   environment: Environment;
   environmentCommand: EnvironmentCommand;
+  sshKey: SSHKey;
 }
 
 export async function canSetRunning({
@@ -43,25 +45,31 @@ export async function setRunning({
   trx,
   environment,
   environmentCommand,
+  sshKey,
 }: SetRunningArguments): Promise<EnvironmentCommandStateMachineReturn> {
   const canContinue = await canSetRunning({
     trx,
     environment,
     environmentCommand,
+    sshKey,
   });
 
   if (canContinue.operationSuccess === false) {
     return canContinue;
   }
 
-  await sendCommand(environment, environmentCommand);
-
-  await envCommandEntity.update(trx, environmentCommand.id, {
-    status: "running",
-  });
-
-  return {
-    errors: [],
-    operationSuccess: true,
-  };
+  try {
+    await envCommandEntity.update(trx, environmentCommand.id, {
+      status: "running",
+    });
+    return {
+      errors: [],
+      operationSuccess: true,
+    };
+  } catch (e) {
+    return {
+      errors: [e.message, e.stack],
+      operationSuccess: false,
+    };
+  }
 }

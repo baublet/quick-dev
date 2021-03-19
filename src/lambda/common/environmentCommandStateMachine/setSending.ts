@@ -1,5 +1,5 @@
 import { EnvironmentCommandStateMachineReturn } from ".";
-import { Transaction } from "../db";
+import { ConnectionOrTransaction } from "../db";
 import { enqueueJob } from "../enqueueJob";
 import {
   Environment,
@@ -9,7 +9,7 @@ import {
 import { hasCommandInStatus } from "../hasCommandInStatus";
 
 interface SetSendingArguments {
-  trx: Transaction;
+  trx: ConnectionOrTransaction;
   environment: Environment;
   environmentCommand: EnvironmentCommand;
   environmentCommands: EnvironmentCommand[];
@@ -75,14 +75,10 @@ export async function setSending({
     status: "sending",
   });
 
-  enqueueJob(
+  await enqueueJob(
     "sendCommand",
-    {
-      environmentCommandId: environmentCommand.id,
-    },
-    // It should take almost no time to ping the downstream server. If it takes
-    // more than 30 seconds, it probably failed to send, so try again.
-    { timeout: 30000 }
+    { environmentCommandId: environmentCommand.id },
+    { timeout: 1000 * 60 * 12, retries: 3 }
   );
 
   return {

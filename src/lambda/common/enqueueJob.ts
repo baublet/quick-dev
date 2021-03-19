@@ -42,8 +42,8 @@ export function processQueue() {
   return getQueue().process(jobProcessor);
 }
 
-export function stopProcessingQueue() {
-  getQueue().close(10000);
+export async function stopProcessingQueue() {
+  await getQueue().close(120000);
   delete global.queue;
 }
 

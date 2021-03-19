@@ -13,3 +13,4 @@ export interface SSHKey {
 export { create } from "./create";
 export { getByUser } from "./getByUser";
 export { getById } from "./getById";
+export { getByUserOrFail } from "./getByUserOrFail";

@@ -118,7 +118,7 @@ type EnvironmentCommand {
 }
 
 type EnvironmentLogsConnection {
-  startupLogs: String!
+  startupLogs: String
   commands: [EnvironmentCommand!]!
 }
 

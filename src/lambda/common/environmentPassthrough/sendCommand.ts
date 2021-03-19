@@ -1,17 +1,22 @@
-import { Environment, EnvironmentCommand } from "../entities";
+import { Environment, EnvironmentCommand, SSHKey } from "../entities";
 import { log } from "../../../common/logger";
-import { fetch } from "../fetch";
+import { sendSshCommand } from "./sendSshCommand";
 
 export async function sendCommand(
   environment: Environment,
-  environmentCommand: EnvironmentCommand
-) {
+  environmentCommand: EnvironmentCommand,
+  sshKey: SSHKey
+): Promise<undefined | ReturnType<typeof sendSshCommand>> {
+  log.debug("Sending command to environment", {
+    environment: environment.name,
+    environmentCommand: environmentCommand.command,
+  });
   if (environment.deleted) {
     log.debug(
       `Environment prompted to send command, but environment is deleted. Skipping`,
       { environment: environment.subdomain }
     );
-    return;
+    return undefined;
   }
 
   if (!environment.ipv4) {
@@ -19,25 +24,27 @@ export async function sendCommand(
       "Environment prompted to receive a command, but has no IPv4 address",
       { environment, environmentCommand }
     );
-    return;
+    return undefined;
   }
 
-  await fetch(
-    `http://${environment.ipv4}:8333/command/${environmentCommand.id}`,
-    {
-      method: "post",
-      body: environmentCommand.command,
-      headers: {
-        "Content-Type": "text/plain",
-        authorization: environment.secret,
-      },
-      expectStatus: 200,
-      timeoutMs: 1000,
-    }
-  );
-
-  log.info("Environment received command OK", {
-    environment: environment.name,
-    environmentCommand,
+  const result = await sendSshCommand({
+    ipv4: environment.ipv4,
+    command: environmentCommand.command,
+    privateKey: sshKey.privateKey,
   });
+
+  if (result.error) {
+    log.debug("Environment command received error", {
+      environment: environment.name,
+      result,
+    });
+  } else {
+    log.debug("Environment received command OK", {
+      environment: environment.name,
+      environmentCommand,
+      result,
+    });
+  }
+
+  return result;
 }

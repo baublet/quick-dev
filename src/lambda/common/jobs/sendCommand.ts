@@ -1,72 +1,156 @@
 import {
   environment as envEntity,
   environmentCommand as envCommandEntity,
+  SSHKey,
+  sshKey,
   Environment,
   EnvironmentCommand,
 } from "../entities";
-import { getDatabaseConnection } from "../db";
+import { ConnectionOrTransaction, getDatabaseConnection } from "../db";
 import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 import { log } from "../../../common/logger";
+import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
+
+async function getData(
+  db: ConnectionOrTransaction,
+  environmentCommandId: string
+) {
+  const environmentCommand = await envCommandEntity.getByIdOrFail(
+    db,
+    environmentCommandId
+  );
+  const environment = await envEntity.getByIdOrFail(
+    db,
+    environmentCommand.environmentId
+  );
+  const environmentSshKey = await sshKey.getByUserOrFail(
+    db,
+    environment.user,
+    environment.userSource
+  );
+
+  return {
+    environmentCommand,
+    environment,
+    environmentSshKey,
+  };
+}
+
+async function finalizeResults(
+  db: ConnectionOrTransaction,
+  environmentCommandId: string,
+  results:
+    | undefined
+    | {
+        error: string | false;
+        buffer?: string | undefined;
+        errorBuffer?: string | undefined;
+        code?: number | undefined;
+        signal?: string | undefined;
+      }
+) {
+  const { environment, environmentCommand } = await getData(
+    db,
+    environmentCommandId
+  );
+
+  if (results === undefined) {
+    const result = await environmentCommandStateMachine.setFailed({
+      trx: db,
+      environment,
+      environmentCommand,
+    });
+
+    if (result.operationSuccess === false) {
+      log.error("Unknown error setting a command as failed", {
+        result,
+        environment: environment.name,
+      });
+    }
+    return;
+  }
+
+  await envCommandEntity.update(db, environmentCommand.id, {
+    logs: results.buffer,
+  });
+
+  const result = await environmentCommandStateMachine.setSuccess({
+    trx: db,
+    environment,
+    environmentCommand,
+  });
+
+  if (result.operationSuccess === false) {
+    log.error("Unknown error setting a command success", {
+      result,
+      environment: environment.name,
+    });
+  }
+}
+
+async function setupCommandToRun(
+  db: ConnectionOrTransaction,
+  environment: Environment,
+  environmentCommand: EnvironmentCommand,
+  environmentSshKey: SSHKey
+) {
+  const canContinue = await environmentCommandStateMachine.canSetRunning({
+    trx: db,
+    environment,
+    environmentCommand,
+    sshKey: environmentSshKey,
+  });
+  if (!canContinue.operationSuccess) {
+    log.debug(
+      "Unable to send command to environment. State machine forbids it",
+      {
+        canContinue,
+        method: "setRunning",
+        environmentCommand,
+      }
+    );
+    return;
+  }
+
+  await environmentCommandStateMachine.setRunning({
+    trx: db,
+    environment,
+    environmentCommand,
+    sshKey: environmentSshKey,
+  });
+}
 
 export const sendCommand = async (payload: {
   environmentCommandId: string;
 }) => {
-  let foundEnvironment: Environment | undefined;
-  let foundEnvironmentCommand: EnvironmentCommand | undefined;
+  const db = getDatabaseConnection();
+  const preRunData = await getData(db, payload.environmentCommandId);
 
-  await getDatabaseConnection().transaction(async (trx) => {
-    const environmentCommandId = payload.environmentCommandId;
-    const environmentCommand = await envCommandEntity.getById(
-      trx,
-      environmentCommandId
-    );
-
-    if (!environmentCommand) {
-      throw new Error(
-        `Job invariance error! Asked to send command ID ${environmentCommandId}, but no command with that ID exists!`
-      );
-    }
-
-    const environment = await envEntity.getById(
-      trx,
-      environmentCommand.environmentId
-    );
-
-    if (!environment) {
-      throw new Error(
-        `Job invariance error! Environment command ${environmentCommandId} has no environment?!`
-      );
-    }
-
-    if (environment.deleted) {
-      log.debug(
-        `Environment attempted to end command, but environment is deleted. Skipping`,
-        { environment: environment.subdomain }
-      );
-      return;
-    }
-
-    const canContinue = await environmentCommandStateMachine.canSetRunning({
-      trx,
-      environment,
-      environmentCommand,
+  if (
+    preRunData.environment.deleted ||
+    preRunData.environment.lifecycleStatus === "error_provisioning"
+  ) {
+    log.warn("sendCommand: skipping sending command to deleted environment", {
+      environment: preRunData.environment.subdomain,
+      commandFirst50: preRunData.environmentCommand.command.substring(0, 50),
     });
-    if (!canContinue.operationSuccess) {
-      log.debug(
-        "Unable to send command to environment. State machine forbids it",
-        {
-          canContinue,
-          method: "setRunning",
-          environmentCommand,
-        }
-      );
-      return;
-    }
+    return;
+  }
 
-    await environmentCommandStateMachine.setRunning({
-      trx,
-      environment,
-      environmentCommand,
-    });
-  });
+  await setupCommandToRun(
+    db,
+    preRunData.environment,
+    preRunData.environmentCommand,
+    preRunData.environmentSshKey
+  );
+
+  const postRunData = await getData(db, payload.environmentCommandId);
+
+  const results = await sendCommandToEnvironment(
+    postRunData.environment,
+    postRunData.environmentCommand,
+    postRunData.environmentSshKey
+  );
+
+  await finalizeResults(db, payload.environmentCommandId, results);
 };

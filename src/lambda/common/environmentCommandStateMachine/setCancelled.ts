@@ -1,5 +1,5 @@
 import { EnvironmentCommandStateMachineReturn } from ".";
-import { Transaction } from "../db";
+import { ConnectionOrTransaction } from "../db";
 import {
   Environment,
   EnvironmentCommand,
@@ -7,7 +7,7 @@ import {
 } from "../entities";
 
 interface SetCancelledArguments {
-  trx: Transaction;
+  trx: ConnectionOrTransaction;
   environment: Environment;
   environmentCommand: EnvironmentCommand;
 }

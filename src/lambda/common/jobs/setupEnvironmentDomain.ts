@@ -5,6 +5,7 @@ import {
 import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
 import { getDatabaseConnection } from "../../common/db";
 import { log } from "../../../common/logger";
+import { environmentStateMachine } from "../environmentStateMachine";
 
 export const setupEnvironmentDomain = async (payload: {
   environmentId: string;
@@ -42,6 +43,11 @@ export const setupEnvironmentDomain = async (payload: {
       type,
       name,
       data,
+    });
+
+    await environmentStateMachine.setProvisioning({
+      trx,
+      environment,
     });
   });
 };

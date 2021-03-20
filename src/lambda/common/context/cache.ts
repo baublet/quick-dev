@@ -21,9 +21,9 @@ declare global {
   }
 }
 
-function maybeSetCache(
-  name: keyof GlobalCache,
-  factory: () => SimpleCache<any>
+function maybeSetCache<K extends keyof GlobalCache>(
+  name: K,
+  factory: () => SimpleCache<GlobalCache[K]>
 ) {
   global.globalCache = global.globalCache || ({} as any);
   global.globalCache[name] = global.globalCache[name] || factory();

@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const path = require("path");
-const fs = require("fs");
 const esbuild = require("esbuild");
 const glob = require("glob");
 
@@ -16,7 +15,7 @@ esbuild.buildSync({
   platform: "node",
   bundle: true,
   target: ["node12"],
-  external: ["knex", "bee-queue"],
+  external: ["knex", "bee-queue", "apollo-server-lambda", "graceful-fs"],
 });
 
 console.log("Functions built");

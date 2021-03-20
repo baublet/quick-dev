@@ -17,10 +17,10 @@ declare global {
 
 export function getDatabaseConnection() {
   if (!process.env.DATABASE_CONNECTION) {
-    log.debug(
+    log.error(
       "db.ts: No database connection (DATABASE_CONNECTION) found in environment."
     );
-    process.exit();
+    process.exit(1);
   }
 
   if (!global.dbConnection) {

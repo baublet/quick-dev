@@ -56,7 +56,7 @@ export const cache = {
   },
   set: (key: string, value: any, expireAfter: number = 5000): Promise<void> => {
     return new Promise((resolve, reject) => {
-      getRedisClient().set(key, JSON.stringify(value), "EX", 360, (error) => {
+      getRedisClient().setex(key, 3, JSON.stringify(value), (error) => {
         if (error) {
           log.error("Error setting redis cache value", {
             message: error.message,

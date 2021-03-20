@@ -62,7 +62,10 @@ export interface ExternalEnvironmentHandler {
   ) => Promise<{ providerId: string }>;
   snapshotEnvironment: (
     environment: Environment
-  ) => Promise<{ snapshotId: string }>;
+  ) => Promise<{
+    id: string;
+    status: "in-progress" | "completed" | "errored";
+  }>;
   getSnapshot: (
     environment: Environment
   ) => Promise<ExternalEnvironmentSnapshot | undefined>;

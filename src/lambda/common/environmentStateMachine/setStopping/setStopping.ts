@@ -1,4 +1,4 @@
-import { environment as envEntity } from "../../entities";
+import { environment as envEntity, environmentAction } from "../../entities";
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetStoppingArguments } from ".";
@@ -25,10 +25,14 @@ export async function setStopping({
   }
 
   // Tell our environment provider to shut it down and record the action
-  await DigitalOceanHandler.shutdownEnvironment(
+  const createdAction = await DigitalOceanHandler.shutdownEnvironment(
     environment,
     environmentDomainRecords
   );
+  await environmentAction.create(trx, {
+    actionPayload: JSON.stringify(createdAction),
+    environmentId: environment.id,
+  });
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "stopping",

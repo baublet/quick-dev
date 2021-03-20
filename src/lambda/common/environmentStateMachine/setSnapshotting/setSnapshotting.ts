@@ -1,4 +1,4 @@
-import { environment as envEntity } from "../../entities";
+import { environment as envEntity, environmentAction } from "../../entities";
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetSnapshottingArguments } from ".";
@@ -22,8 +22,16 @@ export async function setSnapshotting({
     return canContinue;
   }
 
+  await environmentAction.deleteByEnvironmentId(trx, environment.id);
+
   // Tell our environment provider to shut it down and record the action
-  await DigitalOceanHandler.snapshotEnvironment(environment);
+  const createdAction = await DigitalOceanHandler.snapshotEnvironment(
+    environment
+  );
+  await environmentAction.create(trx, {
+    actionPayload: JSON.stringify(createdAction),
+    environmentId: environment.id,
+  });
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "snapshotting",

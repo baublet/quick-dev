@@ -2,36 +2,6 @@ import { ExternalEnvironmentHandler } from "../index";
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
 
-function getSnapshotId(dropletId: string): Promise<string> {
-  let attemptsLeft = 25;
-  return new Promise(async (resolve) => {
-    const intervalId = setInterval(async () => {
-      if (attemptsLeft === 0) {
-        throw new Error(
-          `getSnapshotId upper poll limit exceeded! Droplet ID: ${dropletId}`
-        );
-      }
-      attemptsLeft = attemptsLeft - 1;
-
-      const { snapshots } = await digitalOceanApi<{
-        snapshots: {
-          id: number;
-        }[];
-      }>({
-        path: `droplets/${dropletId}/snapshots`,
-        method: "get",
-      });
-
-      if (snapshots.length === 0) {
-        return;
-      }
-
-      clearInterval(intervalId);
-      resolve(`${snapshots[0].id}`);
-    }, 500);
-  });
-}
-
 export const snapshotEnvironment: ExternalEnvironmentHandler["snapshotEnvironment"] = (
   environment
 ) => {
@@ -47,7 +17,12 @@ export const snapshotEnvironment: ExternalEnvironmentHandler["snapshotEnvironmen
       throw new Error("Unable to snapshot an environment without a source ID!");
     }
 
-    await digitalOceanApi({
+    const result = await digitalOceanApi<{
+      action: {
+        id: string;
+        status: "in-progress" | "completed" | "errored";
+      };
+    }>({
       path: `droplets/${environment.sourceId}/actions`,
       method: "post",
       body: {
@@ -56,6 +31,6 @@ export const snapshotEnvironment: ExternalEnvironmentHandler["snapshotEnvironmen
       },
     });
 
-    return await getSnapshotId(environment.sourceId);
+    return result.action;
   });
 };

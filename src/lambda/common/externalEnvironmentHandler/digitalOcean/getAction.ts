@@ -37,7 +37,9 @@ export const getAction: ExternalEnvironmentHandler["getAction"] = async (
     path: `droplets/${environment.sourceId}/actions/${parsedPayload.action.id}`,
     method: "get",
   });
-  await cache.set(cacheKey, foundAction.action);
+  if (foundAction.action) {
+    await cache.set(cacheKey, foundAction.action);
+  }
 
   return foundAction.action;
 };

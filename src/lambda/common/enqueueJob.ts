@@ -28,9 +28,16 @@ declare global {
 }
 
 export function getQueue() {
+  const credentials = JSON.parse(process.env.REDIS_CONNECTION || "''");
+  if (!credentials) {
+    log.error(
+      "enqueueJob.ts: No redis connection (REDIS_CONNECTION) found in environment."
+    );
+    process.exit(1);
+  }
   if (!global.queue) {
     global.queue = new Queue<JobQueuePayload>("strapyard", {
-      redis: process.env.REDIS_CREDENTIALS,
+      redis: credentials,
       activateDelayedJobs: true,
     });
   }
@@ -43,7 +50,8 @@ export function processQueue() {
 }
 
 export async function stopProcessingQueue() {
-  await getQueue().close(120000);
+  // Wait as long as 12 minutes to let pending jobs run
+  await getQueue().close(1000 * 60 * 12);
   delete global.queue;
 }
 

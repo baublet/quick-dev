@@ -6,6 +6,7 @@ module.exports = {
       args: "dev --watch",
       env: {
         DEBUG: "true",
+        NODE_OPTIONS: "--inspect",
       },
       max_memory_restart: "1G",
     },

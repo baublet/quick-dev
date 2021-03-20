@@ -24,5 +24,14 @@ export async function environmentPermissions(
       }
       return true;
     },
+    canStop: async () => {
+      if (parent.lifecycleStatus !== "ready") {
+        return false;
+      }
+      if (context.user?.email !== parent.user) {
+        return false;
+      }
+      return true;
+    },
   };
 }

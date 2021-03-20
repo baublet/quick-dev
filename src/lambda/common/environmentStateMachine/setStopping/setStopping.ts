@@ -36,9 +36,7 @@ export async function setStopping({
 
   log.debug(
     "setFinishedProvisioning: Updated environment to finished provisioning",
-    {
-      environment: environment.subdomain,
-    }
+    { environment: environment.subdomain }
   );
 
   return {

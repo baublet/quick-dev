@@ -1,13 +1,8 @@
-import {
-  environmentAction,
-  Environment,
-  environmentDomainRecord,
-} from "../../entities";
+import { environment as envEntity, Environment } from "../../entities";
 import { Transaction } from "../../db";
 import { log } from "../../../../common/logger";
 import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
 import { environmentStateMachine } from "../../environmentStateMachine";
-import { digitalOceanApi } from "../../externalEnvironmentHandler/digitalOcean/digitalOceanApi";
 
 export async function processSnapshottingEnvironment(
   trx: Transaction,
@@ -29,6 +24,7 @@ export async function processSnapshottingEnvironment(
   }
 
   if (environmentSnapshot.status === "pending") {
+    await envEntity.touch(trx, environment.id);
     return;
   }
 
@@ -44,7 +40,7 @@ export async function processSnapshottingEnvironment(
   }
 
   const result = await environmentStateMachine.setStopped({ trx, environment });
-  if (result.operationSuccess) {
+  if (!result.operationSuccess) {
     log.error(
       `processSnapshottingEnvironment: Unexpected error setting environment as stopped ${environment.subdomain}`,
       {

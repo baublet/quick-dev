@@ -6,7 +6,7 @@ export const shutdownEnvironment: ExternalEnvironmentHandler["shutdownEnvironmen
   environment,
   environmentDomainRecords
 ) => {
-  log.info("Destroying a DigitalOcean environment and its domain records", {
+  log.info("shutdownEnvironment", {
     environment: environment.name,
     environmentDomainRecords,
   });

@@ -1,29 +1,43 @@
 import { ExternalEnvironmentHandler } from "../index";
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
+import { cache } from "../../cache";
 
 export const getAction: ExternalEnvironmentHandler["getAction"] = async (
   environment,
   environmentAction
 ) => {
-  log.info("Destroying a DigitalOcean environment and its domain records", {
+  const cacheKey = `get-action-${environmentAction.id}`;
+  log.info("getAction", {
     environment: environment.name,
     environmentAction,
   });
 
-  const parsedPayload = JSON.parse(environmentAction.actionPayload);
-
-  const foundAction = await digitalOceanApi<{
+  const cached = await cache.get<{
     id: string;
     status: "in-progress" | "completed" | "errored";
     type: string;
-  }>({
-    path: `droplets/${environment.sourceId}/actions/${parsedPayload.id}`,
-    method: "post",
-    body: {
-      type: "shutdown",
-    },
-  });
+  }>(cacheKey);
 
-  return foundAction;
+  if (cached) {
+    return cached;
+  }
+
+  const parsedPayload = environmentAction.actionPayload
+    ? JSON.parse(environmentAction.actionPayload)
+    : {};
+
+  const foundAction = await digitalOceanApi<{
+    action: {
+      id: string;
+      status: "in-progress" | "completed" | "errored";
+      type: string;
+    };
+  }>({
+    path: `droplets/${environment.sourceId}/actions/${parsedPayload.action.id}`,
+    method: "get",
+  });
+  await cache.set(cacheKey, foundAction.action);
+
+  return foundAction.action;
 };

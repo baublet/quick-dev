@@ -43,6 +43,7 @@ export async function processStoppingEnvironment(
     environment,
     existingAction
   );
+
   switch (action.status) {
     case "completed": {
       const result = await environmentStateMachine.setSnapshotting({

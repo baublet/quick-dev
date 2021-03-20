@@ -16,6 +16,8 @@ export async function digitalOceanApi<T = any>({
   expectJson?: boolean;
   timeout?: number;
 }): Promise<T> {
+  let bodyText = "";
+  let responseStatus: "unknown" | number = "unknown";
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
     throw new Error("No DIGITAL_OCEAN_TOKEN found in path variables");
   }
@@ -38,6 +40,9 @@ export async function digitalOceanApi<T = any>({
     body,
   });
 
+  bodyText = response.bodyText;
+  responseStatus = response.status;
+
   if (expectStatus) {
     if (response.status !== expectStatus) {
       throw new Error(
@@ -54,6 +59,14 @@ export async function digitalOceanApi<T = any>({
   } catch (e) {
     log.error("Error with DigitalOcean request", {
       message: e.message,
+      bodyText,
+      body,
+      path,
+      method,
+      expectStatus,
+      responseStatus,
+      expectJson,
+      timeout,
     });
     throw e;
   }

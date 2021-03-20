@@ -6,7 +6,7 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
   environment,
   environmentDomainRecords
 ) => {
-  log.info("Destroying a DigitalOcean environment and its domain records", {
+  log.info("destroyEnvironment", {
     environment: environment.name,
     environmentDomainRecords,
   });

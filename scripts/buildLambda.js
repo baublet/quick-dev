@@ -8,14 +8,36 @@ console.log("Building functions...");
 
 esbuild.buildSync({
   entryPoints: glob.sync(
-    path.resolve(__dirname, "..", "src", "lambda", "**", "*.ts")
+    path.resolve(__dirname, "..", "src", "lambda", "*.ts")
   ),
   sourcemap: true,
   outdir: path.resolve(__dirname, "..", "builtFunctions"),
   platform: "node",
   bundle: true,
   target: ["node12"],
-  external: ["knex", "bee-queue", "apollo-server-lambda", "graceful-fs"],
+  external: [
+    "abort-controller",
+    "apollo-server-lambda",
+    "bee-queue",
+    "dataloader",
+    "dotenv",
+    "faker",
+    "graceful-fs",
+    "js-yaml",
+    "jsbn",
+    "knex",
+    "mkdirp",
+    "node-fetch",
+    "pg",
+    "redis-parser",
+    "redis",
+    "source-map-support",
+    "ssh-keygen",
+    "ssh2",
+    "sshpk",
+    "tweetnacl",
+    "ulid",
+  ],
 });
 
 console.log("Functions built");

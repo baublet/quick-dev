@@ -1,6 +1,7 @@
 import { Environment, EnvironmentCommand, SSHKey } from "../entities";
 import { log } from "../../../common/logger";
 import { sendSshCommand } from "./sendSshCommand";
+import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 
 export async function sendCommand(
   environment: Environment,
@@ -35,12 +36,14 @@ export async function sendCommand(
 
   if (result.error) {
     log.debug("Environment command received error", {
-      environment: environment.name,
-      result,
+      environment: environment.subdomain,
+      result: {
+        logLast50: result.buffer?.substr(result.buffer?.length - 50),
+      },
     });
   } else {
     log.debug("Environment received command OK", {
-      environment: environment.name,
+      environment: environment.subdomain,
       environmentCommand,
       result,
     });

@@ -11,12 +11,13 @@ export const shutdownEnvironment: ExternalEnvironmentHandler["shutdownEnvironmen
     environmentDomainRecords,
   });
 
-  const dropAction = await digitalOceanApi<{
+  const shutdownAction = await digitalOceanApi<{
     id: string;
     status: "in-progress" | "completed" | "errored";
   }>({
     path: `droplets/${environment.sourceId}/actions`,
     method: "post",
+    timeout: 10000,
     body: {
       type: "shutdown",
     },
@@ -33,5 +34,5 @@ export const shutdownEnvironment: ExternalEnvironmentHandler["shutdownEnvironmen
     )
   );
 
-  return dropAction;
+  return shutdownAction;
 };

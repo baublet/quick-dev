@@ -1,5 +1,5 @@
-import { environment as envEntity } from "../../entities";
-import { getDatabaseConnection } from "../../db";
+import { environment as envEntity, Environment } from "../../entities";
+import { Transaction, getDatabaseConnection } from "../../db";
 import { log } from "../../../../common/logger";
 import { processNewEnvironment } from "./new";
 import { processProvisioningEnvironment } from "./provisioning";
@@ -7,57 +7,64 @@ import { processFinishedProvisioningEnvironment } from "./finishedProvisioning";
 import { processStoppingEnvironment } from "./stopping";
 import { processSnapshottingEnvironment } from "./snapshotting";
 
+const doNothing = (trx: Transaction, environment: Environment) => {
+  log.error("Unhandled processEnvironment lifecycle status", {
+    environment: environment.subdomain,
+    status: environment.lifecycleStatus,
+  });
+  return Promise.resolve();
+};
+
+const environmentStatusProcessor: Record<
+  Environment["lifecycleStatus"],
+  (trx: Transaction, environment: Environment) => Promise<void>
+> = {
+  new: (trx, environment) => {
+    return processNewEnvironment(trx, environment);
+  },
+  provisioning: (trx, environment) => {
+    return processProvisioningEnvironment(trx, environment);
+  },
+  finished_provisioning: (trx, environment) => {
+    return processFinishedProvisioningEnvironment(trx, environment);
+  },
+  stopping: (trx, environment) => {
+    return processStoppingEnvironment(trx, environment);
+  },
+  snapshotting: (trx, environment) => {
+    return processSnapshottingEnvironment(trx, environment);
+  },
+  creating: doNothing,
+  error_provisioning: doNothing,
+  ready: doNothing,
+  starting: doNothing,
+  starting_from_snapshot: doNothing,
+  stopped: doNothing,
+} as const;
+
 export async function processEnvironment(payload: { environmentId: string }) {
   const db = getDatabaseConnection();
-
-  let subdomain: string = "unknown";
-  let id: string | undefined;
 
   const environment = await envEntity.getByIdOrFail(db, payload.environmentId);
   await envEntity.touch(db, environment.id);
 
   try {
-    id = environment.id;
-
     await db.transaction(async (trx) => {
-      id = environment.id;
-      subdomain = environment.subdomain;
-
-      log.info(`Working on ${subdomain}`);
-
-      switch (environment.lifecycleStatus) {
-        case "new":
-          await processNewEnvironment(trx, environment);
-          break;
-        case "provisioning":
-          await processProvisioningEnvironment(trx, environment);
-          break;
-        case "finished_provisioning":
-          await processFinishedProvisioningEnvironment(trx, environment);
-          break;
-        case "stopping":
-          await processStoppingEnvironment(trx, environment);
-          break;
-        case "snapshotting":
-          await processSnapshottingEnvironment(trx, environment);
-          break;
-        default:
-          break;
-      }
+      log.info(`Working on ${environment.subdomain}`);
+      await environmentStatusProcessor[environment.lifecycleStatus](
+        trx,
+        environment
+      );
     });
-
-    await envEntity.setNotWorking(db, environment.id);
   } catch (e) {
-    if (id) {
-      await envEntity.setNotWorking(db, environment.id);
-    }
     log.error(
-      `Environment processor threw an error while processing environment: ${subdomain}`,
+      `Environment processor threw an error while processing environment: ${environment.subdomain}`,
       {
         message: e.message,
         stack: e.stack,
       }
     );
-    throw e;
+  } finally {
+    await envEntity.setNotWorking(db, environment.id);
   }
 }

@@ -8,9 +8,11 @@ export async function canSetStopped({
   environment,
   trx,
 }: SetStoppedArguments): Promise<StateMachineReturnValue> {
-  if (environment.lifecycleStatus !== "stopping") {
+  if (environment.lifecycleStatus !== "snapshotting") {
     return {
-      errors: ["Environment cannot be set to stopping unless it's 'stopping'"],
+      errors: [
+        "Environment cannot be set to stopping unless it's 'snapshotting'",
+      ],
       operationSuccess: false,
     };
   }

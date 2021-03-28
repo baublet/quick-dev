@@ -8,12 +8,15 @@ export async function processSnapshottingEnvironment(
   trx: Transaction,
   environment: Environment
 ) {
+  log.debug("processSnapshottingEnvironment", {
+    environment: environment.subdomain,
+  });
   const environmentSnapshot = await DigitalOceanHandler.getSnapshot(
     environment
   );
 
   if (!environmentSnapshot) {
-    log.warn(
+    log.debug(
       `Environment suggests it is snapshotting, but no image found in the provider`,
       {
         environmentSubdomain: environment.subdomain,
@@ -24,6 +27,7 @@ export async function processSnapshottingEnvironment(
   }
 
   if (environmentSnapshot.status === "pending") {
+    log.debug("Environment still snapshotting", { environmentSnapshot });
     await envEntity.touch(trx, environment.id);
     return;
   }
@@ -45,6 +49,10 @@ export async function processSnapshottingEnvironment(
       `processSnapshottingEnvironment: Unexpected error setting environment as stopped ${environment.subdomain}`,
       {
         result,
+        environment: {
+          subdomain: environment.subdomain,
+          lifecycleState: environment.lifecycleStatus,
+        },
       }
     );
   }

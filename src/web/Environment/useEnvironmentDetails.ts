@@ -14,25 +14,12 @@ function shouldPoll(status: undefined | EnvironmentLifecycleStatus): boolean {
 }
 
 export function useEnvironmentDetails(id: string) {
-  const { loading, data, refetch } = useEnvironmentDetailsQuery({
+  const { loading, data } = useEnvironmentDetailsQuery({
     variables: {
       id,
     },
+    pollInterval: 5000,
   });
-
-  console.log({ data });
-
-  React.useEffect(() => {
-    const lifecycleStatus: undefined | EnvironmentLifecycleStatus = data
-      ?.environment?.lifecycleStatus as EnvironmentLifecycleStatus;
-    if (shouldPoll(lifecycleStatus)) {
-      const interval = setInterval(() => {
-        console.log("REFETCH");
-        refetch({ id });
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [data?.environment?.lifecycleStatus]);
 
   if (loading || !data) {
     return {

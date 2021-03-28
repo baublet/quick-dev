@@ -27,6 +27,9 @@ export function setDeleted({
         enqueueJob("deleteEnvironmentInProvider", {
           environmentId: environment.id,
         }),
+        enqueueJob("removeAllTrace", {
+          environmentId: environment.id,
+        }),
       ]);
     } catch (e) {
       log.error("Deletion request failed", {

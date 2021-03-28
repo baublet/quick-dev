@@ -1,7 +1,7 @@
 import { log } from "../../../common/logger";
 import { environmentDomainRecord, environment as env } from "../entities";
 import { getDatabaseConnection } from "../../common/db";
-import { destroyEnvironment } from "../../common/externalEnvironmentHandler/digitalOcean/destroyEnvironment";
+import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
 
 export const deleteEnvironmentInProvider = async (payload: {
   environmentId: string;
@@ -23,12 +23,14 @@ export const deleteEnvironmentInProvider = async (payload: {
       throw new Error(`Environment not found`);
     }
 
-    const databaseOperations: Promise<any>[] = [
-      destroyEnvironment(environment, environmentDomainRecords),
-    ];
-    environmentDomainRecords.forEach((record) =>
-      databaseOperations.push(environmentDomainRecord.del(trx, record.id))
-    );
-    await Promise.all(databaseOperations);
+    await Promise.all([
+      DigitalOceanHandler.destroyEnvironment(
+        environment,
+        environmentDomainRecords
+      ),
+      ...environmentDomainRecords.map(async (record) => {
+        await environmentDomainRecord.del(trx, record.id);
+      }),
+    ]);
   });
 };

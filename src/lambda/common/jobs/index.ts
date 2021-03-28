@@ -2,6 +2,7 @@ import { createEnvironmentCommands } from "./createEnvironmentCommands";
 import { deleteEnvironmentInProvider } from "./deleteEnvironmentInProvider";
 import { getEnvironmentStartupLogs } from "./getEnvironmentStartupLogs";
 import { processEnvironment } from "./processEnvironment";
+import { removeAllTrace } from "./removeAllTrace";
 import { rescueStuckEnvironments } from "./rescueStuckEnvironments";
 import { sendCommand } from "./sendCommand";
 import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
@@ -11,6 +12,7 @@ export const JOB_MAP = {
   deleteEnvironmentInProvider,
   getEnvironmentStartupLogs,
   processEnvironment,
+  removeAllTrace,
   rescueStuckEnvironments,
   sendCommand,
   setupEnvironmentDomain,

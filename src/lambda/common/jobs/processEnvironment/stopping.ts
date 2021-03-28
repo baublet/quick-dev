@@ -17,6 +17,11 @@ export async function processStoppingEnvironment(
     environment.id
   );
 
+  log.info("processStoppingEnvironment", {
+    environment: environment.subdomain,
+    action: existingAction?.actionPayload,
+  });
+
   if (!existingAction) {
     // Create it! Unusual that it can get here, but possible
     const domains = await environmentDomainRecord.getByEnvironmentId(
@@ -31,7 +36,7 @@ export async function processStoppingEnvironment(
       environmentId: environment.id,
       actionPayload: JSON.stringify(action),
     });
-    log.debug(`Environment ${environment.subdomain} shutting down`, {
+    log.warn(`Environment ${environment.subdomain} shutting down`, {
       environment: environment.subdomain,
       environmentAction: savedAction,
     });
@@ -43,6 +48,8 @@ export async function processStoppingEnvironment(
     environment,
     existingAction
   );
+
+  log.scream("HERE", { action });
 
   switch (action.status) {
     case "completed": {

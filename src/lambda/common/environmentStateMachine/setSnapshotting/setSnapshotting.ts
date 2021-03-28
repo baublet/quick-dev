@@ -9,21 +9,28 @@ export async function setSnapshotting({
   trx,
   environment,
 }: SetSnapshottingArguments): Promise<StateMachineReturnValue> {
-  log.debug("setSnapshotting: Setting environment to status: snapshotting", {
-    environment: environment.name,
-  });
-
   const canContinue = await canSetSnapshotting({
     trx,
     environment,
   });
 
   if (!canContinue.operationSuccess) {
+    log.warn("Unable to set environment snapshotting", {
+      canContinue,
+      environment: environment.subdomain,
+    });
     return canContinue;
   }
 
+  log.debug("setSnapshotting: Setting environment to status: snapshotting", {
+    environment: environment.subdomain,
+  });
+
   await environmentAction.deleteByEnvironmentId(trx, environment.id);
 
+  log.debug("setSnapshotting: creating action in provider", {
+    environment: environment.subdomain,
+  });
   // Tell our environment provider to shut it down and record the action
   const createdAction = await DigitalOceanHandler.snapshotEnvironment(
     environment

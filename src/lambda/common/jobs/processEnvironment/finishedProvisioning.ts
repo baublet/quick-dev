@@ -7,8 +7,6 @@ export async function processFinishedProvisioningEnvironment(
   trx: Transaction,
   environment: Environment
 ) {
-  log.scream("TEST 1132");
-
   const isComplete = await environmentStateMachine.canSetReady({
     trx,
     environment,

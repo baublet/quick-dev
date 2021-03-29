@@ -1,21 +1,11 @@
-require("./common/initialize");
-
 import { log } from "../common/logger";
 import { getDatabaseConnection } from "./common/db";
 import {
-  stopProcessingQueue,
   processQueue,
+  stopProcessingQueue,
   enqueueJob,
 } from "./common/enqueueJob";
 import { environment } from "./common/entities";
-
-declare global {
-  module NodeJS {
-    interface Global {
-      working: boolean;
-    }
-  }
-}
 
 async function queueJobsForEnvironmentsThatNeedWork() {
   const db = getDatabaseConnection();
@@ -23,14 +13,13 @@ async function queueJobsForEnvironmentsThatNeedWork() {
   const environments = await environment.getEnvironmentsThatNeedWork(db);
 
   if (environments.length === 0) {
-    log.debug("worker-background: No environments need work");
     return;
   }
 
   await Promise.all(
     environments.map(async (env) => {
       log.debug(
-        `worker-background: Enqueuing process environment job for environment ${env.name}`
+        `worker: Enqueuing process environment job for environment ${env.name}`
       );
 
       // Collision protection here -- `setWorking` returns false if it's already
@@ -44,7 +33,7 @@ async function queueJobsForEnvironmentsThatNeedWork() {
         );
       } else {
         log.warn(
-          "worker-background: COLLISION DETECTED! Can't process an environment that's working",
+          "worker: COLLISION DETECTED! Can't process an environment that's working",
           { canContinue, environment: env.subdomain }
         );
       }
@@ -52,35 +41,35 @@ async function queueJobsForEnvironmentsThatNeedWork() {
   );
 }
 
-export const handler = async () => {
-  await enqueueJob("rescueStuckEnvironments", undefined);
-
-  async function queueJobs() {
-    if (!global.working) {
-      return;
-    }
-    await queueJobsForEnvironmentsThatNeedWork();
-    setTimeout(async () => {
-      await queueJobs();
-    }, 1000);
-  }
-
+export const worker = async () => {
   return new Promise<void>(async (resolve) => {
-    if (!global.working) {
-      global.working = true;
-      // Jobs processor
-      await processQueue();
-      // Environment processor
-      await queueJobs();
-    }
+    // Regular worker process
+    await processQueue();
 
-    // Cleanup
+    // Rescuing stuck environments
+    await enqueueJob("rescueStuckEnvironments", undefined);
+
+    // Normal environment operations
+    await queueJobsForEnvironmentsThatNeedWork();
+    const environmentQueue = setInterval(async () => {
+      await queueJobsForEnvironmentsThatNeedWork();
+    }, 1000);
+
     setTimeout(async () => {
-      if (global.working) {
-        await stopProcessingQueue();
-        global.working = false;
-      }
-      resolve();
-    }, 5000);
+      console.log("Worker finishing...");
+      await stopProcessingQueue();
+      clearInterval(environmentQueue);
+      process.exit();
+    }, 1000 * 60);
   });
 };
+
+process.on("SIGINT", async (code) => {
+  log.debug(
+    `Exit code received (${code}). Attempting to exit worker gracefully...`
+  );
+  await stopProcessingQueue();
+  log.debug("Successfully shut down!");
+});
+
+worker();

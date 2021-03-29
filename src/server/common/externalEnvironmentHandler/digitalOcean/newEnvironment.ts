@@ -3,7 +3,6 @@ import { digitalOceanApi } from "./digitalOceanApi";
 import { ExternalEnvironmentHandler } from "../index";
 import { environmentToUniqueName } from "../environmentToUniqueName";
 import { sizeToDOSize } from "./sizeToDOSize";
-import { getCurrentUrl } from "../../getCurrentUrl";
 import { getSSHKeyOrThrow } from "../../gitHub";
 import { getDatabaseConnection } from "../../db";
 import { providerSSHKey } from "../../entities";
@@ -19,7 +18,6 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
   return db.transaction(async (trx) => {
     const name = environmentToUniqueName(environment);
     const size = sizeToDOSize(environment.size);
-    const baseUrl = await getCurrentUrl();
     const sshKey = await getSSHKeyOrThrow(
       trx,
       environment.user,

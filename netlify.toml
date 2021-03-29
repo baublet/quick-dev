@@ -1,7 +1,0 @@
-[build]
-  command = "yarn build:netlify"
-  functions = "builtFunctions"
-  publish = "builtWeb"
-
-[dev]
-  autoLaunch = false

@@ -1,18 +1,15 @@
-import { APIGatewayEvent } from "aws-lambda";
-import cookie from "cookie";
+import { Request } from "express";
 import { ulid } from "ulid";
 
 import { createContext, Context } from "../../common/context";
 
 export async function contextFactory({
-  event,
+  req: request,
 }: {
-  event: APIGatewayEvent;
+  req: Request;
 }): Promise<Context> {
   try {
-    const cookies = cookie.parse(event.headers.cookie || "");
-    const accessToken = cookies.auth || undefined;
-
+    const accessToken = request.cookies?.auth || undefined;
     return createContext({ accessToken, requestId: ulid() });
   } catch (e) {
     console.error({

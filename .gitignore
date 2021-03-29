@@ -1,4 +1,4 @@
-builtFunctions/*
+builtServer/*
 builtWeb/*
 builtProvisioner/*
 .env

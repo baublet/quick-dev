@@ -1,7 +1,7 @@
 import { getCurrentUser } from "../gitHub";
 import { getDatabaseConnection, Connection } from "../../common/db";
 import { serviceHandler } from "./serviceHandler";
-import { cache } from "./cache";
+import { createCache, Caches } from "./cache";
 
 export type UserSource = "github";
 
@@ -18,7 +18,7 @@ export interface Context {
   db: Connection;
   service: ReturnType<typeof serviceHandler>;
   accessToken?: string;
-  cache: typeof global.globalCache;
+  cache: Caches;
   requestId: string;
 }
 
@@ -41,7 +41,7 @@ export async function createContext({
 
   context.db = getDatabaseConnection();
   context.service = serviceHandler(context as Context);
-  context.cache = cache();
+  context.cache = createCache();
   context.accessToken = accessToken;
   context.requestId = requestId;
 

@@ -31,8 +31,9 @@ export async function getCurrentUser(
   }
 
   const gitHubUserCache = context.cache.gitHubUserCache;
+  const cachedUser = await gitHubUserCache.get(accessToken);
 
-  if (!gitHubUserCache.has(accessToken)) {
+  if (!cachedUser) {
     const fetchResponse = (await githubApi({
       path: "user",
       accessToken,
@@ -55,9 +56,10 @@ export async function getCurrentUser(
     };
 
     gitHubUserCache.set(accessToken, userData);
+    return userData;
   } else {
     log.debug("Cache hit for gitHub/getCurrentUser");
   }
 
-  return gitHubUserCache.get(accessToken);
+  return cachedUser;
 }

@@ -41,7 +41,8 @@ export async function getCurrentUserRepos(
   const gitHubUserReposCache = context.cache.gitHubUserReposCache;
   const hasPreviousPage = page > 1;
 
-  if (!gitHubUserReposCache.has(cacheKey)) {
+  const userRepos = await gitHubUserReposCache.get(cacheKey);
+  if (!userRepos) {
     const fetchResponse = await githubApi<GitHubRepoResponse[]>({
       path: `user/repos?per_page=${perPage + 1}&page=${page}`,
       accessToken: context.accessToken,
@@ -67,7 +68,13 @@ export async function getCurrentUserRepos(
       hasPreviousPage,
       nodes: fetchedRepos,
     });
+    return {
+      currentPage: page,
+      hasNextPage,
+      hasPreviousPage,
+      nodes: fetchedRepos,
+    };
   }
 
-  return gitHubUserReposCache.get(cacheKey);
+  return userRepos;
 }

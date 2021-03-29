@@ -2,6 +2,7 @@ import { EnvironmentLifecycleStatus, Environment } from "./index";
 import { Connection } from "../../db";
 
 const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
+  "creating",
   "new",
   "provisioning",
   "finished_provisioning",

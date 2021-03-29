@@ -56,10 +56,6 @@ export const handler = async (event: APIGatewayEvent) => {
   await envEntity.update(db, environment.id, {
     ipv4,
   });
-  // Now that we have an IP, we can setup its domain
-  await enqueueJob("setupEnvironmentDomain", {
-    environmentId: environment.id,
-  });
 
   log.debug("Updated environment IP", { environment, ipv4 });
 

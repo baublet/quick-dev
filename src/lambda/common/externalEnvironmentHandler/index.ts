@@ -48,7 +48,10 @@ export interface ExternalEnvironmentHandler {
     environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
   ) => Promise<void>;
   removeAllTrace: (
-    environment: Pick<Environment, "id" | "sourceId" | "subdomain">
+    environment: Pick<
+      Environment,
+      "id" | "sourceId" | "subdomain" | "sourceSnapshotId"
+    >
   ) => Promise<void>;
   // Should always work. If something is wrong, it throws
   shutdownEnvironment: (

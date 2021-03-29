@@ -4,7 +4,6 @@ import { getDatabaseConnection } from "../../common/db";
 import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
 
 export const removeAllTrace = async (payload: { environmentId: string }) => {
-  log.scream("REMOVING ALL TRACE");
   const db = getDatabaseConnection();
   const environmentId = payload.environmentId;
   const [environment, environmentDomainRecords] = await Promise.all([

@@ -31,7 +31,7 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
           ip_address: string;
           netmask: string;
           gateway: string;
-          type: string;
+          type: "public" | "private";
         }[];
       };
     };
@@ -46,6 +46,9 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
     throw new Error(`Error creating droplet`);
   }
   const droplet = fetchedDroplet.droplet;
+  const publicNetwork = droplet.networks.v4.find(
+    (network) => network.type === "public"
+  );
 
   return {
     id: droplet.id.toString(),
@@ -57,8 +60,6 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
     status: droplet.status,
     sizeSlug: droplet.size_slug,
     provider: "digital_ocean",
-    ipv4: droplet.networks.v4.length
-      ? droplet.networks.v4[0].ip_address
-      : undefined,
+    ipv4: publicNetwork?.ip_address,
   };
 };

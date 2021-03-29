@@ -21,7 +21,7 @@ export async function processNewEnvironment(
     await environmentStateMachine.setCreating({ trx, environment });
   } catch (error) {
     log.error("Error creating an environment in the source!", {
-      environment,
+      environment: environment.subdomain,
       message: error.message,
       stack: error.stack,
     });

@@ -63,6 +63,24 @@ export async function canSetStopped({
     };
   }
 
+  // Now, grab the snapshot so we can get the image ID
+  const snapshot = await DigitalOceanHandler.getSnapshot(environment);
+  if (!snapshot) {
+    log.warn(
+      "Expected environment to have a snapshot by now, but it doesn't...",
+      {
+        environment: environment.subdomain,
+        snapshot,
+      }
+    );
+    return {
+      errors: [
+        "Cannot set a environment to stopped if it has no snapshot! Otherwise, we couldn't start it again...",
+      ],
+      operationSuccess: false,
+    };
+  }
+
   return {
     errors: [],
     operationSuccess: true,

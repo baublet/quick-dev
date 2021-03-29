@@ -56,6 +56,7 @@ export async function getOrCreateSSHKey(
       name: keyTitle,
       public_key: sshKey.publicKey,
     },
+    skipCache: true,
   });
 
   let sshKeySourceId: string;

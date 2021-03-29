@@ -6,6 +6,7 @@ import { processProvisioningEnvironment } from "./provisioning";
 import { processFinishedProvisioningEnvironment } from "./finishedProvisioning";
 import { processStoppingEnvironment } from "./stopping";
 import { processSnapshottingEnvironment } from "./snapshotting";
+import { processCreatingEnvironment } from "./creating";
 
 const doNothing = (trx: Transaction, environment: Environment) => {
   log.error("Unhandled processEnvironment lifecycle status", {
@@ -19,22 +20,12 @@ const environmentStatusProcessor: Record<
   Environment["lifecycleStatus"],
   (trx: Transaction, environment: Environment) => Promise<void>
 > = {
-  new: (trx, environment) => {
-    return processNewEnvironment(trx, environment);
-  },
-  provisioning: (trx, environment) => {
-    return processProvisioningEnvironment(trx, environment);
-  },
-  finished_provisioning: (trx, environment) => {
-    return processFinishedProvisioningEnvironment(trx, environment);
-  },
-  stopping: (trx, environment) => {
-    return processStoppingEnvironment(trx, environment);
-  },
-  snapshotting: (trx, environment) => {
-    return processSnapshottingEnvironment(trx, environment);
-  },
-  creating: doNothing,
+  new: processNewEnvironment,
+  provisioning: processProvisioningEnvironment,
+  finished_provisioning: processFinishedProvisioningEnvironment,
+  stopping: processStoppingEnvironment,
+  snapshotting: processSnapshottingEnvironment,
+  creating: processCreatingEnvironment,
   error_provisioning: doNothing,
   ready: doNothing,
   starting: doNothing,
@@ -50,7 +41,9 @@ export async function processEnvironment(payload: { environmentId: string }) {
 
   try {
     await db.transaction(async (trx) => {
-      log.info(`Working on ${environment.subdomain}`);
+      log.info(
+        `Working on ${environment.subdomain}. Status: ${environment.lifecycleStatus}`
+      );
       await environmentStatusProcessor[environment.lifecycleStatus](
         trx,
         environment

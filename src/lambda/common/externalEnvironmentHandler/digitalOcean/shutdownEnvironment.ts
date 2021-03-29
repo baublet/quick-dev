@@ -18,6 +18,7 @@ export const shutdownEnvironment: ExternalEnvironmentHandler["shutdownEnvironmen
     path: `droplets/${environment.sourceId}/actions`,
     method: "post",
     timeout: 10000,
+    skipCache: true,
     body: {
       type: "shutdown",
     },

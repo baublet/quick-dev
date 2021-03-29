@@ -4,6 +4,7 @@ mutation deleteEnvironment($id: ID!) {
     environment {
       deleted
       id
+      lifecycleStatus
     }
   }
 }

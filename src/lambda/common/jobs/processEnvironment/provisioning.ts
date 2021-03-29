@@ -124,8 +124,8 @@ export async function processProvisioningEnvironment(
       trx,
       environment,
     });
-    if (result.operationSuccess) {
-      log.error("Unknown error setting environment to error cancelled", {
+    if (!result.operationSuccess) {
+      log.error("Unknown error setting environment to provisioning", {
         result,
         environment: environment.subdomain,
       });

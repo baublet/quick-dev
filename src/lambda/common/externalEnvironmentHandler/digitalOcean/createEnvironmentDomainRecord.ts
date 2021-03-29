@@ -21,6 +21,7 @@ export const createEnvironmentDomainRecord: ExternalEnvironmentHandler["createEn
     expectStatus: 201,
     path: `domains/${process.env.STRAPYARD_DOMAIN}/records`,
     method: "post",
+    skipCache: true,
     body: {
       type,
       name,

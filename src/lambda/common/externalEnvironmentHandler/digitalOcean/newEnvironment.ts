@@ -35,29 +35,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       throw new Error("Provider SSH key not found for extant SSH key");
     }
 
-    const provisionScript = `#!/bin/bash
-
-whoami
-pwd
-cd /root
-sudo apt-get update
-
-# Hit our function to tell StrapYard that our environment is up
-echo "\n\nInforming StrapYard (${baseUrl}) that the environment is allocated\n\n"
-IP_ADDRESS=$(curl http://checkip.amazonaws.com)
-curl --header "Content-Type: application/json" \
-  --header "Authorization: ${environment.secret}" \
-  --request POST \
-  --connect-timeout 5 \
-  --max-time 10 \
-  --retry 5 \
-  --retry-delay 3 \
-  --retry-max-time 40 \
-  --data "{\\"subdomain\\":\\"${environment.subdomain}\\", \\"ipv4\\": \\"$IP_ADDRESS\\"}" \
-  "${baseUrl}/.netlify/functions/environmentCreated"
-
-echo "~fin~"
-  `;
+    const provisionScript = ``;
 
     const body = {
       name,
@@ -90,6 +68,7 @@ echo "~fin~"
       body,
       expectStatus: 202,
       timeout: 7500,
+      skipCache: true,
     });
 
     if (!createdDroplet.droplet) {

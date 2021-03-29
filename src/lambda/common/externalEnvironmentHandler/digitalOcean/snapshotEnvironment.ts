@@ -24,6 +24,7 @@ export const snapshotEnvironment: ExternalEnvironmentHandler["snapshotEnvironmen
   }>({
     path: `droplets/${environment.sourceId}/actions`,
     method: "post",
+    skipCache: true,
     body: {
       type: "snapshot",
       name: `${environment.subdomain}-${environment.id}`,

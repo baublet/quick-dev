@@ -29,6 +29,7 @@ function clear(key: string) {
 }
 
 export const cache = {
+  clear,
   get: <V = any>(key: string) => {
     return new Promise<V | null>((resolve) => {
       getRedisClient().get(key, async (error, value) => {
@@ -54,18 +55,27 @@ export const cache = {
       });
     });
   },
-  set: (key: string, value: any, expireAfter: number = 5000): Promise<void> => {
+  set: (
+    key: string,
+    value: any,
+    expireAfterSeconds: number = 3
+  ): Promise<void> => {
     return new Promise((resolve, reject) => {
-      getRedisClient().setex(key, 3, JSON.stringify(value), (error) => {
-        if (error) {
-          log.error("Error setting redis cache value", {
-            message: error.message,
-            stack: error.stack,
-          });
-          return reject(error);
+      getRedisClient().setex(
+        key,
+        expireAfterSeconds,
+        JSON.stringify(value),
+        (error) => {
+          if (error) {
+            log.error("Error setting redis cache value", {
+              message: error.message,
+              stack: error.stack,
+            });
+            return reject(error);
+          }
+          resolve();
         }
-        resolve();
-      });
+      );
     });
   },
 };

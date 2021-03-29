@@ -1,5 +1,7 @@
 import { fetch } from "../../fetch";
 import { log } from "../../../../common/logger";
+import { cache } from "../../cache";
+import hash from "object-hash";
 
 export async function digitalOceanApi<T = any>({
   body,
@@ -8,6 +10,7 @@ export async function digitalOceanApi<T = any>({
   expectStatus,
   expectJson = true,
   timeout = 3000,
+  skipCache = false,
 }: {
   path: string;
   method?: "post" | "delete" | "get";
@@ -15,11 +18,29 @@ export async function digitalOceanApi<T = any>({
   expectStatus?: number;
   expectJson?: boolean;
   timeout?: number;
+  skipCache?: boolean;
 }): Promise<T> {
   let bodyText = "";
   let responseStatus: "unknown" | number = "unknown";
   if (!process.env.DIGITAL_OCEAN_TOKEN) {
     throw new Error("No DIGITAL_OCEAN_TOKEN found in path variables");
+  }
+
+  const cacheKey = hash({
+    path,
+    method,
+    body,
+  });
+
+  if (!skipCache) {
+    const cachedValue = await cache.get(cacheKey);
+    if (cachedValue) {
+      log.debug("Cache hit for DO request", {
+        path,
+        method,
+      });
+      return cachedValue;
+    }
   }
 
   const accessToken = process.env.DIGITAL_OCEAN_TOKEN;
@@ -53,7 +74,13 @@ export async function digitalOceanApi<T = any>({
 
   try {
     if (expectJson) {
+      if (!skipCache) {
+        await cache.set(cacheKey, JSON.parse(response.bodyText));
+      }
       return JSON.parse(response.bodyText) as Promise<T>;
+    }
+    if (!skipCache) {
+      await cache.set(cacheKey, response.bodyText);
     }
     return (response.bodyText as unknown) as Promise<T>;
   } catch (e) {

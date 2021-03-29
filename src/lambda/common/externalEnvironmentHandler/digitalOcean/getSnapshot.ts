@@ -12,7 +12,7 @@ export const getSnapshot: ExternalEnvironmentHandler["getSnapshot"] = async (
       });
       return undefined;
     }
-    log.warn(
+    log.debug(
       `Asked for a snapshot for an environment (${environment.subdomain}) without a snapshot`
     );
 
@@ -29,6 +29,9 @@ export const getSnapshot: ExternalEnvironmentHandler["getSnapshot"] = async (
     });
 
     if (found.snapshots.length === 0) {
+      log.debug("Environment has no snapshots, yet. Waiting...", {
+        environment: environment.subdomain,
+      });
       return undefined;
     }
 

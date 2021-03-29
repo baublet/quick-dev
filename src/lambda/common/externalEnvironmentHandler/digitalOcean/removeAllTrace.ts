@@ -21,14 +21,29 @@ export const removeAllTrace: ExternalEnvironmentHandler["removeAllTrace"] = asyn
     method: "get",
   });
 
+  const snapshotIdsToDelete: string[] = environment.sourceSnapshotId
+    ? [environment.sourceSnapshotId]
+    : [];
+
   if (snapshots.snapshots) {
-    await Promise.all(
-      snapshots.snapshots.map(async (snapshot) => {
-        await digitalOceanApi({
-          path: `images/${snapshot.id}`,
-          method: "delete",
-        });
-      })
+    snapshotIdsToDelete.push(
+      ...snapshots.snapshots.map((snapshot) => `${snapshot.id}`)
     );
   }
+
+  if (!snapshotIdsToDelete.length) {
+    log.debug("No snapshots to delete", { snapshots });
+    return;
+  }
+
+  await Promise.all(
+    snapshotIdsToDelete.map(async (id) => {
+      await digitalOceanApi({
+        path: `images/${id}`,
+        method: "delete",
+        expectJson: false,
+        skipCache: true,
+      });
+    })
+  );
 };

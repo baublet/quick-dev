@@ -24,9 +24,6 @@ export function setDeleted({
       });
       await Promise.all([
         envEntity.del(trx, environment.id),
-        enqueueJob("deleteEnvironmentInProvider", {
-          environmentId: environment.id,
-        }),
         enqueueJob("removeAllTrace", {
           environmentId: environment.id,
         }),

@@ -16,6 +16,7 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
     path: `droplets/${environment.sourceId}`,
     method: "delete",
     expectJson: false,
+    skipCache: true,
   });
 
   await Promise.all(

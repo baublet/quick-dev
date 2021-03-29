@@ -56,7 +56,7 @@ export const worker = async () => {
     }, 1000);
 
     setTimeout(async () => {
-      console.log("Worker finishing...");
+      log.debug("Worker awaiting lingering processes before rebooting...");
       await stopProcessingQueue();
       clearInterval(environmentQueue);
       process.exit();

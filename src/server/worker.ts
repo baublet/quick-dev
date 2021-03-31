@@ -64,12 +64,16 @@ export const worker = async () => {
   });
 };
 
-process.on("SIGINT", async (code) => {
+async function handleExit(code: number) {
   log.debug(
     `Exit code received (${code}). Attempting to exit worker gracefully...`
   );
   await stopProcessingQueue();
   log.debug("Successfully shut down!");
-});
+}
+
+process.on("SIGINT", handleExit);
+process.on("SIGABRT", handleExit);
+process.on("SIGTERM", handleExit);
 
 worker();

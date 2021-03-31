@@ -12,7 +12,7 @@ export function Application() {
       <AuthProvider>
         <GraphQLProvider>
           <Header />
-          <main>
+          <main className="mb-60">
             <Routes />
           </main>
         </GraphQLProvider>

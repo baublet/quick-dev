@@ -1,7 +1,7 @@
 import React from "react";
 import cx from "classnames";
 
-import type { EnvironmentSize } from "../../lambda/common/entities/environment";
+import type { EnvironmentSize } from "../../server/common/entities/environment";
 
 import {
   useEnvironmentDetails,
@@ -16,6 +16,8 @@ import { EnvironmentBuilding } from "./EnvironmentBuilding";
 import { MachineSize } from "../components/MachineSize";
 import { Link } from "../components/Link";
 import { Loader } from "../components/Loader";
+import { Divider } from "../components/Divider";
+import { EnvironmentStatusBadge } from "./EnvironmentStatusBadge";
 
 interface EnvironmentProps {
   id: string;
@@ -63,14 +65,19 @@ export function Environment({ id }: EnvironmentProps) {
             <div className="mb-4 flex">
               <div
                 className={cx(
-                  "rounded-full p-2 inline-block w-16 mr-6 text-white",
+                  "rounded-full p-2 inline-block w-16 mr-6 text-white h-16",
                   StatusClassNames[StatusMap[environment.lifecycleStatus]]
                 )}
               >
                 <MachineSize size={environment.size as EnvironmentSize} />
               </div>
               <div className="flex flex-col">
-                <H3>{environment?.name || ""}</H3>
+                <H3 className="mt-2">{environment?.name || ""}</H3>
+                <div className="my-2">
+                  <EnvironmentStatusBadge
+                    status={environment.lifecycleStatus}
+                  />
+                </div>
                 <span>
                   <Link to={environment.repositoryHttpUrl} external={true}>
                     {environment.repositoryUrl}
@@ -78,10 +85,27 @@ export function Environment({ id }: EnvironmentProps) {
                 </span>
               </div>
             </div>
-            <b>Status:</b> {environment.lifecycleStatus}
           </>
         }
       />
+      <Divider />
+      <div className="my-2 flex justify-between">
+        <div>
+          {environment.lifecycleStatus === "ready" ? (
+            <Link to={environment.url} external>
+              {environment.url}
+            </Link>
+          ) : (
+            environment.url
+          )}
+        </div>
+        {environment.ipv4 ? (
+          <div>
+            <b>ipv4:</b> {environment.ipv4}
+          </div>
+        ) : null}
+      </div>
+      <Divider />
       {!hasLogs ? (
         <EnvironmentBuilding />
       ) : (

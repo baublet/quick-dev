@@ -1,4 +1,4 @@
-import type { EnvironmentCommand } from "../../../../lambda/common/entities";
+import type { EnvironmentCommand } from "../../../../server/common/entities";
 
 export interface LogEntryProps {
   commandId: string;

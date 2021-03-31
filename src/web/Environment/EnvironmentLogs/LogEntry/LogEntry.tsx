@@ -1,9 +1,9 @@
 import React from "react";
-import { Route, Link } from "react-router-dom";
+import { Route, Link, useLocation } from "react-router-dom";
 import cx from "classnames";
 import { useInView } from "react-hook-inview";
 
-import type { EnvironmentCommand } from "../../../../lambda/common/entities";
+import type { EnvironmentCommand } from "../../../../server/common/entities";
 import { LogOutput } from "../../../components/LogOutput";
 import { StatusIndicator } from "../../../components/StatusIndicator";
 import { useGetEnvironmentCommandLogsLazyQuery } from "../../../generated";
@@ -18,8 +18,7 @@ const hasLogs: Record<EnvironmentCommand["status"], boolean> = {
   success: true,
 };
 
-const baseClassNames =
-  "shadow-sm block p-4 border rounded-sm border-gray-400 text-gray-800 leading-5";
+const baseClassNames = "block text-gray-800 leading-5";
 
 const boxClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
   ready: baseClassNames,
@@ -36,9 +35,18 @@ const textClassNamesByStatus: Record<EnvironmentCommand["status"], string> = {
   ready: baseTextClassNames,
   sending: baseTextClassNames,
   cancelled: baseTextClassNames,
-  failed: cx(baseTextClassNames, "text-red-500"),
-  running: cx(baseTextClassNames, "text-yellow-600"),
-  success: cx(baseTextClassNames, "text-green-600"),
+  failed: cx(
+    baseTextClassNames,
+    "text-red-500 hover:text-red-900 hover:underline"
+  ),
+  running: cx(
+    baseTextClassNames,
+    "text-yellow-600 hover:text-yellow-900 hover:underline"
+  ),
+  success: cx(
+    baseTextClassNames,
+    "text-green-600 hover:text-green-900 hover:underline"
+  ),
 };
 
 function Status({ status }: { status: EnvironmentCommand["status"] }) {
@@ -62,7 +70,12 @@ export function LogEntry({
   status,
   title,
 }: LogEntryProps) {
+  const { pathname } = useLocation();
   const logExpandedPath = `/environment/${environmentId}/logs/${commandId}`;
+  const linkPath =
+    logExpandedPath === pathname
+      ? `/environment/${environmentId}/logs/`
+      : logExpandedPath;
   const [ref, inView] = useInView();
   const [logOutput, setLogOutput] = React.useState<string | undefined>();
   const [getLogs, { loading }] = useGetEnvironmentCommandLogsLazyQuery({
@@ -94,22 +107,17 @@ export function LogEntry({
   return (
     <div className="mt-4">
       <div className={boxClassNamesByStatus[status]}>
-        <div className="inline-block mr-4">
+        <div className="inline-block mr-2">
           <Status status={status as EnvironmentCommand["status"]} />
         </div>
-        <Link
-          to={logExpandedPath}
-          className={textClassNamesByStatus[status]}
-          replace
-        >
+        <Link to={linkPath} className={textClassNamesByStatus[status]} replace>
           {title}
         </Link>
       </div>
       <Route path={logExpandedPath}>
-        <LogOutput
-          logText={!dynamic ? logText : logOutput}
-          streaming={status === "running" || loading}
-        />
+        <div className="mt-2">
+          <LogOutput logText={!dynamic ? logText : logOutput} />
+        </div>
         {!dynamic ? null : <div ref={ref} />}
       </Route>
     </div>

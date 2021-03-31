@@ -1,12 +1,13 @@
 import React from "react";
 
-import type { EnvironmentSize } from "../../lambda/common/entities/environment";
+import type { EnvironmentSize } from "../../server/common/entities/environment";
 
 import { H4 } from "../components/H4";
 import { Meatball } from "../components/Meatball";
 import { Link } from "../components/Link";
 import { Environment } from "../generated";
 import { MachineSize } from "../components/MachineSize";
+import { EnvironmentStatusBadge } from "../Environment/EnvironmentStatusBadge";
 
 interface EnvironmentProps {
   environment: Pick<
@@ -25,7 +26,9 @@ export function EnvironmentCard({ environment }: EnvironmentProps) {
         <H4>
           <Link to={`/environment/${environment.id}`}>{environment.name}</Link>
         </H4>
-        <b>Status:</b> {environment.lifecycleStatus}
+        <div className="my-1">
+          <EnvironmentStatusBadge status={environment.lifecycleStatus} />
+        </div>
         {environment.ipv4 ? (
           <div>
             <b>IP:</b> {environment.ipv4}

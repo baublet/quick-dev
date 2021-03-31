@@ -2,7 +2,7 @@ import React from "react";
 
 import { H4 } from "../../components/H4";
 import { LogEntry } from "./LogEntry";
-import type { EnvironmentCommand } from "../../../lambda/graphql/generated";
+import type { EnvironmentCommand } from "../../../server/graphql/generated";
 
 interface EnvironmentLogsProps {
   environmentId: string;
@@ -26,7 +26,6 @@ export function EnvironmentLogs({
         logText={startupLogs}
         status={startupLogs ? "success" : "ready"}
         dynamic={false}
-        poll={false}
       />
       {commands.map((command) => (
         <LogEntry
@@ -36,7 +35,6 @@ export function EnvironmentLogs({
           commandId={command.id}
           title={command.title}
           dynamic={true}
-          poll={true}
         />
       ))}
     </div>

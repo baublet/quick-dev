@@ -18,7 +18,7 @@ export function StatusIndicator({
   return (
     <div
       className={cx(
-        "align-middle inline-block w-3 h-3",
+        "align-middle inline-block w-3 h-3 rounded-full",
         statusColorClasses[status]
       )}
       title={alt}

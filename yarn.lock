@@ -650,6 +650,13 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@baublet/ts-object-helpers@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@baublet/ts-object-helpers/-/ts-object-helpers-1.0.3.tgz#0d3b0e5fc0f9bc47cae927ffa4deb8c967524a17"
+  integrity sha512-XLqxrREB65YeZidaIdriy8ec80opm4LtROP/9NgDYkn3ejT6jNwbu8KCMM7cpgyIamVYSQjCSI3NbKQa/fXyJg==
+  dependencies:
+    lodash.get "^4.4.2"
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
@@ -6353,7 +6360,7 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash.get@^4:
+lodash.get@^4, lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=

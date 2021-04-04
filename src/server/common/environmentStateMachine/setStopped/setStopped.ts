@@ -47,6 +47,7 @@ export async function setStopped({
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "stopped",
     sourceSnapshotId: snapshot.id,
+    ipv4: undefined,
   });
 
   log.debug("setStopped: Updated environment to stopped", {

@@ -10,9 +10,11 @@ import { newEnvironment } from "./newEnvironment";
 import { removeAllTrace } from "./removeAllTrace";
 import { shutdownEnvironment } from "./shutdownEnvironment";
 import { snapshotEnvironment } from "./snapshotEnvironment";
+import { deleteSnapshot } from "./deleteSnapshot";
 
 export const DigitalOceanHandler: ExternalEnvironmentHandler = {
   createEnvironmentDomainRecord,
+  deleteSnapshot,
   destroyEnvironment,
   environmentExists,
   getAction,

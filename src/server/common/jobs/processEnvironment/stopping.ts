@@ -49,8 +49,6 @@ export async function processStoppingEnvironment(
     existingAction
   );
 
-  log.scream("HERE", { action });
-
   switch (action.status) {
     case "completed": {
       const result = await environmentStateMachine.setSnapshotting({

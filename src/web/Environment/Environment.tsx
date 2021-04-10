@@ -1,6 +1,6 @@
 import React from "react";
 import cx from "classnames";
-import { get } from "@baublet/ts-object-helpers";
+import copy from "copy-to-clipboard";
 
 import type { EnvironmentSize } from "../../server/common/entities/environment";
 
@@ -19,6 +19,7 @@ import { Link } from "../components/Link";
 import { Loader } from "../components/Loader";
 import { Divider } from "../components/Divider";
 import { EnvironmentStatusBadge } from "./EnvironmentStatusBadge";
+import { CopyToClipboard } from "../components/buttons/CopyToClipboard";
 
 interface EnvironmentProps {
   id: string;
@@ -37,7 +38,7 @@ const StatusMap: Record<
   snapshotting: "yellow",
   starting: "yellow",
   starting_from_snapshot: "yellow",
-  stopped: "green",
+  stopped: "gray",
   stopping: "yellow",
 };
 
@@ -92,6 +93,8 @@ export function Environment({ id }: EnvironmentProps) {
       <Divider />
       <div className="my-2 flex justify-between">
         <div>
+          <b>URL:</b>
+          <br />
           {environment.lifecycleStatus === "ready" ? (
             <Link to={environment.url} external>
               {environment.url}
@@ -100,9 +103,22 @@ export function Environment({ id }: EnvironmentProps) {
             environment.url
           )}
         </div>
+        {environment.secret ? (
+          <div className="flex items-center ml-4">
+            <div className="mr-2">
+              <b>password:</b>
+              <br /> {environment.secret.substr(0, 6) + "**********"}
+            </div>
+            <CopyToClipboard textToCopy={environment.secret} />
+          </div>
+        ) : null}
         {environment.ipv4 ? (
-          <div>
-            <b>ipv4:</b> {environment.ipv4}
+          <div className="flex items-center ml-4">
+            <div className="mr-2">
+              <b>ipv4:</b>
+              <br /> {environment.ipv4}
+            </div>
+            <CopyToClipboard textToCopy={environment.ipv4} />
           </div>
         ) : null}
       </div>

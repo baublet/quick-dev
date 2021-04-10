@@ -2,6 +2,7 @@ import {
   Environment,
   environmentCommand as envCommandEntity,
   EnvironmentCommand,
+  environment as envEntity,
 } from "../../entities";
 import { Transaction } from "../../db";
 import { environmentStateMachine } from "../../environmentStateMachine";
@@ -95,6 +96,7 @@ export async function processProvisioningEnvironment(
   trx: Transaction,
   environment: Environment
 ) {
+  await envEntity.touch(trx, environment.id);
   const environmentCommands = await envCommandEntity.getByEnvironmentId(
     trx,
     environment.id

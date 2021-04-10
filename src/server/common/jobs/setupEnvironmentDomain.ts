@@ -19,7 +19,16 @@ export const setupEnvironmentDomain = async (payload: {
     );
   }
 
-  //
+  const existingDomainRecords = await envDomainEntity.getByEnvironmentId(
+    db,
+    environment.id
+  );
+  if (existingDomainRecords.length > 0) {
+    log.info("Environment domain records already created, skipping", {
+      environment: environment.subdomain,
+    });
+    return;
+  }
 
   const type = "A";
   const name = `${environment.subdomain}.env`;
@@ -45,12 +54,5 @@ export const setupEnvironmentDomain = async (payload: {
     type,
     name,
     data,
-  });
-
-  await db.transaction(async (trx) => {
-    await environmentStateMachine.setProvisioning({
-      trx,
-      environment,
-    });
   });
 };

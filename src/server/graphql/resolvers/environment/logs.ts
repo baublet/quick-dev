@@ -17,10 +17,6 @@ export async function environmentLogs(
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {
-  if (!parent.ipv4) {
-    return null;
-  }
-
   return {
     startupLogs: parent.startupLogs || null,
     commands: () => envCommandEntity.getByEnvironmentId(context.db, parent.id),

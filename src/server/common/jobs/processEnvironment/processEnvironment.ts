@@ -7,6 +7,7 @@ import { processFinishedProvisioningEnvironment } from "./finishedProvisioning";
 import { processStoppingEnvironment } from "./stopping";
 import { processSnapshottingEnvironment } from "./snapshotting";
 import { processCreatingEnvironment } from "./creating";
+import { processStartingFromSnapshot } from "./startingFromSnapshot";
 
 const doNothing = (trx: Transaction, environment: Environment) => {
   log.error("Unhandled processEnvironment lifecycle status", {
@@ -29,7 +30,7 @@ const environmentStatusProcessor: Record<
   error_provisioning: doNothing,
   ready: doNothing,
   starting: doNothing,
-  starting_from_snapshot: doNothing,
+  starting_from_snapshot: processStartingFromSnapshot,
   stopped: doNothing,
 } as const;
 

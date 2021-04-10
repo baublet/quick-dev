@@ -1,5 +1,6 @@
 import { Environment, EnvironmentDomainRecord } from "../entities";
 import { EnvironmentAction } from "../entities/environmentAction";
+import { EnvironmentSnapshot } from "../entities/environmentSnapshot";
 
 export interface ExternalEnvironment {
   id: string;
@@ -24,6 +25,7 @@ export interface ExternalEnvironmentSnapshot {
   id: string;
   name: string;
   status: "available" | "pending" | "deleted";
+  sizeInGb: number;
 }
 
 export interface ExternalEnvironmentAction {
@@ -42,6 +44,7 @@ export interface ExternalEnvironmentHandler {
   environmentExists: (
     environment: Environment
   ) => Promise<false | ExternalEnvironment>;
+  deleteSnapshot: (environmentSnapshot: EnvironmentSnapshot) => Promise<void>;
   // Should always work. If something is wrong, it throws
   destroyEnvironment: (
     environment: Pick<Environment, "sourceId" | "name">,

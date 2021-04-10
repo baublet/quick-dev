@@ -9,7 +9,6 @@ export type EnvironmentCommandStatus =
 export interface EnvironmentCommand {
   adminOnly: boolean;
   command: string;
-  processor?: string | null;
   created_at: Date;
   environmentId: string;
   id: string;

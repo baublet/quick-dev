@@ -32,5 +32,7 @@ export const deleteEnvironmentInProvider = async (payload: {
         await environmentDomainRecord.del(trx, record.id);
       }),
     ]);
+
+    await env.update(trx, environmentId, { sourceId: "" });
   });
 };

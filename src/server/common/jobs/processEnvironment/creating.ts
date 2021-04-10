@@ -1,4 +1,4 @@
-import { Environment } from "../../entities";
+import { Environment, environment as envEntity } from "../../entities";
 import { Transaction } from "../../db";
 import { environmentStateMachine } from "../../environmentStateMachine";
 import { log } from "../../../../common/logger";
@@ -7,6 +7,7 @@ export async function processCreatingEnvironment(
   trx: Transaction,
   environment: Environment
 ) {
+  await envEntity.touch(trx, environment.id);
   // If the environment has no source ID, something went wrong with spinning up
   // the environment in the external provider. This is a big error, so move the
   // environment to failed...

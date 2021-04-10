@@ -24,7 +24,6 @@ export interface Environment {
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;
-  processor?: string;
   repositoryUrl: string;
   secret: string;
   size: EnvironmentSize;

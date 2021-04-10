@@ -6,6 +6,7 @@ export function sendSshCommand({
   ipv4,
   privateKey,
   command,
+  // 5 minute timeout by default
   timeoutInMs = 1000 * 60 * 5,
 }: {
   ipv4: string;
@@ -68,6 +69,7 @@ export function sendSshCommand({
       host: ipv4,
       username: "root",
       privateKey,
+      readyTimeout: 1000 * 60, // 1 minute
     });
   });
 }

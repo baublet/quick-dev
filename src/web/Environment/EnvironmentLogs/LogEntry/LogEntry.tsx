@@ -110,9 +110,17 @@ export function LogEntry({
         <div className="inline-block mr-2">
           <Status status={status as EnvironmentCommand["status"]} />
         </div>
-        <Link to={linkPath} className={textClassNamesByStatus[status]} replace>
-          {title}
-        </Link>
+        {["success", "failed"].includes(status) ? (
+          <Link
+            to={linkPath}
+            className={textClassNamesByStatus[status]}
+            replace
+          >
+            {title}
+          </Link>
+        ) : (
+          <span className={textClassNamesByStatus[status]}>{title}</span>
+        )}
       </div>
       <Route path={logExpandedPath}>
         <div className="mt-2">

@@ -1,8 +1,8 @@
 overwrite: true
-schema: "src/lambda/graphql/schema.graphql"
+schema: "src/server/graphql/schema.graphql"
 documents: "./src/web/**/*.graphql"
 generates:
-  src/lambda/graphql/generated.ts:
+  src/server/graphql/generated.ts:
     plugins:
       - "typescript"
     config:

@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+
 import { Transaction } from "../db";
 import { Environment } from "../entities";
 import { environmentCommand } from "../entities";
@@ -52,7 +54,15 @@ export async function createInitialCommands(
 && sudo apt update \
 && sudo apt install caddy \
 && echo "${environment.subdomain}.env.${process.env.STRAPYARD_DOMAIN}\n\n\
-reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
+reverse_proxy 127.0.0.1:8080\n\n
+
+log {
+	output file /var/log/access.log {
+		roll_size 1gb
+		roll_keep 5
+		roll_keep_for 720h
+	}
+}" > /etc/caddy/Caddyfile \
 && sudo systemctl reload caddy`,
     environmentId: environment.id,
     title: "Install Web Server",
@@ -60,11 +70,13 @@ reverse_proxy 127.0.0.1:8080" > /etc/caddy/Caddyfile \
     status: "ready",
   });
 
+  const hashedSecret = createHash("sha256")
+    .update(environment.secret)
+    .digest("hex");
   await environmentCommand.create(trx, {
     command: `mkdir -p "$HOME/.config/code-server" && echo "bind-addr: 127.0.0.1:8080\n\
 auth: password\n\
-password: aa82dd974de376d337fb0854\n\
-home: ${process.env.STRAPYARD_URL}/environment/${environment.subdomain}\n\
+hashed-password: ${hashedSecret}\n\
 cert: false" > /root/.config/code-server/config.yaml\
 && sudo systemctl restart code-server@root`,
     environmentId: environment.id,

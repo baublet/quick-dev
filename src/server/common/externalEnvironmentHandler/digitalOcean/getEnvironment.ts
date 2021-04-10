@@ -11,7 +11,9 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
     );
   }
 
-  log.info("Fetching a DigitalOcean environment", { environment });
+  log.info("Fetching a DigitalOcean environment", {
+    environment: environment.subdomain,
+  });
 
   const fetchedDroplet = await digitalOceanApi<{
     droplet?: {

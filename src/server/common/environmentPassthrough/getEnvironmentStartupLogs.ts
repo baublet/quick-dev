@@ -15,17 +15,27 @@ export async function getEnvironmentStartupLogs(
     return null;
   }
 
-  const result = await sendSshCommand({
-    ipv4: environment.ipv4,
-    command: "cat /var/log/cloud-init-output.log",
-    privateKey: sshKey.privateKey,
-    timeoutInMs: 5000,
-  });
+  try {
+    const result = await sendSshCommand({
+      ipv4: environment.ipv4,
+      command: "cat /var/log/cloud-init-output.log",
+      privateKey: sshKey.privateKey,
+      timeoutInMs: 5000,
+    });
 
-  if (result.error) {
-    log.error("Error getting environment startup logs!", { result });
-    return null;
+    if (result.error) {
+      log.error("Error getting environment startup logs!", { result });
+      return null;
+    }
+
+    return result.buffer || null;
+  } catch (e) {
+    log.error(
+      `Error sending SSH command to ${environment.subdomain} (${environment.ipv4})`,
+      {
+        error: e.message,
+      }
+    );
+    throw e;
   }
-
-  return result.buffer || null;
 }

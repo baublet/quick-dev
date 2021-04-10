@@ -17,6 +17,7 @@ import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolve
 import { createEnvironment } from "./resolvers/createEnvironment";
 import { deleteEnvironment } from "./resolvers/deleteEnvironment";
 import { stopEnvironment } from "./resolvers/stopEnvironment";
+import { startEnvironment } from "./resolvers/startEnvironment";
 
 // Provide resolver functions for your schema fields
 export const resolvers = {
@@ -30,6 +31,7 @@ export const resolvers = {
     createEnvironment,
     deleteEnvironment,
     stopEnvironment,
+    startEnvironment,
   },
   EnvironmentCommand: {
     logs: environmentCommandLogs,

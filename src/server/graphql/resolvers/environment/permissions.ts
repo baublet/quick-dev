@@ -33,5 +33,8 @@ export async function environmentPermissions(
       }
       return true;
     },
+    canStart: async () => {
+      return parent.lifecycleStatus === "stopped";
+    },
   };
 }

@@ -17,7 +17,12 @@ export function OpenEnvironmentButton({
 
   return (
     <div className="relative">
-      <PrimaryActionButton full={true} href={environment.url} loading={false}>
+      <PrimaryActionButton
+        full={true}
+        href={environment.url}
+        loading={false}
+        newWindow
+      >
         <div className="flex">
           <Computer className="transform scale-75 opacity-75" />
           <div className="ml-4">Open</div>

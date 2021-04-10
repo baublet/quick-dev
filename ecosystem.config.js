@@ -24,9 +24,11 @@ module.exports = {
       watch: ["src/web", "src/common", "./scripts/buildServer.js"],
       autorestart: false,
     },
-    // {
-    //   name: "worker",
-    //   script: "./devWorkers.js",
-    // },
+    {
+      name: "build-graphql",
+      script: "graphql-codegen",
+      watch: ["**/*.graphql"],
+      autorestart: false,
+    },
   ],
 };

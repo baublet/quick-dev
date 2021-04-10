@@ -33,7 +33,7 @@ export async function processSnapshottingEnvironment(
   }
 
   if (environmentSnapshot.status === "deleted") {
-    log.error(
+    log.warn(
       `Waiting for an environment snapshot to finish that got deleted!`,
       {
         environmentSnapshot,

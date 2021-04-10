@@ -16,6 +16,7 @@ const lifecycleStatusToPillStatus: Record<
   snapshotting: "warning",
   stopped: "inert",
   stopping: "warning",
+  starting_from_snapshot: "warning",
 };
 
 const lifecycleStatusToPillWorkingState: Record<
@@ -31,6 +32,7 @@ const lifecycleStatusToPillWorkingState: Record<
   snapshotting: true,
   stopped: false,
   stopping: true,
+  starting_from_snapshot: true,
 };
 
 export function EnvironmentStatusBadge({

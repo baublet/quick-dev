@@ -26,4 +26,7 @@ export async function create(
   if (created.length > 0) {
     return created[0];
   }
+  throw new Error(
+    `Unexpected error creating environment! DB invariance violation`
+  );
 }

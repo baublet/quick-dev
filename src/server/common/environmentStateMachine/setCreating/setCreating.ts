@@ -24,7 +24,6 @@ export async function setCreating({
     );
     createdDropletId = createdDroplet.id;
     const updatedEntity = await envEntity.update(trx, environment.id, {
-      processor: undefined,
       sourceId: createdDroplet.id,
     });
     return {

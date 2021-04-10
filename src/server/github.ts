@@ -20,8 +20,6 @@ export const githubHandler = async (request: Request, response: Response) => {
     }
   ).then((response) => response.text());
 
-  log.scream(paramsString);
-
   const params = new URLSearchParams(paramsString);
   const accessToken = params.get("access_token");
 

@@ -1,6 +1,7 @@
 import {
   environment as envEntity,
-  environmentDomainRecord,
+  environmentAction as envActionEntity,
+  environmentSnapshot,
 } from "../../entities";
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
@@ -44,10 +45,20 @@ export async function setStopped({
     };
   }
 
+  log.scream("Snapshot: ", { snapshot });
+
+  await environmentSnapshot.create(trx, {
+    environmentId: environment.id,
+    source: "digital_ocean",
+    sourceId: snapshot.id,
+    sizeInGb: snapshot.sizeInGb,
+  });
+
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "stopped",
     sourceSnapshotId: snapshot.id,
-    ipv4: undefined,
+    ipv4: "",
+    working: false,
   });
 
   log.debug("setStopped: Updated environment to stopped", {
@@ -57,6 +68,7 @@ export async function setStopped({
   await enqueueJob("deleteEnvironmentInProvider", {
     environmentId: environment.id,
   });
+  await envActionEntity.deleteByEnvironmentId(trx, environment.id);
 
   return {
     operationSuccess: true,

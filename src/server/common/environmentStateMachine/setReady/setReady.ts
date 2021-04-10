@@ -3,6 +3,8 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetReadyArguments } from ".";
 import { canSetReady } from "./canSetReady";
+import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { enqueueJob } from "../../enqueueJob";
 
 export async function setReady({
   trx,
@@ -20,6 +22,10 @@ export async function setReady({
   if (!canContinue.operationSuccess) {
     return canContinue;
   }
+
+  await enqueueJob("deleteEnvironmentSnapshots", {
+    environmentId: environment.id,
+  });
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "ready",

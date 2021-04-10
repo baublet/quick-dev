@@ -1,5 +1,5 @@
 import { Context } from "../../common/context";
-import { Environment } from "../../common/entities";
+import { Environment, environment as envEntity } from "../../common/entities";
 import { environmentStateMachine } from "../../common/environmentStateMachine";
 
 interface CreateEnvironmentArguments {
@@ -13,5 +13,17 @@ export async function createEnvironment(
   { input }: CreateEnvironmentArguments,
   context: Context
 ): Promise<{ errors: string[]; environment?: Environment }> {
-  return environmentStateMachine.setNew({ input, context });
+  const operation = await environmentStateMachine.setNew({ input, context });
+  if (operation.environment) {
+    return {
+      errors: operation.errors,
+      environment: await envEntity.getByIdOrFail(
+        context.db,
+        operation.environment.id
+      ),
+    };
+  }
+  return {
+    errors: operation.errors,
+  };
 }

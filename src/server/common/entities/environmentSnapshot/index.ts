@@ -5,8 +5,8 @@ export interface EnvironmentSnapshot {
   updated_at: Date;
   created_at: Date;
   environmentId: string;
-  source: string;
-  sourceId: EnvironmentSource;
+  source: EnvironmentSource;
+  sourceId: string;
   deleted: boolean;
   deletedInProvider: boolean;
   sizeInGb: number;
@@ -15,3 +15,5 @@ export interface EnvironmentSnapshot {
 export { create } from "./create";
 export { getByIdOrFail } from "./getByIdOrFail";
 export { update } from "./update";
+export { deleteByEnvironmentId } from "./deleteByEnvironmentId";
+export { getByEnvironmentId } from "./getByEnvironmentId";

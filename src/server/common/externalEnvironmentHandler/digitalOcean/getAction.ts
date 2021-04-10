@@ -40,7 +40,6 @@ export const getAction: ExternalEnvironmentHandler["getAction"] = async (
     method: "get",
   });
 
-  log.scream({ foundAction, parsedPayload });
   if (foundAction.action) {
     await cache.set(cacheKey, foundAction.action);
   }

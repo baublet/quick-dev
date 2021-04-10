@@ -9,6 +9,7 @@ export function PrimaryActionButton({
   children,
   variant = "normal",
   disabled = false,
+  newWindow,
   ...props
 }: React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -19,8 +20,14 @@ export function PrimaryActionButton({
   disabled?: boolean;
   variant?: "inverted" | "normal";
   href?: string;
+  newWindow?: boolean;
 }) {
   const Component = "href" in props ? "a" : "button";
+
+  if (newWindow && "href" in props) {
+    (props as any).target = "_blank";
+  }
+
   return (
     <Component
       {...(props as any)}

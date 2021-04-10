@@ -32,6 +32,7 @@ export async function sendCommand(
     ipv4: environment.ipv4,
     command: environmentCommand.command,
     privateKey: sshKey.privateKey,
+    timeoutInMs: 1000 * 60 * 30, // 30 minutes
   });
 
   if (result.error) {

@@ -1,4 +1,8 @@
-import { environment as envEntity, environmentAction } from "../../entities";
+import {
+  environment as envEntity,
+  environmentAction,
+  environmentSnapshot,
+} from "../../entities";
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetSnapshottingArguments } from ".";
@@ -42,6 +46,7 @@ export async function setSnapshotting({
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "snapshotting",
+    ipv4: "",
   });
 
   log.debug("setSnapshotting: Updated environment to snapshotting", {

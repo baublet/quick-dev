@@ -8,6 +8,7 @@ const processorStatusesThatNeedWork: EnvironmentLifecycleStatus[] = [
   "finished_provisioning",
   "stopping",
   "snapshotting",
+  "starting_from_snapshot",
 ];
 
 export async function getEnvironmentsThatNeedWork(db: Connection) {

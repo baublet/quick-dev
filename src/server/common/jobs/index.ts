@@ -6,10 +6,12 @@ import { removeAllTrace } from "./removeAllTrace";
 import { rescueStuckEnvironments } from "./rescueStuckEnvironments";
 import { sendCommand } from "./sendCommand";
 import { setupEnvironmentDomain } from "./setupEnvironmentDomain";
+import { deleteEnvironmentSnapshots } from "./deleteEnvironmentSnapshots";
 
 export const JOB_MAP = {
   createEnvironmentCommands,
   deleteEnvironmentInProvider,
+  deleteEnvironmentSnapshots,
   getEnvironmentStartupLogs,
   processEnvironment,
   removeAllTrace,

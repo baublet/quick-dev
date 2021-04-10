@@ -11,7 +11,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
   environment
 ) => {
   log.info("Provisioning new DigitalOcean environment", {
-    environment,
+    environment: environment.subdomain,
   });
 
   const db = getDatabaseConnection();
@@ -39,7 +39,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       name,
       region: "nyc3",
       size,
-      image: "ubuntu-16-04-x64",
+      image: environment.sourceSnapshotId || "ubuntu-16-04-x64",
       user_data: provisionScript,
       ssh_keys: [providerSshKey.sourceId],
       tags: [environment.id],

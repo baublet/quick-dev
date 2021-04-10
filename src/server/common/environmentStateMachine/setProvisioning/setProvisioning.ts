@@ -30,7 +30,7 @@ export async function setProvisioning({
       environment
     );
     const ipv4 = environment.ipv4 || environmentInProvider.ipv4;
-    if (environmentDomainRecords.length > 0) {
+    if (environmentDomainRecords.length === 0) {
       await enqueueJob("setupEnvironmentDomain", {
         environmentId: environment.id,
       });

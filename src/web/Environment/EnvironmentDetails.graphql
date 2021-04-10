@@ -8,12 +8,14 @@ query EnvironmentDetails($id: ID!) {
     ipv4
     lifecycleStatus
     working
+    secret
     repositoryUrl
     repositoryHttpUrl
     permissions {
       canDelete
       canOpen
       canStop
+      canStart
     }
     logs {
       startupLogs

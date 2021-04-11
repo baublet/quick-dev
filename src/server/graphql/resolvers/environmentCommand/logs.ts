@@ -3,7 +3,8 @@ import { EnvironmentCommandLogsNodeInput } from "../../generated";
 
 export async function environmentCommandLogs(
   parent: EnvironmentCommand,
-  { input }: { input: EnvironmentCommandLogsNodeInput }
+  { input }: { input: EnvironmentCommandLogsNodeInput },
+  context: unknown
 ): Promise<string | null> {
   const after = input?.after || 0;
   if (parent?.logs) {

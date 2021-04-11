@@ -47,7 +47,7 @@ export interface ExternalEnvironmentHandler {
   deleteSnapshot: (environmentSnapshot: EnvironmentSnapshot) => Promise<void>;
   // Should always work. If something is wrong, it throws
   destroyEnvironment: (
-    environment: Pick<Environment, "sourceId" | "name">,
+    environment: Pick<Environment, "sourceId" | "name" | "subdomain">,
     environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
   ) => Promise<void>;
   removeAllTrace: (
@@ -58,7 +58,7 @@ export interface ExternalEnvironmentHandler {
   ) => Promise<void>;
   // Should always work. If something is wrong, it throws
   shutdownEnvironment: (
-    environment: Pick<Environment, "sourceId" | "name">,
+    environment: Pick<Environment, "sourceId" | "name" | "subdomain">,
     environmentDomainRecords: Pick<EnvironmentDomainRecord, "providerId">[]
   ) => Promise<{
     id: string;

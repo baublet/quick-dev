@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { EnvironmentSize } from "../../lambda/common/entities/environment";
+import type { EnvironmentSize } from "../../server/common/entities/environment";
 
 import { MachineSizeSmall } from "./svg/MachineSizeSmall";
 import { MachineSizeMedium } from "./svg/MachineSizeMedium";

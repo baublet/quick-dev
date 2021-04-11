@@ -26,11 +26,7 @@ async function queueJobsForEnvironmentsThatNeedWork() {
       // working, so we don't want to work if it's already working
       const canContinue = await environment.setWorking(db, env.id);
       if (canContinue) {
-        await enqueueJob(
-          "processEnvironment",
-          { environmentId: env.id },
-          { startAfter: 0 }
-        );
+        await enqueueJob("processEnvironment", { environmentId: env.id });
       } else {
         log.warn(
           "worker: COLLISION DETECTED! Can't process an environment that's working",

@@ -1,7 +1,6 @@
 import { ExternalEnvironmentHandler } from "../index";
 import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
-import { getSnapshot } from "./getSnapshot";
 
 export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"] = async (
   environment,

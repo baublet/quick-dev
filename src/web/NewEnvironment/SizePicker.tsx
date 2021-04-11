@@ -1,7 +1,7 @@
 import React from "react";
 import cx from "classnames";
 
-import type { EnvironmentSize } from "../../lambda/common/entities";
+import type { EnvironmentSize } from "../../server/common/entities";
 
 import { H4 } from "../components/H4";
 import { FormState } from "./useFormState";

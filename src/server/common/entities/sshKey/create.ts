@@ -2,6 +2,7 @@ import { ulid } from "ulid";
 
 import { SSHKey } from "./index";
 import { ConnectionOrTransaction } from "../../db";
+import { log } from "../../../../common/logger";
 
 type CreateSSHKeyInput = Pick<
   SSHKey,
@@ -18,4 +19,5 @@ export async function create(
   if (created.length > 0) {
     return created[0];
   }
+  throw new Error("Unexpected error saving an SSH key!");
 }

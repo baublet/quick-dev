@@ -39,9 +39,13 @@ export async function setProvisioning({
         environment: environment.subdomain,
       });
     }
-    await enqueueJob("getEnvironmentStartupLogs", {
-      environmentId: environment.id,
-    });
+    await enqueueJob(
+      "getEnvironmentStartupLogs",
+      {
+        environmentId: environment.id,
+      },
+      { retries: 5, retryDelaySeconds: 10 }
+    );
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "provisioning",
       ipv4,

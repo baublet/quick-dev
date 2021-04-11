@@ -1,5 +1,5 @@
 import { Transaction } from "../../db";
-import { Environment, EnvironmentDomainRecord } from "../../entities";
+import { Environment } from "../../entities";
 
 export interface SetStoppedArguments {
   trx: Transaction;

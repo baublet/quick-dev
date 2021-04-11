@@ -11,13 +11,14 @@ export async function processSnapshottingEnvironment(
   log.debug("processSnapshottingEnvironment", {
     environment: environment.subdomain,
   });
+
   const environmentSnapshot = await DigitalOceanHandler.getSnapshot(
     environment
   );
 
   if (!environmentSnapshot) {
     log.debug(
-      `Environment suggests it is snapshotting, but no image found in the provider`,
+      `Environment suggests it is snapshotting, but no image found in the provider. Waiting longer...`,
       {
         environmentSubdomain: environment.subdomain,
         sourceSnapshotId: environment.sourceSnapshotId,

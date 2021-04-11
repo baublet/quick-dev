@@ -29,6 +29,7 @@ export async function setReady({
 
   await envEntity.update(trx, environment.id, {
     lifecycleStatus: "ready",
+    sourceSnapshotId: "",
   });
 
   log.debug(

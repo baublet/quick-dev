@@ -59,15 +59,9 @@ export async function setNew({
       user: user.email,
       userSource: user.source,
     });
-    await enqueueJob(
-      "createEnvironmentCommands",
-      {
-        environmentId: environment.id,
-      },
-      {
-        startAfter: 10000, // Wait 10 seconds before running this (no reason to rush)
-      }
-    );
+    await enqueueJob("createEnvironmentCommands", {
+      environmentId: environment.id,
+    });
 
     return {
       operationSuccess: true,

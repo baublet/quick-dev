@@ -5,10 +5,6 @@ import { JOB_MAP, JobQueuePayload, JobKey, JobPayload } from "./jobs";
 
 interface JobOptions {
   /**
-   * The delay (in MS) before this job should be processed
-   */
-  startAfter?: number;
-  /**
    * All jobs have a timeout. The default timeout is 30 seconds. Pass in a
    * millisecond value after startAfter that the job should be cancelled.
    * For example, if you want your job to be cancelled after 15 seconds,
@@ -17,6 +13,8 @@ interface JobOptions {
   timeout?: number;
   retries?: number;
   retryDelaySeconds?: number;
+  onFail?: () => void;
+  onRetry?: () => void;
 }
 
 declare global {
@@ -85,23 +83,28 @@ export async function enqueueJob<T extends JobKey>(
   type: T,
   payload: JobPayload[T],
   {
-    startAfter = 3000,
     timeout = 1000 * 30,
     retries = 2,
     retryDelaySeconds = 1,
+    onFail,
+    onRetry,
   }: JobOptions = {}
 ): Promise<void> {
-  const now = new Date();
-  const delayUntil = new Date(now.valueOf() + startAfter);
-
   return new Promise((resolve) => {
     const queue = getQueue();
     const job = queue.createJob(getJob(type, payload));
 
+    if (onFail) {
+      job.on("failed", onFail);
+    }
+
+    if (onRetry) {
+      job.on("retrying", onRetry);
+    }
+
     job
       .timeout(timeout)
       .retries(retries)
-      // .delayUntil(delayUntil)
       .timeout(timeout)
       .backoff("fixed", retryDelaySeconds)
       .save()

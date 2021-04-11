@@ -45,7 +45,7 @@ export async function setStopped({
     };
   }
 
-  log.scream("Snapshot: ", { snapshot });
+  log.scream("Stopping. Snapshot data", { snapshot });
 
   await environmentSnapshot.create(trx, {
     environmentId: environment.id,

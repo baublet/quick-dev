@@ -55,19 +55,11 @@ async function finalizeResults(
   );
 
   if (results === undefined) {
-    const result = await environmentCommandStateMachine.setFailed({
-      trx: db,
-      environment,
-      environmentCommand,
+    log.error("Unknown error sending command to environment", {
+      environment: environment.subdomain,
+      command: environmentCommand.id,
     });
-
-    if (result.operationSuccess === false) {
-      log.error("Unknown error setting a command as failed", {
-        result,
-        environment: environment.name,
-      });
-    }
-    return;
+    throw new Error("Unknown error sending command to environment");
   }
 
   await envCommandEntity.update(db, environmentCommand.id, {

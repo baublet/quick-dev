@@ -1,4 +1,8 @@
-import { EnvironmentCommandStateMachineReturn } from ".";
+import {
+  environmentCommandStateMachine,
+  EnvironmentCommandStateMachineReturn,
+} from ".";
+import { log } from "../../../common/logger";
 import { ConnectionOrTransaction } from "../db";
 import { enqueueJob } from "../enqueueJob";
 import {
@@ -78,7 +82,28 @@ export async function setSending({
   await enqueueJob(
     "sendCommand",
     { environmentCommandId: environmentCommand.id },
-    { timeout: 1000 * 60 * 12, retries: 3 }
+    {
+      timeout: 1000 * 60 * 30,
+      retries: 3,
+      onRetry: async () => {
+        log.scream("Retrying command", { environmentCommand });
+      },
+      onFail: async () => {
+        const result = await environmentCommandStateMachine.setFailed({
+          trx,
+          environment,
+          environmentCommand,
+        });
+
+        if (result.operationSuccess === false) {
+          log.error("Unknown error setting a command as failed", {
+            result,
+            environment: environment.name,
+          });
+        }
+        return;
+      },
+    }
   );
 
   return {

@@ -51,6 +51,7 @@ export async function setSnapshotting({
 
   log.debug("setSnapshotting: Updated environment to snapshotting", {
     environment: environment.subdomain,
+    createdAction,
   });
 
   return {

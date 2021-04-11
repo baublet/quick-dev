@@ -1,28 +1,60 @@
 import { ExternalEnvironmentHandler, ExternalEnvironmentSnapshot } from "..";
+import { log } from "../../../../common/logger";
 import { digitalOceanApi } from "./digitalOceanApi";
 
 export const getSnapshot: ExternalEnvironmentHandler["getSnapshot"] = async (
   environment
 ) => {
+  let sourceSnapshotId: string | undefined = environment.sourceSnapshotId;
+
   if (!environment.sourceSnapshotId) {
-    throw new Error(
-      `Fatal error: tried to get a snapshot for an environment without a source snapshot ID associated with it!`
-    );
+    const snapshots = await digitalOceanApi<{
+      snapshots: {
+        id: number;
+      }[];
+    }>({
+      path: `droplets/${environment.sourceId}/snapshots`,
+      method: "get",
+      skipCache: true,
+    });
+    log.scream("Get snapshots for droplet", {
+      snapshots,
+    });
+    if (snapshots.snapshots.length > 0) {
+      sourceSnapshotId = `${snapshots.snapshots[0].id}`;
+    }
+  }
+
+  if (!sourceSnapshotId) {
+    log.debug("No snapshot yet exists on the environment. Skipping...");
+    return undefined;
   }
 
   const externalSnapshot = await digitalOceanApi<{
-    id: string;
-    type: "snapshot" | "backup" | "custom";
-    name: string;
-    status: "available" | "pending" | "deleted";
-    size_gigabytes: number;
+    id?: "not_found";
+    image?: {
+      id: string;
+      type: "snapshot" | "backup" | "custom";
+      name: string;
+      status: "available" | "pending" | "deleted";
+      size_gigabytes: number;
+    };
   }>({
-    path: `images/${environment.sourceSnapshotId}`,
+    path: `images/${sourceSnapshotId}`,
     method: "get",
   });
 
+  log.scream("External snapshot from snapshot ID", { externalSnapshot });
+
+  if (!externalSnapshot.image) {
+    log.debug("External snapshot not yet saved as an image", {
+      externalSnapshot,
+    });
+    return undefined;
+  }
+
   return {
-    ...externalSnapshot,
-    sizeInGb: externalSnapshot.size_gigabytes,
+    ...externalSnapshot.image,
+    sizeInGb: externalSnapshot.image.size_gigabytes,
   };
 };

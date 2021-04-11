@@ -1,6 +1,6 @@
 import { SetStoppedArguments } from ".";
 import { log } from "../../../../common/logger";
-import { environmentAction } from "../../entities";
+import { environmentAction, environmentSnapshot } from "../../entities";
 import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
 import { StateMachineReturnValue } from "../index";
 
@@ -8,6 +8,14 @@ export async function canSetStopped({
   environment,
   trx,
 }: SetStoppedArguments): Promise<StateMachineReturnValue> {
+  if (!environmentSnapshot) {
+    return {
+      errors: [
+        "Can't set an environment to stopped if you don't associate a snapshot with it",
+      ],
+      operationSuccess: false,
+    };
+  }
   if (environment.lifecycleStatus !== "snapshotting") {
     return {
       errors: [

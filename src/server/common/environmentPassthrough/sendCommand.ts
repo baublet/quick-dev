@@ -1,7 +1,6 @@
 import { Environment, EnvironmentCommand, SSHKey } from "../entities";
 import { log } from "../../../common/logger";
 import { sendSshCommand } from "./sendSshCommand";
-import { environmentCommandStateMachine } from "../environmentCommandStateMachine";
 
 export async function sendCommand(
   environment: Environment,
@@ -9,7 +8,8 @@ export async function sendCommand(
   sshKey: SSHKey
 ): Promise<undefined | ReturnType<typeof sendSshCommand>> {
   log.debug("Sending command to environment", {
-    environment: environment.name,
+    environment: environment.subdomain,
+    ip: environment.ipv4,
     environmentCommand: environmentCommand.command,
   });
   if (environment.deleted) {

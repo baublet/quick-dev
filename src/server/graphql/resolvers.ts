@@ -10,6 +10,7 @@ import { environmentLogs } from "./resolvers/environment/logs";
 import { environmentWorking } from "./resolvers/environment/working";
 import { environmentPermissions } from "./resolvers/environment/permissions";
 import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
+import { environmentSecret } from "./resolvers/environment/secret";
 
 import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolvers/environmentCommandLogs";
 
@@ -44,6 +45,7 @@ export const resolvers = {
       parent.repositoryUrl.replace("git://", "https://"),
     url: (parent: Environment) =>
       `https://${parent.subdomain}.env.${process.env.STRAPYARD_DOMAIN}`,
+    secret: environmentSecret,
   },
   User: {
     repositories,

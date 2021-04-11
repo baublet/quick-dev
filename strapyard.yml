@@ -1,4 +1,10 @@
 name: StrapYard
-description: Yo dawg 8)
+description: Develop StrapYard.... with StrapYard!
 steps:
-  - command: whoami && sleep 2 && echo "\n\nyo\n\n" && sleep 1 && echo "testing 123"
+  - name: Install NVM
+    command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+  - name: Install Node
+    command: nvm install
+  - name: Install yarn
+    command: npm i --global yarn
+  - name: yarn

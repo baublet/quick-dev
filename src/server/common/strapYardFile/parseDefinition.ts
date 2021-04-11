@@ -2,16 +2,6 @@ import yaml from "js-yaml";
 
 import { ParsedDefinitionFile } from "./index";
 
-function assertStepValid(step: any) {
-  if (!step.command) {
-    throw new Error(
-      `All steps require a command. This step doesn't have one: ${JSON.stringify(
-        step
-      )}`
-    );
-  }
-}
-
 export async function parseDefinition(
   repositoryUrl: string,
   def: string
@@ -37,4 +27,14 @@ export async function parseDefinition(
       };
     }),
   };
+}
+
+function assertStepValid(step: any) {
+  if (!step.command) {
+    throw new Error(
+      `All steps require a command. This step doesn't have one: ${JSON.stringify(
+        step
+      )}`
+    );
+  }
 }

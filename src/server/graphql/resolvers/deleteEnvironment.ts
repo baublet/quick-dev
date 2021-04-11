@@ -38,7 +38,7 @@ export async function deleteEnvironment(
     } catch (e) {
       log.error("Deletion request failed from the resolver", {
         context,
-        environment: environment.name,
+        environment: environment.subdomain,
         error: e.message,
         stack: e.stack,
       });

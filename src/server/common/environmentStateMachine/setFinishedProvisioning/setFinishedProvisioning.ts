@@ -12,7 +12,7 @@ export async function setFinishedProvisioning({
   log.debug(
     "setFinishedProvisioning: Setting environment to status: error provisioning",
     {
-      environment: environment.name,
+      environment: environment.subdomain,
     }
   );
 

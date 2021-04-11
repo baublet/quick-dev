@@ -39,13 +39,6 @@ export async function setProvisioning({
         environment: environment.subdomain,
       });
     }
-    await enqueueJob(
-      "getEnvironmentStartupLogs",
-      {
-        environmentId: environment.id,
-      },
-      { retries: 5, retryDelaySeconds: 10 }
-    );
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "provisioning",
       ipv4,
@@ -62,7 +55,7 @@ export async function setProvisioning({
   }
 
   log.debug("Updated environment to provisioning", {
-    environment: environment.name,
+    environment: environment.subdomain,
   });
 
   return {

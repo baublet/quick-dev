@@ -15,7 +15,6 @@ export type Caches = {
     nodes: GitHubRepo[];
   }>;
   gitHubRepoCache: CacheNode<GitHubRepo>;
-  environmentStartupLogsCache: CacheNode<string>;
 };
 
 function makeCacheNode<K extends keyof Caches>(
@@ -32,7 +31,6 @@ function makeCacheNode<K extends keyof Caches>(
 export function createCache(): Caches {
   return {
     gitHubRepoCache: makeCacheNode("gitHubRepoCache", 3),
-    environmentStartupLogsCache: makeCacheNode("environmentStartupLogsCache"),
     gitHubUserCache: makeCacheNode("gitHubUserCache", 60 * 30),
     gitHubUserReposCache: makeCacheNode("gitHubUserReposCache", 60),
   };

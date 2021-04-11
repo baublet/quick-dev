@@ -13,6 +13,14 @@ export async function createInitialCommands(
   { environment }: AddSSHKeyArguments
 ): Promise<void> {
   await environmentCommand.create(trx, {
+    command: `sudo apt-get -y update && sudo apt-get -y upgrade`,
+    environmentId: environment.id,
+    title: "Update and Upgrade",
+    adminOnly: true,
+    status: "ready",
+  });
+
+  await environmentCommand.create(trx, {
     command: `mkdir -p /root/project \
 && (cd ~/project; git clone ${environment.repositoryUrl})`,
     environmentId: environment.id,
@@ -57,11 +65,11 @@ export async function createInitialCommands(
 reverse_proxy 127.0.0.1:8080\n\n
 
 log {
-	output file /var/log/access.log {
-		roll_size 1gb
-		roll_keep 5
-		roll_keep_for 720h
-	}
+  output file /var/log/access.log {
+    roll_size 1gb
+    roll_keep 5
+    roll_keep_for 720h
+  }
 }" > /etc/caddy/Caddyfile \
 && sudo systemctl reload caddy`,
     environmentId: environment.id,

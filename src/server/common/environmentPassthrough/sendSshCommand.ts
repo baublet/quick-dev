@@ -6,8 +6,8 @@ export function sendSshCommand({
   ipv4,
   privateKey,
   command,
-  // 5 minute timeout by default
-  timeoutInMs = 1000 * 60 * 5,
+  // 15 minute timeout by default
+  timeoutInMs = 1000 * 60 * 15,
 }: {
   ipv4: string;
   privateKey: string;
@@ -19,7 +19,9 @@ export function sendSshCommand({
   errorBuffer?: string;
   code?: number;
   signal?: string;
+  totalMs: number;
 }> {
+  const startTime = Date.now();
   return new Promise(async (resolve) => {
     const connection = new Client();
 
@@ -38,6 +40,7 @@ export function sendSshCommand({
           error: `Command timed out after ${timeoutInMs / 1000}s`,
           buffer,
           errorBuffer,
+          totalMs: Date.now() - startTime,
         });
       }, timeoutInMs);
       const cancelTimeout = () => clearTimeout(timeout);
@@ -47,13 +50,21 @@ export function sendSshCommand({
           cancelTimeout();
           return resolve({
             error: err.message + "\n\n" + err.stack,
+            totalMs: Date.now() - startTime,
           });
         }
         stream
           .on("close", async (code: number, signal: string) => {
             connection.end();
             cancelTimeout();
-            resolve({ error: false, buffer, errorBuffer, code, signal });
+            resolve({
+              error: false,
+              buffer,
+              errorBuffer,
+              code,
+              signal,
+              totalMs: Date.now() - startTime,
+            });
           })
           .on("data", (data: string) => {
             buffer = buffer + data;
@@ -65,11 +76,24 @@ export function sendSshCommand({
       });
     });
 
+    connection.on("error", (message) => {
+      log.error("Unexpected error sending an SSH command", {
+        environmentIp: ipv4,
+        command,
+        message,
+      });
+      resolve({
+        error: "Unknown connection error",
+        buffer,
+        errorBuffer,
+        totalMs: Date.now() - startTime,
+      });
+    });
+
     connection.connect({
       host: ipv4,
       username: "root",
       privateKey,
-      readyTimeout: 1000 * 60, // 1 minute
     });
   });
 }

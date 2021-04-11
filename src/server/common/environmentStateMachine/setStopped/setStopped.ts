@@ -15,7 +15,7 @@ export async function setStopped({
   environment,
 }: SetStoppedArguments): Promise<StateMachineReturnValue> {
   log.debug("setStopped: Setting environment to status: stopped", {
-    environment: environment.name,
+    environment: environment.subdomain,
   });
 
   const canContinue = await canSetStopped({
@@ -44,8 +44,6 @@ export async function setStopped({
       operationSuccess: false,
     };
   }
-
-  log.scream("Stopping. Snapshot data", { snapshot });
 
   await environmentSnapshot.create(trx, {
     environmentId: environment.id,

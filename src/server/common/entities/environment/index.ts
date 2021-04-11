@@ -31,7 +31,6 @@ export interface Environment {
   sourceId?: string;
   sourceSnapshotId?: string;
   sshKeyId: string;
-  startupLogs?: string | null;
   strapYardFile: string;
   subdomain: string;
   updated_at: Date;

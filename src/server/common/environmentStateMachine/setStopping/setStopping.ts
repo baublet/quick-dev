@@ -11,7 +11,7 @@ export async function setStopping({
   environmentDomainRecords,
 }: SetStoppingArguments): Promise<StateMachineReturnValue> {
   log.debug("setStopping: Setting environment to status: stopping", {
-    environment: environment.name,
+    environment: environment.subdomain,
   });
 
   const canContinue = await canSetStopping({

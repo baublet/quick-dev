@@ -79,7 +79,7 @@ export async function setFailed({
   );
 
   log.debug("Updated environment command to failed", {
-    environment: environment.name,
+    environment: environment.subdomain,
     status: environment.lifecycleStatus,
     updatedCommand,
   });

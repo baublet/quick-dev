@@ -86,7 +86,7 @@ export async function setSending({
       timeout: 1000 * 60 * 30,
       retries: 3,
       onRetry: async () => {
-        log.scream("Retrying command", { environmentCommand });
+        log.info("Retrying command", { environmentCommand });
       },
       onFail: async () => {
         const result = await environmentCommandStateMachine.setFailed({
@@ -98,7 +98,7 @@ export async function setSending({
         if (result.operationSuccess === false) {
           log.error("Unknown error setting a command as failed", {
             result,
-            environment: environment.name,
+            environment: environment.subdomain,
           });
         }
         return;

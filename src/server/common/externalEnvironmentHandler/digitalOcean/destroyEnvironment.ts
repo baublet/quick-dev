@@ -8,7 +8,7 @@ export const destroyEnvironment: ExternalEnvironmentHandler["destroyEnvironment"
   environmentDomainRecords
 ) => {
   log.info("destroyEnvironment", {
-    environment: environment.name,
+    environment: environment.subdomain,
     environmentDomainRecords,
   });
 

@@ -75,7 +75,7 @@ async function finalizeResults(
   if (result.operationSuccess === false) {
     log.error("Unknown error setting a command success", {
       result,
-      environment: environment.name,
+      environment: environment.subdomain,
     });
   }
 }

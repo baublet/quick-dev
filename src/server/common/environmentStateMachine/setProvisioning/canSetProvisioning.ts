@@ -44,7 +44,7 @@ export async function canSetProvisioning({
     !environmentInProvider.ipv4
   ) {
     log.debug(
-      "Environment not allowed to set active because the environment in the provider is not ready yet",
+      "Environment not allowed to set provisioning because the environment in the provider is not ready yet",
       {
         environmentInProvider,
       }

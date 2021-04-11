@@ -18,7 +18,6 @@ query EnvironmentDetails($id: ID!) {
       canStart
     }
     logs {
-      startupLogs
       commands {
         id
         title

@@ -11,7 +11,7 @@ export async function setReady({
   environment,
 }: SetReadyArguments): Promise<StateMachineReturnValue> {
   log.debug("setStarted: Setting environment to status: started", {
-    environment: environment.name,
+    environment: environment.subdomain,
   });
 
   const canContinue = await canSetReady({

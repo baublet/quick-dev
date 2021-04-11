@@ -1,7 +1,9 @@
+import hash from "object-hash";
+
 import { fetch } from "../../fetch";
 import { log } from "../../../../common/logger";
 import { cache } from "../../cache";
-import hash from "object-hash";
+import { partiallyConceal } from "../../../../common/partiallyConceal";
 
 export async function digitalOceanApi<T = any>({
   body,
@@ -64,6 +66,8 @@ export async function digitalOceanApi<T = any>({
   bodyText = response.bodyText;
   responseStatus = response.status;
 
+  logIfRateLimitLow(response.headers, process.env.DIGITAL_OCEAN_TOKEN);
+
   if (expectStatus) {
     if (response.status !== expectStatus) {
       throw new Error(
@@ -96,5 +100,23 @@ export async function digitalOceanApi<T = any>({
       timeout,
     });
     throw e;
+  }
+}
+
+function logIfRateLimitLow(headers: Record<string, string>, key: string) {
+  if (!headers["ratelimit-remaining"]) {
+    return;
+  }
+
+  const asNumber = parseInt(headers["ratelimit-remaining"], 10);
+  if (isNaN(asNumber)) {
+    return;
+  }
+
+  if (asNumber < 1000) {
+    log.error("Rate limit low for DigitalOcean key!", {
+      remaining: headers["ratelimit-remaining"],
+      key: partiallyConceal(key),
+    });
   }
 }

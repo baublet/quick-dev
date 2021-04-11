@@ -62,7 +62,13 @@ export async function fetch(
     }
   }
 
+  const headerObject: Record<string, any> = {};
+  for (const headerKey of Array.from(response.headers.keys())) {
+    headerObject[headerKey] = response.headers.get(headerKey);
+  }
+
   return {
+    headers: headerObject,
     bodyText,
     status: response.status,
   };

@@ -14,7 +14,7 @@ export async function setErrorProvisioning({
   log.debug(
     "setErrorProvisioning: Setting environment to status: error provisioning",
     {
-      environment: environment.name,
+      environment: environment.subdomain,
     }
   );
   const canContinue = await canSetErrorProvisioning({ trx, environment });

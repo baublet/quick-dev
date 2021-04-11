@@ -13,12 +13,10 @@ export async function environmentLogs(
   | null
   | string
   | {
-      startupLogs: string | null | (() => Promise<string | null>);
       commands: () => Promise<EnvironmentCommand[]>;
     }
 > {
   return {
-    startupLogs: parent.startupLogs || null,
     commands: () => envCommandEntity.getByEnvironmentId(context.db, parent.id),
   };
 }

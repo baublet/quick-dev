@@ -129,7 +129,6 @@ export function Environment({ id }: EnvironmentProps) {
         <div className="mt-4">
           <EnvironmentLogs
             environmentId={environment?.id}
-            startupLogs={environment?.logs?.startupLogs || ""}
             commands={environment?.logs?.commands || []}
           />
         </div>

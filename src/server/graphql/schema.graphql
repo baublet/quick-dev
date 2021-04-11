@@ -138,7 +138,6 @@ type EnvironmentCommand {
 }
 
 type EnvironmentLogsConnection {
-  startupLogs: String
   commands: [EnvironmentCommand!]!
 }
 

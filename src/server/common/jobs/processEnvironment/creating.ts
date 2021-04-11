@@ -27,7 +27,7 @@ export async function processCreatingEnvironment(
     if (!canProvision.operationSuccess) {
       log.debug(
         "Environment not yet ready to create: blocked by the state machine!",
-        { canProvision, environment }
+        { canProvision, environment: environment.subdomain }
       );
     }
     await environmentStateMachine.setProvisioning({ trx, environment });

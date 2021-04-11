@@ -8,10 +8,6 @@ export async function canSetStartingFromSnapshot({
   trx,
 }: SetStartingFromSnapshotArguments): Promise<StateMachineReturnValue> {
   if (!environment.sourceSnapshotId) {
-    log.scream({
-      environmentKeys: Object.keys(environment),
-      sourceSnapshotId: environment.sourceSnapshotId,
-    });
     return {
       errors: [
         "Can't start an environment from snapshot that doesn't have a source snapshot ID",

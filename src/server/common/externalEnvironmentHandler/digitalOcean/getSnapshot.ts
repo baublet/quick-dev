@@ -17,9 +17,6 @@ export const getSnapshot: ExternalEnvironmentHandler["getSnapshot"] = async (
       method: "get",
       skipCache: true,
     });
-    log.scream("Get snapshots for droplet", {
-      snapshots,
-    });
     if (snapshots.snapshots.length > 0) {
       sourceSnapshotId = `${snapshots.snapshots[0].id}`;
     }
@@ -43,8 +40,6 @@ export const getSnapshot: ExternalEnvironmentHandler["getSnapshot"] = async (
     path: `images/${sourceSnapshotId}`,
     method: "get",
   });
-
-  log.scream("External snapshot from snapshot ID", { externalSnapshot });
 
   if (!externalSnapshot.image) {
     log.debug("External snapshot not yet saved as an image", {

@@ -55,7 +55,7 @@ export async function setSuccess({
   );
 
   log.debug("Updated environment command to complete", {
-    environment: environment.name,
+    environment: environment.subdomain,
     status: environment.lifecycleStatus,
     updatedCommand,
   });

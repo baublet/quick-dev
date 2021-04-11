@@ -7,7 +7,7 @@ export const shutdownEnvironment: ExternalEnvironmentHandler["shutdownEnvironmen
   environmentDomainRecords
 ) => {
   log.info("shutdownEnvironment", {
-    environment: environment.name,
+    environment: environment.subdomain,
     environmentDomainRecords,
   });
 

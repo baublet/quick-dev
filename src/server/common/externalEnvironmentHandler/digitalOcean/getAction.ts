@@ -9,7 +9,7 @@ export const getAction: ExternalEnvironmentHandler["getAction"] = async (
 ) => {
   const cacheKey = `get-action-${environmentAction.id}`;
   log.info("getAction", {
-    environment: environment.name,
+    environment: environment.subdomain,
     environmentAction,
   });
 

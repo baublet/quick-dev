@@ -1,7 +1,7 @@
 import { SetCreatingArguments } from ".";
 import { StateMachineReturnValue } from "..";
 import { environment as envEntity } from "../../entities";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { canSetCreating } from "./canSetCreating";
 
 export async function setCreating({
@@ -19,9 +19,9 @@ export async function setCreating({
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "creating",
     });
-    const createdDroplet = await DigitalOceanHandler.newEnvironment(
+    const createdDroplet = await getExternalEnvironmentHandler(
       environment
-    );
+    ).newEnvironment(environment);
     createdDropletId = createdDroplet.id;
     const updatedEntity = await envEntity.update(trx, environment.id, {
       sourceId: createdDroplet.id,
@@ -33,7 +33,10 @@ export async function setCreating({
     };
   } catch (e) {
     if (createdDropletId) {
-      await DigitalOceanHandler.destroyEnvironment(environment, []);
+      await getExternalEnvironmentHandler(environment).destroyEnvironment(
+        environment,
+        []
+      );
     }
     return {
       errors: [e.message, e.stack],

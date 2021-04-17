@@ -1,9 +1,7 @@
-import dayjs from "dayjs";
-
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetProvisioningArguments } from ".";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 
 // Called by a box when it's up and starts running our provisioning scripts
 export async function canSetProvisioning({
@@ -38,9 +36,9 @@ export async function canSetProvisioning({
     };
   }
 
-  const environmentInProvider = await DigitalOceanHandler.getEnvironment(
+  const environmentInProvider = await getExternalEnvironmentHandler(
     environment
-  );
+  ).getEnvironment(environment);
   if (
     environmentInProvider.status !== "active" ||
     !environmentInProvider.ipv4

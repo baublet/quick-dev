@@ -1,7 +1,7 @@
 import { log } from "../../../common/logger";
 import { environmentDomainRecord, environment as env } from "../entities";
 import { getDatabaseConnection } from "../../common/db";
-import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../common/externalEnvironmentHandler";
 
 export const removeAllTrace = async (payload: { environmentId: string }) => {
   const db = getDatabaseConnection();
@@ -22,8 +22,8 @@ export const removeAllTrace = async (payload: { environmentId: string }) => {
   }
 
   await Promise.all([
-    DigitalOceanHandler.removeAllTrace(environment),
-    DigitalOceanHandler.destroyEnvironment(
+    getExternalEnvironmentHandler(environment).removeAllTrace(environment),
+    getExternalEnvironmentHandler(environment).destroyEnvironment(
       environment,
       environmentDomainRecords
     ),

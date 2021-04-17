@@ -1,7 +1,7 @@
 import { SetStoppedArguments } from ".";
 import { log } from "../../../../common/logger";
 import { environmentAction, environmentSnapshot } from "../../entities";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { StateMachineReturnValue } from "../index";
 
 export async function canSetStopped({
@@ -38,10 +38,9 @@ export async function canSetStopped({
     };
   }
 
-  const actionInSource = await DigitalOceanHandler.getAction(
-    environment,
-    action
-  );
+  const actionInSource = await getExternalEnvironmentHandler(
+    environment
+  ).getAction(environment, action);
 
   if (!actionInSource) {
     log.error("Environment action doesn't exist in source", {
@@ -72,7 +71,9 @@ export async function canSetStopped({
   }
 
   // Now, grab the snapshot so we can get the image ID
-  const snapshot = await DigitalOceanHandler.getSnapshot(environment);
+  const snapshot = await getExternalEnvironmentHandler(environment).getSnapshot(
+    environment
+  );
   if (!snapshot) {
     log.warn(
       "Expected environment to have a snapshot by now, but it doesn't...",

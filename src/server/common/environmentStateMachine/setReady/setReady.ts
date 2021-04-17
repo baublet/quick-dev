@@ -3,7 +3,6 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetReadyArguments } from ".";
 import { canSetReady } from "./canSetReady";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
 import { enqueueJob } from "../../enqueueJob";
 
 export async function setReady({

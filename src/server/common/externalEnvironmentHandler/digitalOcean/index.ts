@@ -11,6 +11,7 @@ import { removeAllTrace } from "./removeAllTrace";
 import { shutdownEnvironment } from "./shutdownEnvironment";
 import { snapshotEnvironment } from "./snapshotEnvironment";
 import { deleteSnapshot } from "./deleteSnapshot";
+import { getOrCreateSSHKey } from "./getOrCreateSSHKey";
 
 export const DigitalOceanHandler: ExternalEnvironmentHandler = {
   createEnvironmentDomainRecord,
@@ -19,6 +20,7 @@ export const DigitalOceanHandler: ExternalEnvironmentHandler = {
   environmentExists,
   getAction,
   getEnvironment,
+  getOrCreateSSHKey,
   getSnapshot,
   newEnvironment,
   removeAllTrace,

@@ -1,7 +1,7 @@
 import { environment as envEntity, Environment } from "../../entities";
 import { Transaction } from "../../db";
 import { log } from "../../../../common/logger";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { environmentStateMachine } from "../../environmentStateMachine";
 
 export async function processSnapshottingEnvironment(
@@ -12,9 +12,9 @@ export async function processSnapshottingEnvironment(
     environment: environment.subdomain,
   });
 
-  const environmentSnapshot = await DigitalOceanHandler.getSnapshot(
+  const environmentSnapshot = await getExternalEnvironmentHandler(
     environment
-  );
+  ).getSnapshot(environment);
 
   if (!environmentSnapshot) {
     log.debug(

@@ -1,7 +1,7 @@
 import { SetCreatingArguments } from ".";
 import { StateMachineReturnValue } from "..";
 import { log } from "../../../../common/logger";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 
 export async function canSetCreating({
   environment,
@@ -13,9 +13,9 @@ export async function canSetCreating({
     };
   }
 
-  const externalEnvironmentExists = await DigitalOceanHandler.environmentExists(
+  const externalEnvironmentExists = await getExternalEnvironmentHandler(
     environment
-  );
+  ).environmentExists(environment);
 
   if (externalEnvironmentExists !== false) {
     log.warn(

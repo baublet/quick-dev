@@ -3,7 +3,7 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetStartingFromSnapshotArguments } from ".";
 import { canSetStartingFromSnapshot } from "./canSetStartingFromSnapshot";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 
 export async function setStartingFromSnapshot({
   trx,
@@ -30,9 +30,9 @@ export async function setStartingFromSnapshot({
   );
 
   try {
-    const createdDroplet = await DigitalOceanHandler.newEnvironment(
+    const createdDroplet = await getExternalEnvironmentHandler(
       environment
-    );
+    ).newEnvironment(environment);
 
     await envEntity.update(trx, environment.id, {
       lifecycleStatus: "starting_from_snapshot",

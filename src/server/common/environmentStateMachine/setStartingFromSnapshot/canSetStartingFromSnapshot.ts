@@ -1,7 +1,5 @@
 import { SetStartingFromSnapshotArguments } from ".";
 import { StateMachineReturnValue } from "../index";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
-import { log } from "../../../../common/logger";
 
 export async function canSetStartingFromSnapshot({
   environment,

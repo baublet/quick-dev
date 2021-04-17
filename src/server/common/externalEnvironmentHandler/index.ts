@@ -1,6 +1,14 @@
-import { Environment, EnvironmentDomainRecord } from "../entities";
+import { Context } from "../context";
+import { ConnectionOrTransaction } from "../db";
+import {
+  Environment,
+  EnvironmentDomainRecord,
+  ProviderSSHKey,
+} from "../entities";
 import { EnvironmentAction } from "../entities/environmentAction";
 import { EnvironmentSnapshot } from "../entities/environmentSnapshot";
+
+export { getExternalEnvironmentHandler } from "./getExternalEnvironmentHandler";
 
 export interface ExternalEnvironment {
   id: string;
@@ -35,6 +43,14 @@ export interface ExternalEnvironmentAction {
 }
 
 export interface ExternalEnvironmentHandler {
+  getOrCreateSSHKey: (
+    trx: ConnectionOrTransaction,
+    context: Context,
+    args: {
+      user: string;
+      userSource: Environment["userSource"];
+    }
+  ) => Promise<ProviderSSHKey>;
   getAction: (
     environment: Environment,
     action: EnvironmentAction

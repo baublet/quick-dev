@@ -5,7 +5,7 @@ import {
 } from "../../entities";
 import { Transaction } from "../../db";
 import { log } from "../../../../common/logger";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { environmentStateMachine } from "../../environmentStateMachine";
 
 export async function processStoppingEnvironment(
@@ -28,10 +28,9 @@ export async function processStoppingEnvironment(
       trx,
       environment.id
     );
-    const action = await DigitalOceanHandler.shutdownEnvironment(
-      environment,
-      domains
-    );
+    const action = await getExternalEnvironmentHandler(
+      environment
+    ).shutdownEnvironment(environment, domains);
     const savedAction = await environmentAction.create(trx, {
       environmentId: environment.id,
       actionPayload: JSON.stringify(action),
@@ -44,7 +43,7 @@ export async function processStoppingEnvironment(
   }
 
   // Check the action status
-  const action = await DigitalOceanHandler.getAction(
+  const action = await getExternalEnvironmentHandler(environment).getAction(
     environment,
     existingAction
   );

@@ -6,7 +6,7 @@ import {
 } from "../../entities";
 import { Transaction } from "../../db";
 import { log } from "../../../../common/logger";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { environmentStateMachine } from "../../environmentStateMachine";
 import { enqueueJob } from "../../enqueueJob";
 
@@ -29,9 +29,9 @@ export async function processStartingFromSnapshot(
     return;
   }
 
-  const environmentInSource = await DigitalOceanHandler.getEnvironment(
+  const environmentInSource = await getExternalEnvironmentHandler(
     environment
-  );
+  ).getEnvironment(environment);
 
   if (!environmentInSource) {
     log.warn(

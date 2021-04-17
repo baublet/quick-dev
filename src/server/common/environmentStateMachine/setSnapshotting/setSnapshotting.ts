@@ -7,7 +7,7 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetSnapshottingArguments } from ".";
 import { canSetSnapshotting } from "./canSetSnapshotting";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 
 export async function setSnapshotting({
   trx,
@@ -36,9 +36,9 @@ export async function setSnapshotting({
     environment: environment.subdomain,
   });
   // Tell our environment provider to shut it down and record the action
-  const createdAction = await DigitalOceanHandler.snapshotEnvironment(
+  const createdAction = await getExternalEnvironmentHandler(
     environment
-  );
+  ).snapshotEnvironment(environment);
   await environmentAction.create(trx, {
     actionPayload: JSON.stringify(createdAction),
     environmentId: environment.id,

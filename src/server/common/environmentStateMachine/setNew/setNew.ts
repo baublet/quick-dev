@@ -5,7 +5,7 @@ import { canSetNew, SetNewArguments } from ".";
 import { StateMachineReturnValue } from "../";
 import { log } from "../../../../common/logger";
 import { enqueueJob } from "../../enqueueJob";
-import { getOrCreateSSHKey } from "../../externalEnvironmentHandler/digitalOcean/getOrCreateSSHKey";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { getRepoStrapYardFile } from "../../gitHub";
 import { environment as envEntity } from "../../entities";
 
@@ -26,7 +26,9 @@ export async function setNew({
   return context.db.transaction(async (trx) => {
     let sshKeyId: string;
     try {
-      const providerKey = await getOrCreateSSHKey(trx, context, {
+      const providerKey = await getExternalEnvironmentHandler({
+        source: "digital_ocean",
+      }).getOrCreateSSHKey(trx, context, {
         user: user.email,
         userSource: user.source,
       });

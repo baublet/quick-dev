@@ -3,7 +3,7 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetStoppingArguments } from ".";
 import { canSetStopping } from "./canSetStopping";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 
 export async function setStopping({
   trx,
@@ -25,10 +25,9 @@ export async function setStopping({
   }
 
   // Tell our environment provider to shut it down and record the action
-  const createdAction = await DigitalOceanHandler.shutdownEnvironment(
-    environment,
-    environmentDomainRecords
-  );
+  const createdAction = await getExternalEnvironmentHandler(
+    environment
+  ).shutdownEnvironment(environment, environmentDomainRecords);
   await environmentAction.create(trx, {
     actionPayload: JSON.stringify(createdAction),
     environmentId: environment.id,

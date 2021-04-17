@@ -7,7 +7,7 @@ import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetStoppedArguments } from ".";
 import { canSetStopped } from "./canSetStopped";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { enqueueJob } from "../../enqueueJob";
 
 export async function setStopped({
@@ -28,7 +28,9 @@ export async function setStopped({
   }
 
   // Now, grab the snapshot so we can get the image ID
-  const snapshot = await DigitalOceanHandler.getSnapshot(environment);
+  const snapshot = await getExternalEnvironmentHandler(environment).getSnapshot(
+    environment
+  );
   if (!snapshot) {
     log.error(
       "setStopped: Expected environment to have a snapshot by now, but it doesn't...",

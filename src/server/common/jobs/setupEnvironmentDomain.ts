@@ -2,22 +2,15 @@ import {
   environment as envEntity,
   environmentDomainRecord as envDomainEntity,
 } from "../entities";
-import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../common/externalEnvironmentHandler";
 import { getDatabaseConnection } from "../../common/db";
 import { log } from "../../../common/logger";
-import { environmentStateMachine } from "../environmentStateMachine";
 
 export const setupEnvironmentDomain = async (payload: {
   environmentId: string;
 }) => {
   const db = getDatabaseConnection();
-  const environment = await envEntity.getById(db, payload.environmentId);
-
-  if (!environment) {
-    throw new Error(
-      `setupEnvironmentDomain invariance violation. Expected environment ${environment} to exist. It did not.`
-    );
-  }
+  const environment = await envEntity.getByIdOrFail(db, payload.environmentId);
 
   const existingDomainRecords = await envDomainEntity.getByEnvironmentId(
     db,
@@ -34,11 +27,9 @@ export const setupEnvironmentDomain = async (payload: {
   const name = `${environment.subdomain}.env`;
   const data = environment.ipv4;
 
-  const record = await DigitalOceanHandler.createEnvironmentDomainRecord(
-    type,
-    name,
-    data
-  );
+  const record = await getExternalEnvironmentHandler(
+    environment
+  ).createEnvironmentDomainRecord(type, name, data);
 
   log.debug("Domain record created in DigitalOcean", {
     type,

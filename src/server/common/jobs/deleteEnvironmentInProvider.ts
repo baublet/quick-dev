@@ -1,7 +1,7 @@
 import { log } from "../../../common/logger";
 import { environmentDomainRecord, environment as env } from "../entities";
 import { getDatabaseConnection } from "../../common/db";
-import { DigitalOceanHandler } from "../../common/externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../common/externalEnvironmentHandler";
 
 export const deleteEnvironmentInProvider = async (payload: {
   environmentId: string;
@@ -24,7 +24,7 @@ export const deleteEnvironmentInProvider = async (payload: {
     }
 
     await Promise.all([
-      DigitalOceanHandler.destroyEnvironment(
+      getExternalEnvironmentHandler(environment).destroyEnvironment(
         environment,
         environmentDomainRecords
       ),

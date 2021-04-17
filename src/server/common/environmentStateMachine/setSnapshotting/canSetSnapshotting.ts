@@ -1,7 +1,7 @@
 import { SetSnapshottingArguments } from ".";
 import { StateMachineReturnValue } from "../index";
 import { environmentAction } from "../../entities";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { log } from "../../../../common/logger";
 
 export async function canSetSnapshotting({
@@ -30,10 +30,9 @@ export async function canSetSnapshotting({
     };
   }
 
-  const actionInSource = await DigitalOceanHandler.getAction(
-    environment,
-    action
-  );
+  const actionInSource = await getExternalEnvironmentHandler(
+    environment
+  ).getAction(environment, action);
 
   if (!actionInSource) {
     log.error("Environment action doesn't exist in source", {

@@ -6,7 +6,7 @@ import { log } from "../../../../common/logger";
 import { enqueueJob } from "../../enqueueJob";
 import { StateMachineReturnValue } from "..";
 import { SetProvisioningArguments } from ".";
-import { DigitalOceanHandler } from "../../externalEnvironmentHandler/digitalOcean";
+import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { canSetProvisioning } from "./canSetProvisioning";
 
 // Called by a box when it's up and starts running our provisioning scripts
@@ -26,9 +26,9 @@ export async function setProvisioning({
 
   // Update the environment in the database
   try {
-    const environmentInProvider = await DigitalOceanHandler.getEnvironment(
+    const environmentInProvider = await getExternalEnvironmentHandler(
       environment
-    );
+    ).getEnvironment(environment);
     const ipv4 = environment.ipv4 || environmentInProvider.ipv4;
     if (environmentDomainRecords.length === 0) {
       await enqueueJob("setupEnvironmentDomain", {

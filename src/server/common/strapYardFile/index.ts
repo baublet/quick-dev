@@ -11,4 +11,10 @@ export interface ParsedDefinitionFile {
   steps: ParsedDefinitionStep[];
 }
 
+export interface ValidDefinitionFile {
+  name?: string;
+  description?: string;
+  steps: (string | ParsedDefinitionStep)[];
+}
+
 export { parseDefinition } from "./parseDefinition";

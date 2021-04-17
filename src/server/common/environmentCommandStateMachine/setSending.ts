@@ -85,6 +85,7 @@ export async function setSending({
     {
       timeout: 1000 * 60 * 30,
       retries: 3,
+      retryDelaySeconds: 3,
       onRetry: async () => {
         log.info("Retrying command", { environmentCommand });
       },

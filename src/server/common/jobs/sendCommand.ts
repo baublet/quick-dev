@@ -11,6 +11,11 @@ import { environmentCommandStateMachine } from "../environmentCommandStateMachin
 import { log } from "../../../common/logger";
 import { sendCommand as sendCommandToEnvironment } from "../environmentPassthrough";
 
+function isError(code: number | undefined): boolean {
+  if (!code) return false;
+  return code > 0;
+}
+
 async function getData(
   db: ConnectionOrTransaction,
   environmentCommandId: string
@@ -66,17 +71,36 @@ async function finalizeResults(
     logs: results.buffer,
   });
 
-  const result = await environmentCommandStateMachine.setSuccess({
-    trx: db,
-    environment,
-    environmentCommand,
-  });
-
-  if (result.operationSuccess === false) {
-    log.error("Unknown error setting a command success", {
-      result,
-      environment: environment.subdomain,
+  if (!isError(results.code)) {
+    const result = await environmentCommandStateMachine.setSuccess({
+      trx: db,
+      environment,
+      environmentCommand,
     });
+
+    if (result.operationSuccess === false) {
+      log.error("Unknown error setting a command success", {
+        result,
+        environment: environment.subdomain,
+      });
+    }
+  } else {
+    log.scream("Non-zero exit code... wtf", {
+      code: results.code,
+      lolWut: results,
+    });
+    const result = await environmentCommandStateMachine.setFailed({
+      trx: db,
+      environment,
+      environmentCommand,
+    });
+
+    if (result.operationSuccess === false) {
+      log.error("Unknown error setting a command failed", {
+        result,
+        environment: environment.subdomain,
+      });
+    }
   }
 }
 

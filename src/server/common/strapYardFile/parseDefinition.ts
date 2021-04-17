@@ -1,6 +1,7 @@
 import yaml from "js-yaml";
 
 import { ParsedDefinitionFile } from "./index";
+import { validateDefinition } from "./validateDefinition";
 
 export async function parseDefinition(
   repositoryUrl: string,
@@ -8,11 +9,7 @@ export async function parseDefinition(
 ): Promise<ParsedDefinitionFile> {
   const parsed = yaml.load(def);
 
-  if (parsed.steps && !Array.isArray(parsed.steps)) {
-    throw new Error(
-      "Step file is invalid. Expected an array of steps\n\n" + def
-    );
-  }
+  validateDefinition(parsed);
 
   return {
     name: parsed.name || "",

@@ -35,9 +35,10 @@ export async function sendCommand(
     timeoutInMs: 1000 * 60 * 30, // 30 minutes
   });
 
-  if (result.error) {
+  if (result.error || (result.code && result.code > 0)) {
     log.debug("Environment command received error", {
       environment: environment.subdomain,
+      code: result.code,
       result: {
         logLast50: result.buffer?.substr(result.buffer?.length - 50),
       },

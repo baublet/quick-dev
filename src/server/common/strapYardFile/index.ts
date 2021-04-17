@@ -8,12 +8,14 @@ export interface ParsedDefinitionFile {
   rawFile: string;
   name?: string;
   description?: string;
+  image: string;
   steps: ParsedDefinitionStep[];
 }
 
 export interface ValidDefinitionFile {
   name?: string;
   description?: string;
+  image?: string;
   steps: (string | ParsedDefinitionStep)[];
 }
 

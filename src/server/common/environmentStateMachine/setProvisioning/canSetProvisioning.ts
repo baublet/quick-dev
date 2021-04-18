@@ -9,41 +9,34 @@ import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler"
 export async function canSetProvisioning({
   environment,
 }: SetProvisioningArguments): Promise<StateMachineReturnValue> {
+  const errors: string[] = [];
+
   // Make sure they're not in the wrong status for some reason
   if (environment.lifecycleStatus !== "creating") {
-    log.error(
-      `EnvironmentReadyToProvision request received for environment that's not in the proper status`,
-      { environment: environment.subdomain }
+    errors.push(
+      "EnvironmentReadyToProvision request received for environment that's not in the proper status"
     );
-    return {
-      operationSuccess: false,
-      errors: [
-        "EnvironmentReadyToProvision request received for environment that's not in the proper status",
-      ],
-    };
   }
 
   if (!environment.sourceId) {
-    log.error(
-      "Environment trying to set provisioning without having created the environment in the external provider!",
-      {
-        environment: environment.subdomain,
-      }
+    errors.push(
+      "Can't set an environment to provisioning if it doesn't have a source ID!"
     );
-    return {
-      operationSuccess: false,
-      errors: [
-        "Can't set an environment to provisioning if it doesn't have a source ID!",
-      ],
-    };
   }
 
   const environmentInProvider = await getExternalEnvironmentHandler(
     environment
   ).getEnvironment(environment);
+
+  if (environmentInProvider.status !== "active") {
+    errors.push("Environment in provider is not active");
+  }
+
+  if (!environmentInProvider.ipv4) {
+    errors.push("Environment in provider has no IP");
+  }
+
   if (
-    environmentInProvider.status !== "active" ||
-    !environmentInProvider.ipv4 ||
     // We need to wait around 3 minutes before we can actually start running
     // commands before any environment locks are freed in the source from the
     // initial provisioning.
@@ -51,17 +44,22 @@ export async function canSetProvisioning({
       .add(3, "minutes")
       .isAfter(Date.now())
   ) {
+    errors.push(
+      "Time between environment creation and provisioning not yet met. Need to wait longer as a safety debounce"
+    );
+  }
+
+  if (errors.length > 0) {
     log.debug(
       "Environment not allowed to set provisioning because the environment in the provider is not ready yet",
       {
+        errors,
         environmentInProvider,
       }
     );
     return {
       operationSuccess: false,
-      errors: [
-        "Can't set an environment to provisioning if the external environment isn't yet active",
-      ],
+      errors,
     };
   }
 

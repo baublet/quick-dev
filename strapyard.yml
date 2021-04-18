@@ -4,12 +4,14 @@ steps:
   - name: Install NVM
     command: |
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-      echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc \
-      echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
   - name: debug
     command: cat ~/.bashrc
   - name: Install Node
-    command: nvm install
+    command: |
+      echo "$HOME" \
+      echo "$NVM_DIR" \
+      export NVM_DIR="$HOME/.nvm" echo [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+      nvm install
   - name: Install yarn
     command: npm i --global yarn
   - name: yarn

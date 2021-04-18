@@ -9,6 +9,7 @@ steps:
   - name: Debug
     command: |
       cat ~/.bashrc; \
+      echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"; \
       cat ~/.bash_profile
 
   - name: Install Node

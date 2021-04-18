@@ -2,14 +2,14 @@ name: StrapYard
 description: Develop StrapYard.... with StrapYard!
 steps:
   - name: Install NVM
-    command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-  - name: Install Node
     command: |
-      nvm install \
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
       echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc \
       echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
   - name: debug
     command: cat ~/.bashrc
+  - name: Install Node
+    command: nvm install
   - name: Install yarn
     command: npm i --global yarn
   - name: yarn

@@ -76,6 +76,7 @@ type Environment {
   created: Date!
   deleted: Boolean!
   id: ID!
+  image: String!
   ipv4: String
   lifecycleStatus: EnvironmentLifecycleStatus!
   logs: EnvironmentLogsConnection

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { log } from "../../../../common/logger";
 import { StateMachineReturnValue } from "..";
 import { SetProvisioningArguments } from ".";
@@ -41,7 +43,13 @@ export async function canSetProvisioning({
   ).getEnvironment(environment);
   if (
     environmentInProvider.status !== "active" ||
-    !environmentInProvider.ipv4
+    !environmentInProvider.ipv4 ||
+    // We need to wait around 3 minutes before we can actually start running
+    // commands before any environment locks are freed in the source from the
+    // initial provisioning.
+    dayjs(environmentInProvider.created_at)
+      .add(3, "minutes")
+      .isAfter(Date.now())
   ) {
     log.debug(
       "Environment not allowed to set provisioning because the environment in the provider is not ready yet",

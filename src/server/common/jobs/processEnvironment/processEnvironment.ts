@@ -36,7 +36,6 @@ const environmentStatusProcessor: Record<
 
 export async function processEnvironment(payload: { environmentId: string }) {
   const db = getDatabaseConnection();
-
   const environment = await envEntity.getByIdOrFail(db, payload.environmentId);
   await envEntity.touch(db, environment.id);
 

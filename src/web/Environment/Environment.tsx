@@ -80,11 +80,14 @@ export function Environment({ id }: EnvironmentProps) {
                     status={environment.lifecycleStatus}
                   />
                 </div>
-                <span>
+                <div>
                   <Link to={environment.repositoryHttpUrl} external={true}>
                     {environment.repositoryUrl}
                   </Link>
-                </span>
+                </div>
+                <div>
+                  <b>image:</b> {environment.image}
+                </div>
               </div>
             </div>
           </>

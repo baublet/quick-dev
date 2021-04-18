@@ -11,6 +11,7 @@ import { environmentWorking } from "./resolvers/environment/working";
 import { environmentPermissions } from "./resolvers/environment/permissions";
 import { environmentCommandLogs } from "./resolvers/environmentCommand/logs";
 import { environmentSecret } from "./resolvers/environment/secret";
+import { environmentImage } from "./resolvers/environment/image";
 
 import { environmentCommandLogs as environmentCommandLogsQuery } from "./resolvers/environmentCommandLogs";
 
@@ -46,6 +47,7 @@ export const resolvers = {
     url: (parent: Environment) =>
       `https://${parent.subdomain}.env.${process.env.STRAPYARD_DOMAIN}`,
     secret: environmentSecret,
+    image: environmentImage,
   },
   User: {
     repositories,

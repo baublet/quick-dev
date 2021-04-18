@@ -24,6 +24,7 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       vcpus: number;
       disk: number;
       locked: boolean;
+      created_at: string;
       kernel: {
         name: string;
       };
@@ -61,6 +62,7 @@ export const getEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
     locked: droplet.locked,
     status: droplet.status,
     sizeSlug: droplet.size_slug,
+    created_at: droplet.created_at,
     provider: "digital_ocean",
     ipv4: publicNetwork?.ip_address,
   };

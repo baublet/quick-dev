@@ -2,7 +2,7 @@ import yaml from "js-yaml";
 
 import { ParsedDefinitionFile } from "./index";
 import { validateDefinition } from "./validateDefinition";
-import images from "./images";
+import { images } from "./images";
 
 export async function parseDefinition(
   repositoryUrl: string,
@@ -14,7 +14,7 @@ export async function parseDefinition(
 
   return {
     name: parsed.name || "",
-    image: parsed.image || images[0].slug,
+    image: parsed.image || Object.keys(images)[0],
     description: parsed.description || "",
     rawFile: def,
     repositoryUrl,

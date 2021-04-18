@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 import { ValidDefinitionFile } from ".";
 import { log } from "../../../common/logger";
-import images from "./images";
+import { images } from "./images";
 
 const schema = yup
   .object({
@@ -10,8 +10,8 @@ const schema = yup
     description: yup.string().optional(),
     image: yup
       .mixed()
-      .oneOf(images.map((image) => image.slug))
-      .default(images[0].slug),
+      .oneOf(Object.keys(images))
+      .default(Object.keys(images)[0]),
     steps: yup
       .array(
         yup

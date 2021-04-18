@@ -21,6 +21,7 @@ export interface Environment {
   created_at: Date;
   deleted: boolean;
   id: string;
+  image: string;
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;

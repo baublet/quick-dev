@@ -22,6 +22,7 @@ export interface ExternalEnvironment {
    * In gigabytes
    */
   disk: number;
+  created_at: string;
   locked: boolean;
   status: "new" | "active" | "off" | "archive";
   sizeSlug: string;

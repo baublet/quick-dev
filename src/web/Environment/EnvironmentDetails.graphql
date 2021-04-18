@@ -1,16 +1,17 @@
 query EnvironmentDetails($id: ID!) {
   environment(input: { id: $id }) {
     id
-    name
-    subdomain
-    size
-    url
+    image
     ipv4
     lifecycleStatus
-    working
-    secret
-    repositoryUrl
+    name
     repositoryHttpUrl
+    repositoryUrl
+    secret
+    size
+    subdomain
+    url
+    working
     permissions {
       canDelete
       canOpen

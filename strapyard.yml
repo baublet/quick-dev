@@ -1,9 +1,7 @@
 name: StrapYard
 description: Develop StrapYard.... with StrapYard!
 steps:
-  - command: |
-      touch ~/.bashrc \
-      echo "source ~/.bashrc" >> ~/.bash_profile
+  - command: echo "source ~/.bashrc" >> ~/.bash_profile
 
   - name: Install NVM
     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash

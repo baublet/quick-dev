@@ -10,7 +10,7 @@ steps:
     command: . /root/.nvm/nvm.sh; nvm install
 
   - name: Install yarn
-    command: . /root/.nvm/nvm.sh; npm i --global yarn
+    command: npm i --global yarn
 
   - name: yarn
-    command: . /root/.nvm/nvm.sh; yarn
+    command: yarn

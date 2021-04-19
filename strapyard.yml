@@ -10,9 +10,9 @@ steps:
     command: |
       cat ~/.bashrc; \
       echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"; \
-      cat ~/.bash_profile \
+      cat ~/.bash_profile; \
       echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"; \
-      echo "$HOME --- $NVM_DIR"
+      echo "$HOME --- $NVM_DIR";
 
   - name: Install Node
     command: |

@@ -30,7 +30,32 @@ export function sendSshCommand({
     let buffer = "";
     let errorBuffer = "";
 
-    connection.on("ready", function () {
+    connection.on("ready", () => {
+      // connection.shell((error, stream) => {
+      //   if (error) {
+      //     cancelTimeout();
+      //     return resolve({
+      //       error: error.message + "\n\n" + error.stack,
+      //       totalMs: Date.now() - startTime,
+      //     });
+      //   }
+      //   stream.on('close', () => {
+      //     connection.end();
+      //     cancelTimeout();
+      //     resolve({
+      //       error: false,
+      //       buffer,
+      //       errorBuffer,
+      //       code,
+      //       signal,
+      //       totalMs: Date.now() - startTime,
+      //     });
+      //   }).on('data', (data) => {
+      //     console.log('OUTPUT: ' + data);
+      //   });
+      //   stream.end('ls -l\nexit\n');
+      // });
+
       log.debug("SSH client ready", {
         ipv4,
         commandFirst50: command.substring(0, 50),
@@ -48,7 +73,7 @@ export function sendSshCommand({
       const cancelTimeout = () => clearTimeout(timeout);
 
       connection.exec(
-        `source /root/.bashrc; cd ${workingDirectory}; ${command}`,
+        `source ~/.bashrc; echo "~~ DEBUG\n\n"; printenv; cat ~/.bashrc; echo "\n\n~~\n\n"; cd ${workingDirectory}; ${command}`,
         { pty: true },
         async (err, stream) => {
           if (err) {

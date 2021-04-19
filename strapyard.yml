@@ -13,7 +13,7 @@ steps:
       echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /etc/profile.d/nvm.sh;
 
   - name: Install Node
-    command: nvm install
+    command: source /root/.bashrc && nvm install
 
   - name: Install yarn
     command: npm i --global yarn

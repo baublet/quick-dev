@@ -31,6 +31,15 @@ export async function createInitialCommands(
   });
 
   await environmentCommand.create(trx, {
+    command: `sudo apt-get -y install python3 build-essential`,
+    environmentId: environment.id,
+    title: "Update and Upgrade",
+    adminOnly: true,
+    status: "ready",
+    workingDirectory: "~",
+  });
+
+  await environmentCommand.create(trx, {
     command: `mkdir -p /root/project \
 && (cd ~/project; git clone ${environment.repositoryUrl} .)`,
     environmentId: environment.id,

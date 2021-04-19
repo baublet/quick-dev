@@ -18,6 +18,7 @@ export async function createInitialCommands(
     title: "Update and Upgrade",
     adminOnly: true,
     status: "ready",
+    workingDirectory: "~",
   });
 
   await environmentCommand.create(trx, {
@@ -27,6 +28,7 @@ export async function createInitialCommands(
     title: "Clone Repository",
     adminOnly: true,
     status: "ready",
+    workingDirectory: "~",
   });
 
   await environmentCommand.create(trx, {

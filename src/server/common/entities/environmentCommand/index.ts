@@ -17,6 +17,7 @@ export interface EnvironmentCommand {
   title: string;
   updated_at: Date;
   order: number;
+  workingDirectory?: string;
 }
 
 export { create } from "./create";

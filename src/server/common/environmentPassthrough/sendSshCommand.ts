@@ -8,11 +8,13 @@ export function sendSshCommand({
   command,
   // 15 minute timeout by default
   timeoutInMs = 1000 * 60 * 15,
+  workingDirectory,
 }: {
   ipv4: string;
   privateKey: string;
   command: string;
   timeoutInMs?: number;
+  workingDirectory: string;
 }): Promise<{
   error: string | false;
   buffer?: string;
@@ -45,35 +47,38 @@ export function sendSshCommand({
       }, timeoutInMs);
       const cancelTimeout = () => clearTimeout(timeout);
 
-      connection.exec(command, async (err, stream) => {
-        if (err) {
-          cancelTimeout();
-          return resolve({
-            error: err.message + "\n\n" + err.stack,
-            totalMs: Date.now() - startTime,
-          });
-        }
-        stream
-          .on("close", async (code: number, signal: string) => {
-            connection.end();
+      connection.exec(
+        `(cd ${workingDirectory}; ${command})`,
+        async (err, stream) => {
+          if (err) {
             cancelTimeout();
-            resolve({
-              error: false,
-              buffer,
-              errorBuffer,
-              code,
-              signal,
+            return resolve({
+              error: err.message + "\n\n" + err.stack,
               totalMs: Date.now() - startTime,
             });
-          })
-          .on("data", (data: string) => {
-            buffer = buffer + data;
-          })
-          .stderr.on("data", (data: string) => {
-            buffer = buffer + data;
-            errorBuffer = errorBuffer + data;
-          });
-      });
+          }
+          stream
+            .on("close", async (code: number, signal: string) => {
+              connection.end();
+              cancelTimeout();
+              resolve({
+                error: false,
+                buffer,
+                errorBuffer,
+                code,
+                signal,
+                totalMs: Date.now() - startTime,
+              });
+            })
+            .on("data", (data: string) => {
+              buffer = buffer + data;
+            })
+            .stderr.on("data", (data: string) => {
+              buffer = buffer + data;
+              errorBuffer = errorBuffer + data;
+            });
+        }
+      );
     });
 
     connection.on("error", (message) => {

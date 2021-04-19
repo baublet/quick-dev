@@ -13,7 +13,9 @@ steps:
       cat ~/.bash_profile
 
   - name: Install Node
-    command: nvm install
+    command: |
+      source ~/.bashrc; \
+      nvm install
 
   - name: Install yarn
     command: npm i --global yarn

@@ -13,6 +13,15 @@ export async function createInitialCommands(
   { environment }: AddSSHKeyArguments
 ): Promise<void> {
   await environmentCommand.create(trx, {
+    command: `touch /root/.bashrc; chmod +x /root/.bashrc`,
+    environmentId: environment.id,
+    title: "Setup .bashrc",
+    adminOnly: true,
+    status: "ready",
+    workingDirectory: "~",
+  });
+
+  await environmentCommand.create(trx, {
     command: `sudo apt-get -y update && sudo apt-get -y upgrade`,
     environmentId: environment.id,
     title: "Update and Upgrade",

@@ -1,18 +1,17 @@
 name: StrapYard
 description: Develop StrapYard.... with StrapYard!
 steps:
+  - name: Install Python
+    command: apt-get install -y python3
+
   - name: Install NVM
-    command: |
-      (curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash); \
-      echo ". /root/.nvm/nvm.sh" >> ~/.bashrc; \
-      echo "Added NVM setup to /root/.bashrc"; \
-      cat ~/.bashrc
+    command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
   - name: Install Node
-    command: nvm install
+    command: . /root/.nvm/nvm.sh && nvm install
 
   - name: Install yarn
-    command: npm i --global yarn
+    command: . /root/.nvm/nvm.sh && npm i --global yarn
 
-  - name: yarn
-    command: yarn
+  - name: Install dependencies
+    command: . /root/.nvm/nvm.sh && yarn

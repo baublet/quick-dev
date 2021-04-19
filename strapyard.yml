@@ -6,12 +6,6 @@ steps:
   - name: Install NVM
     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
-  - name: Debug
-    command: |
-      echo 'export NVM_DIR="$HOME/.nvm"' >> /etc/profile.d/nvm.sh; \
-      echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /etc/profile.d/nvm.sh; \
-      echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /etc/profile.d/nvm.sh;
-
   - name: Install Node
     command: source /root/.bashrc && nvm install
 

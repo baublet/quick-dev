@@ -33,7 +33,7 @@ export async function createInitialCommands(
   await environmentCommand.create(trx, {
     command: `sudo apt-get -y install python3 build-essential`,
     environmentId: environment.id,
-    title: "Update and Upgrade",
+    title: "Build Essentials",
     adminOnly: true,
     status: "ready",
     workingDirectory: "~",

@@ -23,7 +23,7 @@ export async function createInitialCommands(
 
   await environmentCommand.create(trx, {
     command: `mkdir -p /root/project \
-&& (cd ~/project; git clone ${environment.repositoryUrl})`,
+&& (cd ~/project; git clone ${environment.repositoryUrl} .)`,
     environmentId: environment.id,
     title: "Clone Repository",
     adminOnly: true,

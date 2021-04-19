@@ -48,8 +48,7 @@ export function sendSshCommand({
       const cancelTimeout = () => clearTimeout(timeout);
 
       connection.exec(
-        // `(cd ${workingDirectory}; ${command})`,
-        command,
+        `(([[ -f "~/.bashrc" ]] && source "~/.bashrc"); cd ${workingDirectory}; ${command})`,
         async (err, stream) => {
           if (err) {
             cancelTimeout();

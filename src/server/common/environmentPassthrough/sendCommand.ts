@@ -2,17 +2,12 @@ import { Environment, EnvironmentCommand, SSHKey } from "../entities";
 import { log } from "../../../common/logger";
 import { sendSshCommand } from "./sendSshCommand";
 
-function getWorkingDirectory(
-  environment: Environment,
-  environmentCommand: EnvironmentCommand
-): string {
+function getWorkingDirectory(environmentCommand: EnvironmentCommand): string {
   if (environmentCommand.workingDirectory) {
     return environmentCommand.workingDirectory;
   }
 
-  const gitParts = environment.repositoryUrl.split("/");
-  const lastPart = gitParts[gitParts.length - 1].replace(".git", "");
-  return `~/${lastPart}`;
+  return "~/project";
 }
 
 export async function sendCommand(
@@ -41,7 +36,7 @@ export async function sendCommand(
     return undefined;
   }
 
-  const workingDirectory = getWorkingDirectory(environment, environmentCommand);
+  const workingDirectory = getWorkingDirectory(environmentCommand);
 
   const result = await sendSshCommand({
     ipv4: environment.ipv4,

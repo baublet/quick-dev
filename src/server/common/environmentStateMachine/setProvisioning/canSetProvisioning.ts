@@ -37,11 +37,11 @@ export async function canSetProvisioning({
   }
 
   if (
-    // We need to wait around 3 minutes before we can actually start running
+    // We need to wait around 2 minutes before we can actually start running
     // commands before any environment locks are freed in the source from the
     // initial provisioning.
     dayjs(environmentInProvider.created_at)
-      .add(3, "minutes")
+      .add(2, "minutes")
       .isAfter(Date.now())
   ) {
     errors.push(

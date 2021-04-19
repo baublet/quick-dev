@@ -13,7 +13,7 @@ export async function createInitialCommands(
   { environment }: AddSSHKeyArguments
 ): Promise<void> {
   await environmentCommand.create(trx, {
-    command: `touch /root/.bashrc; chmod +x /root/.bashrc`,
+    command: `echo "echo '~StrapYard~'" >> /root/.bashrc; chmod +x /root/.bashrc`,
     environmentId: environment.id,
     title: "Setup .bashrc",
     adminOnly: true,

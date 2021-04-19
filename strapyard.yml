@@ -8,10 +8,10 @@ steps:
     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
   - name: Install Node
-    command: source /root/.nvm/nvm.sh && nvm install
+    command: nvm install
 
   - name: Install yarn
-    command: source /root/.nvm/nvm.sh && npm i --global yarn
+    command: npm i --global yarn
 
   - name: Install dependencies
-    command: source /root/.nvm/nvm.sh && yarn
+    command: yarn

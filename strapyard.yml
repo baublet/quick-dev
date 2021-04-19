@@ -1,8 +1,10 @@
 name: StrapYard
 description: Develop StrapYard.... with StrapYard!
 steps:
-  - name: Install Python
-    command: apt-get install -y python3
+  # - name: Install Python
+  # command: apt-get install -y python3
+
+  - command: cat ~/.bashrc; source ~/.bashrc
 
   - name: Install NVM
     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash

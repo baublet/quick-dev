@@ -33,14 +33,11 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       throw new Error("Provider SSH key not found for extant SSH key");
     }
 
-    const provisionScript = ``;
-
     const body = {
       name,
       region: "nyc3",
       size,
       image: environment.sourceSnapshotId || "ubuntu-16-04-x64",
-      user_data: provisionScript,
       ssh_keys: [providerSshKey.sourceId],
       tags: [environment.id],
     };
@@ -59,6 +56,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
         vcpus: number;
         disk: number;
         locked: boolean;
+        created_at: string;
         size_slug: string;
       };
     }>({
@@ -84,6 +82,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       locked: droplet.locked,
       status: droplet.status,
       sizeSlug: droplet.size_slug,
+      created_at: droplet.created_at,
       provider: "digital_ocean",
     };
   });

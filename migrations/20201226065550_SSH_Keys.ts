@@ -5,8 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("id").primary();
     table.timestamps(undefined, true);
 
-    table.text("userSource").notNullable();
-    table.text("user").notNullable();
+    table.text("userId").notNullable().index();
     table.text("fingerprint").notNullable().index();
     table.text("privateKey").notNullable();
     table.text("publicKey").notNullable();

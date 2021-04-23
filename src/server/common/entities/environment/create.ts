@@ -12,8 +12,7 @@ type CreateEnvironmentInput = Partial<Environment> &
     | "sshKeyId"
     | "strapYardFile" // Raw file
     | "subdomain"
-    | "user"
-    | "userSource"
+    | "userId"
   >;
 
 export async function create(

@@ -6,7 +6,7 @@ import { log } from "../../../../common/logger";
 
 type CreateSSHKeyInput = Pick<
   SSHKey,
-  "user" | "userSource" | "privateKey" | "publicKey" | "fingerprint"
+  "userId" | "privateKey" | "publicKey" | "fingerprint"
 >;
 
 export async function create(

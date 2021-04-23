@@ -35,8 +35,7 @@ export interface Environment {
   strapYardFile: string;
   subdomain: string;
   updated_at: Date;
-  user: string;
-  userSource: EnvironmentUserSource;
+  userId: string;
   working: boolean;
 }
 

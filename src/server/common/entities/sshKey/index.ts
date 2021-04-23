@@ -1,10 +1,7 @@
-import { EnvironmentUserSource } from "../environment";
-
 export interface SSHKey {
   id: string;
   environmentId: string;
-  userSource: EnvironmentUserSource;
-  user: string;
+  userId: string;
   privateKey: string;
   publicKey: string;
   fingerprint: string;

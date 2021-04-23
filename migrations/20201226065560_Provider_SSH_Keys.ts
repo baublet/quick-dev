@@ -6,10 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(undefined, true);
 
     table.text("sshKeyId").index().notNullable();
-
-    table.text("userSource").notNullable();
-    table.text("user").notNullable();
-
+    table.text("userId").notNullable().index();
     table.text("source").defaultTo("do").notNullable().index();
     table.text("sourceId"); // e.g., ID of the SSH key in DO
   });

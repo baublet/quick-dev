@@ -13,6 +13,7 @@ interface GitHubUserResponse {
 }
 
 export interface GitHubUser {
+  [key: string]: any;
   id: string;
   avatar: string;
   bioUrl: string;
@@ -23,7 +24,7 @@ export interface GitHubUser {
 }
 
 export async function getCurrentUser(
-  context: Context
+  context: Pick<Context, "cache" | "accessToken">
 ): Promise<GitHubUser | null> {
   const accessToken = context.accessToken;
   if (!accessToken) {

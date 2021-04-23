@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("secret").index().notNullable().unique();
     table.boolean("deleted").index().defaultTo(false);
     table.text("sshKeyId").index().notNullable();
-    table.text("source").defaultTo("do").notNullable().index();
+    table.text("source").defaultTo("digital_ocean").notNullable().index();
     table.text("sourceId"); // e.g., ID of the environment in DO
     table.text("userId").notNullable().index();
     table.text("repositoryUrl").notNullable();

@@ -1,4 +1,4 @@
-import { getDatabaseConnection } from "../src/lambda/common/db";
+import { getDatabaseConnection } from "../src/server/common/db";
 
 async function dropDatabase() {
   const db = getDatabaseConnection();

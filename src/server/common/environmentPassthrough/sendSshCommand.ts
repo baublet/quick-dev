@@ -1,6 +1,8 @@
 import { Client } from "ssh2";
 
 import { log } from "../../../common/logger";
+import { getDatabaseConnection } from "../../common/db";
+import { environmentCommandLog } from "../entities";
 
 export function sendSshCommand({
   ipv4,
@@ -9,12 +11,16 @@ export function sendSshCommand({
   // 15 minute timeout by default
   timeoutInMs = 1000 * 60 * 15,
   workingDirectory,
+  environmentId,
+  environmentCommandId,
 }: {
   ipv4: string;
   privateKey: string;
   command: string;
   timeoutInMs?: number;
   workingDirectory: string;
+  environmentId?: string;
+  environmentCommandId?: string;
 }): Promise<{
   error: string | false;
   buffer?: string;
@@ -24,6 +30,7 @@ export function sendSshCommand({
   totalMs: number;
 }> {
   const startTime = Date.now();
+  const db = getDatabaseConnection();
   return new Promise(async (resolve) => {
     const connection = new Client();
 
@@ -36,6 +43,26 @@ export function sendSshCommand({
         commandFirst50: command.substring(0, 50),
       });
 
+      const writeBuffer = async () => {
+        if (!environmentCommandId || !environmentId) {
+          return;
+        }
+        if (buffer.length === 0) {
+          return;
+        }
+        const toWrite = buffer;
+        buffer = "";
+        await environmentCommandLog.create(db, {
+          environmentCommandId,
+          environmentId,
+          logOutput: toWrite,
+        });
+      };
+
+      const bufferWriter = setInterval(async () => {
+        await writeBuffer();
+      }, 1000);
+
       const timeout = setTimeout(() => {
         connection.end();
         resolve({
@@ -45,14 +72,19 @@ export function sendSshCommand({
           totalMs: Date.now() - startTime,
         });
       }, timeoutInMs);
-      const cancelTimeout = () => clearTimeout(timeout);
+
+      const cancelTimers = async () => {
+        await writeBuffer();
+        clearTimeout(timeout);
+        clearInterval(bufferWriter);
+      };
 
       connection.exec(
         `cd ${workingDirectory}; ${command}`,
         { pty: true },
         async (err, stream) => {
           if (err) {
-            cancelTimeout();
+            await cancelTimers();
             return resolve({
               error: err.message + "\n\n" + err.stack,
               totalMs: Date.now() - startTime,
@@ -61,7 +93,7 @@ export function sendSshCommand({
           stream
             .on("close", async (code: number, signal: string) => {
               connection.end();
-              cancelTimeout();
+              await cancelTimers();
               resolve({
                 error: false,
                 buffer,

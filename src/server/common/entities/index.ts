@@ -8,6 +8,7 @@ export * as sshKey from "./sshKey";
 export * as token from "./tokens";
 export * as userAccount from "./userAccount";
 export * as user from "./user";
+export * as environmentCommandLog from "./environmentCommandLog";
 
 export {
   Environment,

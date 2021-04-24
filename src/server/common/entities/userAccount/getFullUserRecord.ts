@@ -6,13 +6,13 @@ export async function getFullUserRecord(
   trx: ConnectionOrTransaction,
   identifier: {
     source: UserAccount["source"];
-    sourceId: string;
+    uniqueIdentifier: string;
   }
 ): Promise<{ user: User; userAccounts: UserAccount[] } | undefined> {
   const query = trx<UserAccount>("userAccounts")
     .select("userId")
     .where("source", "=", identifier.source)
-    .andWhere("sourceId", "=", identifier.sourceId)
+    .andWhere("uniqueIdentifier", "=", identifier.uniqueIdentifier)
     .limit(1);
 
   const found = await query;

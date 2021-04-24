@@ -6,7 +6,10 @@ import { ConnectionOrTransaction } from "../../db";
 export async function create(
   trx: ConnectionOrTransaction,
   input: Partial<
-    Pick<UserAccount, "rawUserData" | "source" | "uniqueIdentifier" | "userId">
+    Pick<
+      UserAccount,
+      "rawUserData" | "source" | "sourceId" | "uniqueIdentifier" | "userId"
+    >
   >
 ): Promise<UserAccount> {
   const created = await trx<UserAccount>("userAccounts")

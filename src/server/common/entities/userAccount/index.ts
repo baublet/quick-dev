@@ -8,6 +8,7 @@ export interface UserAccount {
   id: string;
   userId: string;
   source: UserAccountSource;
+  sourceId: string;
   uniqueIdentifier: string;
   rawUserData: RawUserData;
   created_at: Date;

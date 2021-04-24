@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import FormData from "form-data";
 import fetch from "node-fetch";
 
-import { log } from "../common/logger";
-
 export const githubHandler = async (request: Request, response: Response) => {
   const data = new FormData();
   data.append("client_id", process.env.GITHUB_CLIENT_ID);

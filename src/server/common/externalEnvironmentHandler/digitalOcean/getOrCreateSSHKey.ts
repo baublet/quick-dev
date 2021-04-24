@@ -1,4 +1,4 @@
-import { Environment, ProviderSSHKey, providerSSHKey } from "../../entities";
+import { ProviderSSHKey, providerSSHKey } from "../../entities";
 import { digitalOceanApi } from "./digitalOceanApi";
 import { getOrCreateSSHKey as getOrCreateGitHubKey } from "../../gitHub";
 import { Context } from "../../context";
@@ -28,6 +28,34 @@ export async function getOrCreateSSHKey(
   });
 
   if (extant) {
+    // Check that it exists in DO
+    const extantKeyInDO = await digitalOceanApi<{
+      ssh_key?: {
+        id: number;
+        fingerprint: string;
+        name: string;
+      };
+    }>({
+      path: `account/keys/${extant.sourceId}`,
+      method: "get",
+      skipCache: true,
+    });
+
+    // Create it in DO if it doesn't exist there (this can happen if the key
+    // was deleted in our DO account. Common in development)
+    if (!extantKeyInDO.ssh_key) {
+      const sshKey = await getOrCreateGitHubKey(trx, context);
+      const keyInDO = await saveKeyInDigitalOcean({
+        fingerprint: sshKey.fingerprint,
+        keyTitle: `StrapYard: ${userId}`,
+        publicKey: sshKey.publicKey,
+      });
+      const updatedProviderKey = await providerSSHKey.update(trx, extant.id, {
+        sourceId: `${keyInDO.id}`,
+      });
+      return updatedProviderKey;
+    }
+
     return extant;
   }
 
@@ -35,9 +63,38 @@ export async function getOrCreateSSHKey(
 
   // Get/create an SSH key for this context
   const sshKey = await getOrCreateGitHubKey(trx, context);
-  const keyTitle = `StrapYard: ${userId}`;
 
   // Now, save the key to the provider (e.g., send it to DigitalOcean)
+  const digitalOceanSSHKey = await saveKeyInDigitalOcean({
+    fingerprint: sshKey.fingerprint,
+    keyTitle: `StrapYard: ${userId}`,
+    publicKey: sshKey.publicKey,
+  });
+
+  // Save the provider SSH key to the StrapYard DB (so we don't do all of
+  // the above junk more than once
+  return providerSSHKey.create(trx, {
+    userId,
+    source: "digital_ocean",
+    sourceId: `${digitalOceanSSHKey.id}`,
+    sshKeyId: sshKey.id,
+  });
+}
+
+async function saveKeyInDigitalOcean({
+  keyTitle,
+  publicKey,
+  fingerprint,
+}: {
+  keyTitle: string;
+  publicKey: string;
+  fingerprint: string;
+}): Promise<{
+  id: number;
+  fingerprint: string;
+  publicKey: string;
+  name: string;
+}> {
   const digitalOceanResponse = await digitalOceanApi<{
     message?: string;
     ssh_key: {
@@ -52,21 +109,25 @@ export async function getOrCreateSSHKey(
     method: "post",
     body: {
       name: keyTitle,
-      public_key: sshKey.publicKey,
+      public_key: publicKey,
     },
     skipCache: true,
   });
 
-  let sshKeySourceId: string;
+  if (!digitalOceanResponse.message) {
+    return {
+      id: digitalOceanResponse.ssh_key.id,
+      fingerprint: digitalOceanResponse.ssh_key.fingerprint,
+      publicKey: digitalOceanResponse.ssh_key.public_key,
+      name: digitalOceanResponse.ssh_key.name,
+    };
+  }
 
-  if (digitalOceanResponse.message) {
-    log.error("Error sending SSH key to DigitalOcean", {
-      digitalOceanResponse,
-    });
-    if (!digitalOceanResponse.message.includes("SSH Key is already in use")) {
-      throw new Error(`Unknown error sending key to DigitalOcean`);
-    }
-    // Grab the ID from DigitalOcean
+  log.error("Error sending SSH key to DigitalOcean", {
+    digitalOceanResponse,
+  });
+
+  if (digitalOceanResponse.message.includes("SSH Key is already in use")) {
     const digitalOceanFetchKeyResponse = await digitalOceanApi<{
       message?: string;
       ssh_key: {
@@ -76,28 +137,25 @@ export async function getOrCreateSSHKey(
         name: string;
       };
     }>({
-      path: `account/keys/${sshKey.fingerprint}`,
+      path: `account/keys/${fingerprint}`,
       method: "get",
       expectStatus: 200,
     });
-    if (!digitalOceanFetchKeyResponse.ssh_key) {
-      log.error("Couldn't find an extant key in DigitalOcean...", {
-        digitalOceanFetchKeyResponse,
-      });
-      throw new Error(`Error adding key to provider...`);
+
+    if (digitalOceanFetchKeyResponse.ssh_key) {
+      return {
+        id: digitalOceanResponse.ssh_key.id,
+        fingerprint: digitalOceanResponse.ssh_key.fingerprint,
+        publicKey: digitalOceanResponse.ssh_key.public_key,
+        name: digitalOceanResponse.ssh_key.name,
+      };
     }
-    sshKeySourceId = digitalOceanFetchKeyResponse.ssh_key.id.toString();
-  } else {
-    sshKeySourceId = digitalOceanResponse.ssh_key.id.toString();
-    log.debug("Key sent to DigitalOcean", { keyTitle, digitalOceanResponse });
   }
 
-  // Save the provider SSH key to the StrapYard DB (so we don't do all of
-  // the above junk more than once
-  return providerSSHKey.create(trx, {
-    userId,
-    source: "digital_ocean",
-    sourceId: sshKeySourceId,
-    sshKeyId: sshKey.id,
+  log.error("Unexpected error saving SSH key to the environment", {
+    keyTitle,
+    digitalOceanResponse,
   });
+
+  throw new Error("Unexpected error saving SSH key to the environment");
 }

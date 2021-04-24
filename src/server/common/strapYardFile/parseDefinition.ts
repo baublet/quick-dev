@@ -1,8 +1,8 @@
 import yaml from "js-yaml";
 
-import { ParsedDefinitionFile } from "./index";
+import { ParsedDefinitionFile, ValidDefinitionFile } from "./index";
 import { validateDefinition } from "./validateDefinition";
-import { images } from "./images";
+import { images, ImageSlug } from "./images";
 
 export async function parseDefinition(
   repositoryUrl: string,
@@ -11,10 +11,11 @@ export async function parseDefinition(
   const parsed = yaml.load(def);
 
   validateDefinition(parsed);
+  assertParsedFileType(parsed);
 
   return {
     name: parsed.name || "",
-    image: parsed.image || Object.keys(images)[0],
+    image: parsed.image || (Object.keys(images)[0] as ImageSlug),
     description: parsed.description || "",
     rawFile: def,
     repositoryUrl,
@@ -35,5 +36,23 @@ function assertStepValid(step: any) {
         step
       )}`
     );
+  }
+}
+
+type PartialValidDefinitionFile = Partial<ValidDefinitionFile>;
+
+function assertParsedFileType(
+  parsedFile: any
+): asserts parsedFile is PartialValidDefinitionFile {
+  if (typeof parsedFile !== "object") {
+    throw new Error("StrapYard file is not an object!");
+  }
+
+  if (parsedFile.image) {
+    if (!(parsedFile.image in images)) {
+      throw new Error(
+        `StrapYard file image is not a valid image: ${parsedFile.image}`
+      );
+    }
   }
 }

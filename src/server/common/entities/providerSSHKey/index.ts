@@ -11,3 +11,4 @@ export interface ProviderSSHKey {
 export { create } from "./create";
 export { get } from "./get";
 export { getBySSHKeyId } from "./getBySSHKeyId";
+export { update } from "./update";

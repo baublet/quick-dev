@@ -6,6 +6,7 @@ import { ConnectionOrTransaction } from "../../db";
 type CreateEnvironmentInput = Partial<Environment> &
   Pick<
     Environment,
+    | "image"
     | "name"
     | "repositoryUrl"
     | "secret"

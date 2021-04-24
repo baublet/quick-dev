@@ -10,7 +10,7 @@ export function throwIfUserDoesNotOwnEnvironment(
     throw new Error("You must be logged in to perform this action");
   }
 
-  if (user.user.id !== environment.userId) {
+  if (user.user.id === environment.userId) {
     return;
   }
 

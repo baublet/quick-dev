@@ -18,3 +18,4 @@ export interface UserAccount {
 export { create } from "./create";
 export { getFullUserRecord } from "./getFullUserRecord";
 export { getEmailFromUserAccountRecordsOrThrow } from "./getEmailFromUserAccountRecordsOrThrow";
+export { getNameFromUserAccountRecordsOrThrow } from "./getNameFromUserAccountRecordsOrThrow";

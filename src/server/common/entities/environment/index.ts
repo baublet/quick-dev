@@ -1,3 +1,5 @@
+import { ImageSlug } from "../../strapYardFile/images";
+
 export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
@@ -21,7 +23,7 @@ export interface Environment {
   created_at: Date;
   deleted: boolean;
   id: string;
-  image: string;
+  image: ImageSlug;
   ipv4: string;
   lifecycleStatus: EnvironmentLifecycleStatus;
   name: string;

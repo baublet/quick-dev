@@ -20,6 +20,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("size").notNullable().defaultTo("s");
     table.text("strapYardFile").notNullable();
     table.text("startupLogs");
+    table.text("image").notNullable().index();
   });
 }
 

@@ -51,6 +51,7 @@ export async function setNew({
 
     const subdomain = createHumanReadableId();
     const environment = await envEntity.create(trx, {
+      image: environmentStrapYardFile.image,
       name: subdomain,
       repositoryUrl: input.repositoryUrl,
       secret: ulid(),

@@ -1,14 +1,8 @@
+import { GitHubUser } from "../../gitHub";
+
 export type UserAccountSource = "github";
 
-interface RawUserData {
-  [k: string]:
-    | string
-    | boolean
-    | number
-    | (string | boolean | number)
-    | RawUserData
-    | RawUserData[];
-}
+type RawUserData = GitHubUser;
 
 export interface UserAccount {
   id: string;
@@ -22,3 +16,4 @@ export interface UserAccount {
 
 export { create } from "./create";
 export { getFullUserRecord } from "./getFullUserRecord";
+export { getEmailFromUserAccountRecordsOrThrow } from "./getEmailFromUserAccountRecordsOrThrow";

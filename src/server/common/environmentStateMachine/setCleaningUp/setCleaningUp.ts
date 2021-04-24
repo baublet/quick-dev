@@ -15,7 +15,7 @@ export async function setCleaningUp({
     return canContinue;
   }
 
-  await enqueueJob("");
+  // await enqueueJob("");
 
   log.debug("Updated environment to provisioning", {
     environment: environment.subdomain,

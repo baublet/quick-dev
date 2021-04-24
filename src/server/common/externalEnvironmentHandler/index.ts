@@ -47,10 +47,7 @@ export interface ExternalEnvironmentHandler {
   getOrCreateSSHKey: (
     trx: ConnectionOrTransaction,
     context: Context,
-    args: {
-      user: string;
-      userSource: Environment["userSource"];
-    }
+    args: { userId: string }
   ) => Promise<ProviderSSHKey>;
   getAction: (
     environment: Environment,

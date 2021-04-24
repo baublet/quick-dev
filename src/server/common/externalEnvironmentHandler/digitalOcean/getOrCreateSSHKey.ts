@@ -8,8 +8,7 @@ import { unauthorized } from "../../../graphql/common/unauthorized";
 import { unauthorizedError } from "../../../graphql/common/unauthorizedError";
 
 interface GetOrCreateKeyArgs {
-  user: string;
-  userSource: Environment["userSource"];
+  userId: string;
 }
 
 export async function getOrCreateSSHKey(
@@ -17,15 +16,14 @@ export async function getOrCreateSSHKey(
   context: Context,
   args: GetOrCreateKeyArgs
 ): Promise<ProviderSSHKey> {
-  const { user, userSource } = args;
+  const { userId } = args;
 
   if (!unauthorized(context)) {
     throw unauthorizedError(context);
   }
 
   const extant = await providerSSHKey.get(trx, {
-    user,
-    userSource,
+    userId,
     source: "digital_ocean",
   });
 
@@ -33,11 +31,11 @@ export async function getOrCreateSSHKey(
     return extant;
   }
 
-  log.debug("No provider key for ", { user, userSource });
+  log.debug("No provider key for ", { userId });
 
   // Get/create an SSH key for this context
   const sshKey = await getOrCreateGitHubKey(trx, context);
-  const keyTitle = `StrapYard: ${userSource} - ${user}`;
+  const keyTitle = `StrapYard: ${userId}`;
 
   // Now, save the key to the provider (e.g., send it to DigitalOcean)
   const digitalOceanResponse = await digitalOceanApi<{
@@ -97,8 +95,7 @@ export async function getOrCreateSSHKey(
   // Save the provider SSH key to the StrapYard DB (so we don't do all of
   // the above junk more than once
   return providerSSHKey.create(trx, {
-    user: context.user.email,
-    userSource: context.user.source,
+    userId,
     source: "digital_ocean",
     sourceId: sshKeySourceId,
     sshKeyId: sshKey.id,

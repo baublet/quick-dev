@@ -35,7 +35,7 @@ export async function environments(
   }
 
   const environments = await envEntity.get(context.db, {
-    user: context.user.email,
+    userId: context.getUserOrFail().user.id,
     page: currentPage,
     perPage: perPage + 1,
   });
@@ -53,6 +53,8 @@ export async function environments(
     hasPreviousPage,
     nodes: environments,
     totalCount: () =>
-      envEntity.getEnvironmentCount(context.db, { user: context.user.email }),
+      envEntity.getEnvironmentCount(context.db, {
+        userId: context.getUserOrFail().user.id,
+      }),
   };
 }

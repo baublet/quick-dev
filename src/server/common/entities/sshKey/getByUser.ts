@@ -3,14 +3,12 @@ import { ConnectionOrTransaction } from "../../db";
 
 export async function getByUser(
   trx: ConnectionOrTransaction,
-  user: string,
-  userSource: SSHKey["userSource"],
+  userId: string,
   props: (keyof SSHKey)[] | "*" = "*"
 ): Promise<SSHKey | undefined> {
   const found = await trx<SSHKey>("sshKeys")
     .select(props)
-    .where("user", "=", user)
-    .andWhere("userSource", "=", userSource)
+    .where("userId", "=", userId)
     .limit(1);
 
   if (found.length > 0) {

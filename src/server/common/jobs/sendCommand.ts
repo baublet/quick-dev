@@ -30,8 +30,7 @@ async function getData(
   );
   const environmentSshKey = await sshKey.getByUserOrFail(
     db,
-    environment.user,
-    environment.userSource
+    environment.userId
   );
 
   return {

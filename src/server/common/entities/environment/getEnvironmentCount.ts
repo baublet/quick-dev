@@ -2,15 +2,15 @@ import { Environment } from "./index";
 import { ConnectionOrTransaction } from "../../db";
 
 type GetEnvironmentsInput = {
-  user: string;
+  userId: string;
 };
 
 export async function getEnvironmentCount(
   trx: ConnectionOrTransaction,
-  { user }: GetEnvironmentsInput
+  { userId }: GetEnvironmentsInput
 ): Promise<number> {
   const result = await trx<Environment>("environments")
-    .where({ user })
+    .where({ userId })
     .andWhere("deleted", "=", false)
     .count("id", { as: "count" });
 

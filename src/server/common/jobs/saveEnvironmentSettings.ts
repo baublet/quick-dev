@@ -19,8 +19,7 @@ async function getData(db: ConnectionOrTransaction, environmentId: string) {
   const environment = await envEntity.getByIdOrFail(db, environmentId);
   const environmentSshKey = await sshKey.getByUserOrFail(
     db,
-    environment.user,
-    environment.userSource
+    environment.userId
   );
 
   return {

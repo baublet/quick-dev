@@ -18,11 +18,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
   return db.transaction(async (trx) => {
     const name = environmentToUniqueName(environment);
     const size = sizeToDOSize(environment.size);
-    const sshKey = await getSSHKeyOrThrow(
-      trx,
-      environment.user,
-      environment.userSource
-    );
+    const sshKey = await getSSHKeyOrThrow(trx, environment.userId);
     const providerSshKey = await providerSSHKey.getBySSHKeyId(trx, sshKey.id);
 
     if (!providerSshKey) {

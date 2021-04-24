@@ -3,38 +3,39 @@ import { Environment } from "../../../common/entities";
 import { environmentStateMachine } from "../../../common/environmentStateMachine";
 
 export async function environmentPermissions(
-  parent: Environment,
+  environment: Environment,
   args: unknown,
   context: Context
 ) {
+  const userRecord = context.getUserOrFail().user;
   return {
     canDelete: async () =>
       (
         await environmentStateMachine.canSetDeleted({
           context,
-          environment: parent,
+          environment: environment,
         })
       ).operationSuccess,
     canOpen: async () => {
-      if (parent.lifecycleStatus !== "ready") {
+      if (environment.lifecycleStatus !== "ready") {
         return false;
       }
-      if (context.user?.email !== parent.user) {
+      if (userRecord.id !== environment.userId) {
         return false;
       }
       return true;
     },
     canStop: async () => {
-      if (parent.lifecycleStatus !== "ready") {
+      if (environment.lifecycleStatus !== "ready") {
         return false;
       }
-      if (context.user?.email !== parent.user) {
+      if (userRecord.id !== environment.userId) {
         return false;
       }
       return true;
     },
     canStart: async () => {
-      return parent.lifecycleStatus === "stopped";
+      return environment.lifecycleStatus === "stopped";
     },
   };
 }

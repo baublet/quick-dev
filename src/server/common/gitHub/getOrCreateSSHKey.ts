@@ -1,5 +1,5 @@
 import { createSSHKeyPair } from "../createSSHKeyPair";
-import { sshKey, SSHKey } from "../entities";
+import { sshKey, SSHKey, userAccount } from "../entities";
 import { ConnectionOrTransaction } from "../../common/db";
 import { Context } from "../context";
 import { saveSSHKey } from "./saveSSHKey";
@@ -14,23 +14,22 @@ export async function getOrCreateSSHKey(
     throw unauthorizedError(context);
   }
 
-  const extant = await sshKey.getByUser(
-    trx,
-    context.user.email,
-    context.user.source
-  );
+  const userRecord = context.getUserOrFail().user;
+  const extant = await sshKey.getByUser(trx, userRecord.id);
   if (extant) {
     // TODO: check that the key exists in their github. If it does, return this one, otherwise,
     // we need to delete this one and create a new one.
     return extant;
   }
 
-  const keyTitle = `StrapYard: ${context.user.email}`;
-  const foundKey = await createSSHKeyPair(context.user.email);
+  const email = userAccount.getEmailFromUserAccountRecordsOrThrow(
+    context.getUserOrFail().userAccounts
+  );
+  const keyTitle = `StrapYard Key: ${email}`;
+  const foundKey = await createSSHKeyPair(email);
 
   const persistedKey = await sshKey.create(trx, {
-    userSource: context.user.source,
-    user: context.user.email,
+    userId: userRecord.id,
     fingerprint: foundKey.fingerprint,
     privateKey: foundKey.privateKey,
     publicKey: foundKey.publicKey,

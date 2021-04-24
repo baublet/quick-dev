@@ -1,8 +1,7 @@
 import { ProviderSSHKey } from "./index";
 import { ConnectionOrTransaction } from "../../db";
-import { log } from "../../../../common/logger";
 
-type GetSSHKeyInput = Pick<ProviderSSHKey, "user" | "userSource" | "source">;
+type GetSSHKeyInput = Pick<ProviderSSHKey, "userId" | "source">;
 
 export async function get(
   trx: ConnectionOrTransaction,
@@ -11,8 +10,7 @@ export async function get(
   const found = await trx<ProviderSSHKey>("providerSSHKeys")
     .select()
     .where("source", "=", input.source)
-    .andWhere("user", "=", input.user)
-    .andWhere("userSource", "=", input.userSource)
+    .andWhere("userId", "=", input.userId)
     .limit(1);
 
   if (!found.length) {

@@ -1,10 +1,9 @@
-import { EnvironmentUserSource, EnvironmentSource } from "../environment";
+import { EnvironmentSource } from "../environment";
 
 export interface ProviderSSHKey {
   id: string;
   sshKeyId: string;
-  userSource: EnvironmentUserSource;
-  user: string;
+  userId: string;
   source: EnvironmentSource;
   sourceId: string;
 }

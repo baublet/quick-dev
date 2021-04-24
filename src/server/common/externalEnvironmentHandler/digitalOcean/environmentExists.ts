@@ -14,6 +14,7 @@ export const environmentExists: ExternalEnvironmentHandler["environmentExists"] 
       vcpus: number;
       disk: number;
       locked: boolean;
+      created_at: string;
       kernel: {
         name: string;
       };
@@ -48,6 +49,7 @@ export const environmentExists: ExternalEnvironmentHandler["environmentExists"] 
   return {
     id: droplet.id.toString(),
     name: droplet.name,
+    created_at: droplet.created_at,
     memory: Math.floor(droplet.memory / 1000),
     cpus: droplet.vcpus,
     disk: droplet.disk,

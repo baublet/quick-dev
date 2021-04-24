@@ -5,7 +5,7 @@ import { ConnectionOrTransaction } from "../../db";
 
 type CreateSSHKeyInput = Pick<
   ProviderSSHKey,
-  "user" | "userSource" | "source" | "sourceId" | "sshKeyId"
+  "userId" | "source" | "sourceId" | "sshKeyId"
 >;
 
 export async function create(

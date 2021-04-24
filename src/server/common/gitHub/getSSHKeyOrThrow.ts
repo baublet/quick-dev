@@ -3,10 +3,9 @@ import { ConnectionOrTransaction } from "../../common/db";
 
 export async function getSSHKeyOrThrow(
   trx: ConnectionOrTransaction,
-  user: string,
-  userSource: EnvironmentUserSource
+  userId: string
 ): Promise<SSHKey> {
-  const extant = await sshKey.getByUser(trx, user, userSource);
+  const extant = await sshKey.getByUser(trx, userId);
   if (extant) {
     return extant;
   }

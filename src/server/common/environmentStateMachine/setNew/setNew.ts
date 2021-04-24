@@ -29,8 +29,7 @@ export async function setNew({
       const providerKey = await getExternalEnvironmentHandler({
         source: "digital_ocean",
       }).getOrCreateSSHKey(trx, context, {
-        user: user.email,
-        userSource: user.source,
+        userId: user.user.id,
       });
       sshKeyId = providerKey.sshKeyId;
     } catch (e) {
@@ -58,8 +57,7 @@ export async function setNew({
       sshKeyId,
       strapYardFile: environmentStrapYardFile.rawFile,
       subdomain,
-      user: user.email,
-      userSource: user.source,
+      userId: user.user.id,
     });
     await enqueueJob("createEnvironmentCommands", {
       environmentId: environment.id,

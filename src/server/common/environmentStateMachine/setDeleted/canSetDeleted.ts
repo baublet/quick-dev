@@ -17,10 +17,9 @@ export async function canSetDeleted({
     };
   }
 
-  const userSource = context.user.source;
-  const user = context.user.email;
+  const userId = context.user.user.id;
 
-  if (environment.user !== user || environment.userSource !== userSource) {
+  if (environment.userId !== userId) {
     return {
       errors: ["You don't own this environment"],
       operationSuccess: false,

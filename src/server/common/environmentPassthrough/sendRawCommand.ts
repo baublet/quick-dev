@@ -40,9 +40,6 @@ export async function sendRawCommand(
     log.debug("Environment command received error", {
       environment: environment.subdomain,
       code: result.code,
-      result: {
-        logLast50: result.buffer?.substr(result.buffer?.length - 50),
-      },
     });
   } else {
     log.debug("Environment received command OK", {

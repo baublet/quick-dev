@@ -23,8 +23,6 @@ export function sendSshCommand({
   environmentCommandId?: string;
 }): Promise<{
   error: string | false;
-  buffer?: string;
-  errorBuffer?: string;
   code?: number;
   signal?: string;
   totalMs: number;
@@ -35,7 +33,6 @@ export function sendSshCommand({
     const connection = new Client();
 
     let buffer = "";
-    let errorBuffer = "";
 
     connection.on("ready", () => {
       log.debug("SSH client ready", {
@@ -67,8 +64,6 @@ export function sendSshCommand({
         connection.end();
         resolve({
           error: `Command timed out after ${timeoutInMs / 1000}s`,
-          buffer,
-          errorBuffer,
           totalMs: Date.now() - startTime,
         });
       }, timeoutInMs);
@@ -96,8 +91,6 @@ export function sendSshCommand({
               await cancelTimers();
               resolve({
                 error: false,
-                buffer,
-                errorBuffer,
                 code,
                 signal,
                 totalMs: Date.now() - startTime,
@@ -108,7 +101,6 @@ export function sendSshCommand({
             })
             .stderr.on("data", (data: string) => {
               buffer = buffer + data;
-              errorBuffer = errorBuffer + data;
             });
         }
       );
@@ -122,8 +114,6 @@ export function sendSshCommand({
       });
       resolve({
         error: "Unknown connection error",
-        buffer,
-        errorBuffer,
         totalMs: Date.now() - startTime,
       });
     });

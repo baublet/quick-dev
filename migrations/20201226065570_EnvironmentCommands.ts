@@ -10,7 +10,6 @@ export async function up(knex: Knex): Promise<void> {
     table.text("command").notNullable();
     table.text("title").notNullable();
     table.text("status").index().notNullable().defaultTo("not_ready");
-    table.text("logs");
     table.integer("order").notNullable().defaultTo(0);
   });
 }

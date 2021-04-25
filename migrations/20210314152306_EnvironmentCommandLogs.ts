@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text("id").primary();
     table.timestamps(undefined, true);
     table.text("environmentId").notNullable().index();
-    table.text("environmentCommandId").notNullable().index();
+    table.text("environmentCommandId").index();
     table.text("logOutput");
     table.text("logOutputPublicUrl");
   });

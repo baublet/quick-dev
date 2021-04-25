@@ -128,18 +128,39 @@ type Repositories {
 }
 
 input EnvironmentCommandLogsNodeInput {
-  after: Float
+  after: ID!
 }
 
 type EnvironmentCommand {
   id: ID!
   title: String!
   status: EnvironmentCommandStatus!
-  logs(input: EnvironmentCommandLogsNodeInput): String
+  logs(input: EnvironmentCommandLogsNodeInput): EnvironmentCommandLogConnection!
+}
+
+type PageInfo {
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type EnvironmentCommandLogConnection {
+  pageInfo: PageInfo!
+  edges: [EnvironmentCommandLogEdge!]!
+}
+
+type EnvironmentCommandLogEdge {
+  cursor: ID!
+  node: EnvironmentCommandLog!
 }
 
 type EnvironmentLogsConnection {
   commands: [EnvironmentCommand!]!
+}
+
+type EnvironmentCommandLog {
+  id: ID!
+  data: String!
 }
 
 type EnvironmentConnection {

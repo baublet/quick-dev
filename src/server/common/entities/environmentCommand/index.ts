@@ -12,7 +12,6 @@ export interface EnvironmentCommand {
   created_at: Date;
   environmentId: string;
   id: string;
-  logs?: string;
   status: EnvironmentCommandStatus;
   title: string;
   updated_at: Date;

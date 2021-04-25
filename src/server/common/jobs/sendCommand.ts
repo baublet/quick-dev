@@ -47,8 +47,6 @@ async function finalizeResults(
     | undefined
     | {
         error: string | false;
-        buffer?: string | undefined;
-        errorBuffer?: string | undefined;
         code?: number | undefined;
         signal?: string | undefined;
       }
@@ -66,10 +64,6 @@ async function finalizeResults(
     throw new Error("Unknown error sending command to environment");
   }
 
-  await envCommandEntity.update(db, environmentCommand.id, {
-    logs: results.buffer,
-  });
-
   if (!isError(results.code)) {
     const result = await environmentCommandStateMachine.setSuccess({
       trx: db,
@@ -84,9 +78,8 @@ async function finalizeResults(
       });
     }
   } else {
-    log.scream("Non-zero exit code... wtf", {
+    log.scream("Non-zero exit code...", {
       code: results.code,
-      lolWut: results,
     });
     const result = await environmentCommandStateMachine.setFailed({
       trx: db,

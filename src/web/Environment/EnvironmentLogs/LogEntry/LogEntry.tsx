@@ -64,7 +64,6 @@ function Status({ status }: { status: EnvironmentCommand["status"] }) {
 
 export function LogEntry({
   commandId,
-  dynamic,
   environmentId,
   logText,
   status,
@@ -77,27 +76,21 @@ export function LogEntry({
       ? `/environment/${environmentId}/logs/`
       : logExpandedPath;
   const [ref, inView] = useInView();
-  const [logOutput, setLogOutput] = React.useState<string | undefined>();
-  const [getLogs, { loading }] = useGetEnvironmentCommandLogsLazyQuery({
-    onCompleted: (data) =>
-      setLogOutput(data.environmentCommandLogs?.logs || "No log output"),
+  const [getLogs, { loading, data }] = useGetEnvironmentCommandLogsLazyQuery({
     onError: (error) => console.error(error),
   });
+
+  const edges = data?.environmentCommandLogs?.edges || [];
 
   React.useEffect(() => {
     if (!inView) {
       return;
     }
 
-    if (
-      inView &&
-      !loading &&
-      hasLogs[status] &&
-      typeof logOutput !== "string"
-    ) {
+    if (inView && !loading && hasLogs[status]) {
       getLogs({
         variables: {
-          after: 0,
+          first: 100,
           commandId,
         },
       });
@@ -110,7 +103,7 @@ export function LogEntry({
         <div className="inline-block mr-2">
           <Status status={status as EnvironmentCommand["status"]} />
         </div>
-        {["success", "failed"].includes(status) ? (
+        {["success", "failed", "running"].includes(status) ? (
           <Link
             to={linkPath}
             className={textClassNamesByStatus[status]}
@@ -124,9 +117,9 @@ export function LogEntry({
       </div>
       <Route path={logExpandedPath}>
         <div className="mt-2">
-          <LogOutput logText={!dynamic ? logText : logOutput} />
+          <LogOutput logText={edges.map((edge) => edge.node)} />
         </div>
-        {!dynamic ? null : <div ref={ref} />}
+        <div ref={ref} />
       </Route>
     </div>
   );

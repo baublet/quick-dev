@@ -19,6 +19,7 @@ export {
 } from "./environment";
 export { EnvironmentCommand } from "./environmentCommand";
 export { EnvironmentDomainRecord } from "./environmentDomainRecord";
+export { EnvironmentCommandLog } from "./environmentCommandLog";
 export { ProviderSSHKey } from "./providerSSHKey";
 export { SSHKey } from "./sshKey";
 export { Token } from "./tokens";

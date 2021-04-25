@@ -23,7 +23,6 @@ export function EnvironmentLogs({
           status={command.status}
           commandId={command.id}
           title={command.title}
-          dynamic={true}
         />
       ))}
     </div>

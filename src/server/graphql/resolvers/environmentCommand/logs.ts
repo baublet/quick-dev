@@ -1,14 +1,26 @@
-import { EnvironmentCommand } from "../../../common/entities";
+import {
+  EnvironmentCommand,
+  EnvironmentCommandLog,
+} from "../../../common/entities";
 import { EnvironmentCommandLogsNodeInput } from "../../generated";
+import {
+  buildConnectionResolver,
+  Connection,
+} from "../../common/buildConnectionResolver";
+import { Context } from "../../../common/context";
 
-export async function environmentCommandLogs(
+export function environmentCommandLogs(
   parent: EnvironmentCommand,
   { input }: { input: EnvironmentCommandLogsNodeInput },
-  context: unknown
-): Promise<string | null> {
-  const after = input?.after || 0;
-  if (parent?.logs) {
-    return parent.logs.substr(after);
-  }
-  return null;
+  context: Context
+): Connection<EnvironmentCommandLog> {
+  const query = context
+    .db<EnvironmentCommandLog>("environmentCommandLogs")
+    .where("environmentId", "=", parent.environmentId)
+    .where("environmentCommandId", "=", parent.id);
+  return buildConnectionResolver<EnvironmentCommandLog>(query, {
+    first: input.first,
+    after: input.after,
+    sort: (q) => q.orderBy("id"),
+  });
 }

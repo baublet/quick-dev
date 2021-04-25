@@ -6,6 +6,7 @@ import { log } from "../../common/logger";
 export type Connection = knex<any, unknown[]>;
 export type Transaction = knex.Transaction<any, any>;
 export type ConnectionOrTransaction = Connection | Transaction;
+export type QueryBuilder<T = any> = knex.QueryBuilder<T, any>;
 
 declare global {
   module NodeJS {

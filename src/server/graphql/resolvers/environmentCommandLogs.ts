@@ -5,13 +5,16 @@ import {
 import { Context } from "../../common/context";
 import { throwIfUserDoesNotOwnEnvironment } from "../../common/authorization/throwIfUserDoesNotOwnEnvironment";
 import { environmentCommandLogs as logsResolver } from "./environmentCommand/logs";
-import { EnvironmentCommand, EnvironmentCommandLogsInput } from "../generated";
+import {
+  EnvironmentCommandLogConnection,
+  EnvironmentCommandLogsInput,
+} from "../generated";
 
 export async function environmentCommandLogs(
   _parent: unknown,
   args: { input: EnvironmentCommandLogsInput },
   context: Context
-): Promise<EnvironmentCommand> {
+) {
   const environmentCommand = await context
     .service(envCommandEntity.loader)
     .load(args.input.environmentCommandId || "");
@@ -29,12 +32,5 @@ export async function environmentCommandLogs(
   }
   throwIfUserDoesNotOwnEnvironment(context.user, environment);
 
-  return {
-    ...environmentCommand,
-    logs: await logsResolver(
-      environmentCommand,
-      { input: args.input },
-      context
-    ),
-  };
+  return logsResolver(environmentCommand, args, context);
 }

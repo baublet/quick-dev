@@ -3,7 +3,9 @@ type Query {
   environment(input: EnvironmentInput!): Environment
   ping: String!
   jobs: JobConnection!
-  environmentCommandLogs(input: EnvironmentCommandLogsInput): EnvironmentCommand
+  environmentCommandLogs(
+    input: EnvironmentCommandLogsInput
+  ): EnvironmentCommandLogConnection
 }
 
 type Mutation {
@@ -26,7 +28,8 @@ scalar ID
 
 input EnvironmentCommandLogsInput {
   environmentCommandId: ID!
-  after: Float = 0
+  after: ID
+  first: Int!
 }
 
 input CreateEnvironmentMutationInput {
@@ -128,7 +131,8 @@ type Repositories {
 }
 
 input EnvironmentCommandLogsNodeInput {
-  after: ID!
+  first: Int!
+  after: ID
 }
 
 type EnvironmentCommand {
@@ -160,7 +164,7 @@ type EnvironmentLogsConnection {
 
 type EnvironmentCommandLog {
   id: ID!
-  data: String!
+  logOutput: String!
 }
 
 type EnvironmentConnection {

@@ -1,8 +1,18 @@
-query getEnvironmentCommandLogs($commandId: ID!, $after: Float!) {
+query getEnvironmentCommandLogs($commandId: ID!, $first: Int!, $after: ID) {
   environmentCommandLogs(
-    input: { environmentCommandId: $commandId, after: $after }
+    input: { environmentCommandId: $commandId, after: $after, first: $first }
   ) {
-    id
-    logs
+    pageInfo {
+      totalCount
+      hasNextPage
+      hasPreviousPage
+    }
+    edges {
+      cursor
+      node {
+        id
+        logOutput
+      }
+    }
   }
 }

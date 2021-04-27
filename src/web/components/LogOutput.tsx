@@ -3,8 +3,10 @@ import AnsiUp from "ansi_up";
 
 export function LogOutput({
   logText = "",
+  footer,
 }: {
   logText?: string | { id: string; logOutput: string }[];
+  footer?: JSX.Element;
 }) {
   const ansiParser = new AnsiUp();
   return (
@@ -29,6 +31,7 @@ export function LogOutput({
           ))}
         </pre>
       )}
+      {footer && footer}
     </div>
   );
 }

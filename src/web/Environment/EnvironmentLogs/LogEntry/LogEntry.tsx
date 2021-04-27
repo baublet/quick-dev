@@ -79,6 +79,7 @@ export function LogEntry({
   const [getLogs, { loading, data }] = useGetEnvironmentCommandLogsLazyQuery({
     onError: (error) => console.error(error),
   });
+  const [lastCursor, setLastCursor] = React.useState<string>();
 
   const edges = data?.environmentCommandLogs?.edges || [];
 
@@ -88,14 +89,27 @@ export function LogEntry({
     }
 
     if (inView && !loading && hasLogs[status]) {
+      console.log("Getting logs");
       getLogs({
         variables: {
-          first: 100,
+          first: 10,
+          after: lastCursor,
           commandId,
         },
       });
     }
   }, [inView]);
+
+  React.useEffect(() => {
+    const results = data?.environmentCommandLogs?.edges || [];
+    if (results.length === 0) {
+      return;
+    }
+    console.log({
+      results,
+    });
+    setLastCursor(results[results.length - 1].cursor);
+  }, [data]);
 
   return (
     <div className="mt-4">
@@ -117,9 +131,11 @@ export function LogEntry({
       </div>
       <Route path={logExpandedPath}>
         <div className="mt-2">
-          <LogOutput logText={edges.map((edge) => edge.node)} />
+          <LogOutput
+            logText={edges.map((edge) => edge.node)}
+            footer={<div ref={ref} />}
+          />
         </div>
-        <div ref={ref} />
       </Route>
     </div>
   );

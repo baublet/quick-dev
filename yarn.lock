@@ -2329,6 +2329,11 @@ apollo-cache-control@^0.12.0:
     apollo-server-env "^3.0.0"
     apollo-server-plugin-base "^0.11.0"
 
+apollo-cursor-pagination@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/apollo-cursor-pagination/-/apollo-cursor-pagination-0.9.1.tgz#58f05f288619ca8af6e6cb53400f005206eeed6f"
+  integrity sha512-3SleMBGuuvLmMtDL7UEZNeSfILYjKSOjrYS5JpwgebLar97GfCDrJSAZ6lS2V2pUfo+w1z8JbngI+0BPLFAluA==
+
 apollo-datasource@^0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/apollo-datasource/-/apollo-datasource-0.8.0.tgz#8cf9103e83558bd30b3b522cb8ec80725c3160ce"

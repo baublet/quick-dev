@@ -13,7 +13,7 @@ export function environmentCommandLogs(
   parent: EnvironmentCommand,
   { input }: { input: EnvironmentCommandLogsNodeInput },
   context: Context
-): Connection<EnvironmentCommandLog> {
+): Promise<Connection<EnvironmentCommandLog>> {
   const query = context
     .db<EnvironmentCommandLog>("environmentCommandLogs")
     .where("environmentId", "=", parent.environmentId)
@@ -21,6 +21,10 @@ export function environmentCommandLogs(
   return buildConnectionResolver<EnvironmentCommandLog>(query, {
     first: input.first,
     after: input.after,
-    sort: (q) => q.orderBy("id"),
+    before: input.before,
+    last: input.last,
+    sort: {
+      id: "asc",
+    },
   });
 }

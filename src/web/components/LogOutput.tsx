@@ -4,11 +4,25 @@ import AnsiUp from "ansi_up";
 export function LogOutput({
   logText = "",
   footer,
+  header,
 }: {
-  logText?: string | { id: string; logOutput: string }[];
+  logText?: string;
   footer?: JSX.Element;
+  header?: JSX.Element;
 }) {
   const ansiParser = new AnsiUp();
+  const [lockScroll] = React.useState(true);
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const element = scrollRef?.current;
+    if (!lockScroll || !element) {
+      return;
+    }
+
+    element.scrollTop = element.scrollHeight;
+  }, [logText]);
+
   return (
     <div
       className="overflow-x-auto font-mono p-2 bg-gray-800 overflow-y-scroll text-gray-200 max-w-full"
@@ -16,21 +30,15 @@ export function LogOutput({
         minHeight: "40vh",
         maxHeight: "60vh",
       }}
+      ref={scrollRef}
     >
-      {typeof logText === "string" ? (
-        <pre className="max-w-full">{ansiParser.ansi_to_html(logText)}</pre>
-      ) : (
-        <pre className="max-w-full">
-          {logText.map((logLine) => (
-            <div
-              key={logLine.id}
-              dangerouslySetInnerHTML={{
-                __html: ansiParser.ansi_to_html(logLine.logOutput),
-              }}
-            />
-          ))}
-        </pre>
-      )}
+      {header && header}
+      <pre
+        className="max-w-full"
+        dangerouslySetInnerHTML={{
+          __html: ansiParser.ansi_to_html(logText),
+        }}
+      />
       {footer && footer}
     </div>
   );

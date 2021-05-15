@@ -7,9 +7,9 @@ interface StrapYardLinkProps extends LinkProps {
   to: string;
 }
 
-export function Link(props: StrapYardLinkProps) {
+export function Link({ external, ...props }: StrapYardLinkProps) {
   const className = cx("text-blue-600 hover:underline", props.className);
-  if (props.external) {
+  if (external) {
     return <a {...props} href={props.to} className={className} />;
   }
   return <RRLink {...props} className={className} />;

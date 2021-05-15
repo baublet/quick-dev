@@ -1,77 +1,166 @@
-import { QueryBuilder } from "../../common/db";
+import { log } from "../../../common/logger";
+
+import { QueryBuilder, getDatabaseConnection } from "../../common/db";
+
+const sortDirections = ["asc", "desc"];
 
 export interface Connection<T> {
   pageInfo: {
-    totalCount: () => Promise<number>;
-    hasPreviousPage: () => boolean | Promise<boolean>;
-    hasNextPage: () => boolean | Promise<boolean>;
+    totalCount: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
   };
-  edges: () => Promise<
-    {
-      cursor: string;
-      node: T;
-    }[]
-  >;
+  edges: {
+    cursor: string;
+    node: T;
+  }[];
 }
 
-export function buildConnectionResolver<T>(
+interface Cursor {
+  entity: Record<string, "asc" | "desc">;
+  sort: Record<string, "asc" | "desc">[];
+}
+
+function flipDirection(dir: "asc" | "desc"): "asc" | "desc" {
+  if (dir === "asc") return "desc";
+  return "asc";
+}
+
+export async function buildConnectionResolver<T>(
   query: QueryBuilder,
   {
     first,
     after,
-    sort,
+    before,
+    last,
+    sort = { id: "asc" } as Record<string | keyof T, "asc" | "desc">,
   }: {
-    first: number;
+    before?: string | null;
+    last?: number | null;
+    first?: number | null;
     after?: string | null;
-    sort?: (queryBuilder: QueryBuilder<T>) => any;
+    sort?: Record<string | keyof T, "asc" | "desc">;
   }
-): Connection<T> {
-  const offset = after ? cursorToOffset(after) : 0;
-  const totalCount = query.clone().countDistinct("id");
-  const resultSet: Promise<Record<string, any>[]> = query
+): Promise<Connection<T>> {
+  const db = getDatabaseConnection();
+  const totalCount = query.clone().clearSelect().count("*");
+
+  const rawSortOptions = Object.entries(sort)
+    .map(
+      ([key, direction]) =>
+        `${key} ${last ? flipDirection(direction) : direction}`
+    )
+    .join(",");
+  const fullResultSetSubQuery = query
     .clone()
-    .limit(first + 1)
-    .offset(offset);
+    .clearSelect()
+    .select(db.raw(`id, ROW_NUMBER() OVER (ORDER BY ${rawSortOptions}`));
 
-  if (sort) sort(resultSet as QueryBuilder);
+  Object.entries(sort).forEach(([key, direction]) => {
+    fullResultSetSubQuery.orderBy(key, direction);
+  });
 
-  return {
-    pageInfo: {
-      totalCount: async () => {
-        const resolvedCount = (await totalCount)[0].count;
-        return resolvedCount;
-      },
-      hasPreviousPage: () => (offset === 0 ? false : true),
-      hasNextPage: async () => {
-        const resolvedCount = (await totalCount)[0].count;
-        if (resolvedCount - offset - first > 0) {
-          return true;
-        }
-        return false;
-      },
-    },
-    edges: async () => {
-      const resolvedSet = await resultSet;
-      return resolvedSet.map((subject, index) => {
-        return {
-          cursor: offsetToCursor(offset + index),
-          node: subject as T,
-        };
-      });
-    },
-  };
+  const slicedResultSet = query.clone();
+
+  return null;
 }
 
-const PREFIX = "simple-cursor-";
+function deserializeCursor(cursorString: string): Cursor {
+  try {
+    const cursorResults = JSON.parse(
+      Buffer.from(cursorString, "base64").toString("utf-8")
+    );
+    if (typeof cursorResults !== "object") {
+      throw new InvalidCursorError(
+        cursorString,
+        `Cursor is invalid type: ${typeof cursorResults}`
+      );
+    }
 
-function cursorToOffset(cursor?: string): number {
-  if (cursor === undefined) {
-    return 0;
+    if (!("entity" in cursorResults)) {
+      throw new InvalidCursorError(
+        cursorString,
+        "Cursors must include referenced entity"
+      );
+    }
+
+    if (!("sort" in cursorResults)) {
+      throw new InvalidCursorError(
+        cursorString,
+        "Cursors must specify sort data"
+      );
+    }
+
+    const entity: Record<string, "asc" | "desc"> =
+      "entity" in cursorResults ? cursorResults.entity : {};
+    const sort: Record<string, "asc" | "desc">[] =
+      "sort" in cursorResults ? cursorResults.sort : [{ id: "asc" }];
+
+    for (const sortField of sort) {
+      if (Object.keys(sortField).length !== 1) {
+        throw new InvalidCursorError(
+          cursorString,
+          `Sort directions may only specify a single key/value pair per specification: ${JSON.stringify(
+            sortField
+          )}`
+        );
+      }
+      const fieldKey = Object.values(sortField)[0];
+      const fieldDirection = Object.keys(sortField)[0];
+
+      if (!sortDirections.includes(fieldDirection)) {
+        throw new InvalidCursorError(
+          cursorString,
+          `Sort key specified an invalid sort direction: ${fieldDirection}`
+        );
+      }
+
+      if (!(fieldKey in entity)) {
+        throw new InvalidCursorError(
+          cursorString,
+          `Valid cursors require entity fields on the target entity to exist when specified as a sort key. Field ${fieldKey} does not exist on entity ${JSON.stringify(
+            entity
+          )}`
+        );
+      }
+    }
+
+    return {
+      sort,
+      entity,
+    };
+  } catch (e) {
+    throw new InvalidCursorError(cursorString);
   }
-  const offsetString = cursor.substr(0, PREFIX.length);
-  return parseInt(offsetString, 10);
 }
 
-function offsetToCursor(offset: number = 0): string {
-  return `${PREFIX}${offset}`;
+function serializeCursor(
+  entity: Record<string, any>,
+  sortFields: Record<string, "asc" | "desc">[]
+): string {
+  const fieldsToKeep = sortFields.reduce((fields, field) => {
+    fields.push(Object.keys(field)[0]);
+    return fields;
+  }, [] as string[]);
+  const newEntity: Record<string, any> = {};
+  for (const field of fieldsToKeep) {
+    newEntity[field] = entity[field];
+  }
+  return Buffer.from(
+    JSON.stringify({
+      sortFields,
+      entity: newEntity,
+    }),
+    "utf-8"
+  ).toString("base64");
+}
+
+class InvalidCursorError extends Error {
+  constructor(cursor: string, message?: string) {
+    super(
+      `Invalid cursor! Expect cursor to deserialize into an object. ${cursor}${
+        message ?? `\n\n${message}`
+      }`
+    );
+  }
 }

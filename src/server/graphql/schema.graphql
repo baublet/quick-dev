@@ -28,8 +28,10 @@ scalar ID
 
 input EnvironmentCommandLogsInput {
   environmentCommandId: ID!
-  after: ID
-  first: Int!
+  after: String
+  first: Int
+  last: Int
+  before: String
 }
 
 input CreateEnvironmentMutationInput {
@@ -131,8 +133,10 @@ type Repositories {
 }
 
 input EnvironmentCommandLogsNodeInput {
-  first: Int!
-  after: ID
+  first: Int
+  after: String
+  last: Int
+  before: String
 }
 
 type EnvironmentCommand {
@@ -154,7 +158,7 @@ type EnvironmentCommandLogConnection {
 }
 
 type EnvironmentCommandLogEdge {
-  cursor: ID!
+  cursor: String!
   node: EnvironmentCommandLog!
 }
 
@@ -200,7 +204,7 @@ type Job {
 }
 
 type JobEdge {
-  cursor: ID!
+  cursor: String!
   nodes: [Job!]!
 }
 

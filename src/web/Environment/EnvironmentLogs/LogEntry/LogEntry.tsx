@@ -65,7 +65,6 @@ function Status({ status }: { status: EnvironmentCommand["status"] }) {
 export function LogEntry({
   commandId,
   environmentId,
-  logText,
   status,
   title,
 }: LogEntryProps) {
@@ -75,41 +74,82 @@ export function LogEntry({
     logExpandedPath === pathname
       ? `/environment/${environmentId}/logs/`
       : logExpandedPath;
-  const [ref, inView] = useInView();
-  const [getLogs, { loading, data }] = useGetEnvironmentCommandLogsLazyQuery({
-    onError: (error) => console.error(error),
-  });
+
+  const [tailRef, tailInView] = useInView();
+  const [headRef, headInView] = useInView();
+
   const [lastCursor, setLastCursor] = React.useState<string>();
+  const [firstCursor, setFirstCursor] = React.useState<string>();
+  const [logData, setLogData] = React.useState("");
 
-  const edges = data?.environmentCommandLogs?.edges || [];
+  const [
+    tail,
+    { loading: tailLoading },
+  ] = useGetEnvironmentCommandLogsLazyQuery({
+    onError: (error) => console.error(error),
+    onCompleted: (data) => {
+      const results = data?.environmentCommandLogs?.edges || [];
+      if (results.length === 0) {
+        return;
+      }
+      setLogData(
+        (data) => data + results.map((result) => result.node.logOutput).join("")
+      );
+      setLastCursor(results[results.length - 1].cursor);
+      if (!firstCursor) {
+        setFirstCursor(results[0].cursor);
+      }
+    },
+  });
 
+  const [
+    head,
+    { loading: headLoading },
+  ] = useGetEnvironmentCommandLogsLazyQuery({
+    onError: (error) => console.error(error),
+    onCompleted: (data) => {
+      const results = data?.environmentCommandLogs?.edges || [];
+      if (results.length === 0) {
+        return;
+      }
+      setLogData(
+        (data) => results.map((result) => result.node.logOutput).join("") + data
+      );
+      setFirstCursor(results[0].cursor);
+    },
+  });
+
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (!tailInView) {
+  //       return;
+  //     }
+  //     if (!hasLogs[status]) {
+  //       return;
+  //     }
+  //     if (tailLoading) {
+  //       return;
+  //     }
+  //     tail({
+  //       variables: {
+  //         last: 10,
+  //         before: lastCursor,
+  //         commandId,
+  //       },
+  //     });
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [tailInView, lastCursor]);
+
+  // By default, load the last 100 lines
   React.useEffect(() => {
-    if (!inView) {
-      return;
-    }
-
-    if (inView && !loading && hasLogs[status]) {
-      console.log("Getting logs");
-      getLogs({
-        variables: {
-          first: 10,
-          after: lastCursor,
-          commandId,
-        },
-      });
-    }
-  }, [inView]);
-
-  React.useEffect(() => {
-    const results = data?.environmentCommandLogs?.edges || [];
-    if (results.length === 0) {
-      return;
-    }
-    console.log({
-      results,
+    tail({
+      variables: {
+        last: 5,
+        commandId,
+      },
     });
-    setLastCursor(results[results.length - 1].cursor);
-  }, [data]);
+  }, []);
 
   return (
     <div className="mt-4">
@@ -131,10 +171,33 @@ export function LogEntry({
       </div>
       <Route path={logExpandedPath}>
         <div className="mt-2">
-          <LogOutput
-            logText={edges.map((edge) => edge.node)}
-            footer={<div ref={ref} />}
-          />
+          <button
+            onClick={() => {
+              head({
+                variables: {
+                  last: 5,
+                  before: firstCursor,
+                  commandId,
+                },
+              });
+            }}
+          >
+            More
+          </button>
+          <LogOutput logText={logData} footer={<div ref={tailRef} />} />
+          <button
+            onClick={() => {
+              tail({
+                variables: {
+                  first: 5,
+                  after: lastCursor,
+                  commandId,
+                },
+              });
+            }}
+          >
+            More
+          </button>
         </div>
       </Route>
     </div>

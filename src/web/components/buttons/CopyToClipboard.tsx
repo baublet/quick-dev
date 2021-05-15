@@ -37,8 +37,8 @@ export function CopyToClipboard({
         viewBox="0 0 333 416.25"
         x="0px"
         y="0px"
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         style={{
           width: "1.5em",
           height: "1.5em",

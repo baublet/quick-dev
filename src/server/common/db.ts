@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 import knex from "knex";
+
 import { log } from "../../common/logger";
 
 export type Connection = knex<any, unknown[]>;
@@ -42,4 +43,28 @@ export function getDatabaseConnection() {
     global.dbConnection = knex(connectionInfo);
   }
   return global.dbConnection;
+}
+
+export async function createTestConnection() {
+  if (!global.dbConnection) {
+    global.dbConnection = await knex({
+      client: "sqlite3",
+      connection: ":memory:",
+      useNullAsDefault: true,
+    });
+  }
+}
+
+export async function getTestConnection() {
+  if (!global.dbConnection) {
+    await createTestConnection();
+  }
+
+  return global.dbConnection;
+}
+
+export async function destroyTestConnection() {
+  if (global.dbConnection) {
+    await global.dbConnection.destroy();
+  }
 }

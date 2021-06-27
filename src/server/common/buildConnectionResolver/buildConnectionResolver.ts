@@ -1,6 +1,4 @@
-import { log } from "../../../common/logger";
-
-import { QueryBuilder, getDatabaseConnection } from "../../common/db";
+import { QueryBuilder } from "../../common/db";
 
 export interface Connection<T> {
   pageInfo: {
@@ -14,9 +12,10 @@ export interface Connection<T> {
       node: T;
     }[]
   >;
+  _resultsQueryText: string;
 }
 
-type Cursor = Record<string, ["asc" | "desc", any]>;
+export type Cursor = Record<string, ["asc" | "desc", any]>;
 
 function flipDirection(dir: "asc" | "desc"): "asc" | "desc" {
   if (dir === "asc") return "desc";
@@ -39,18 +38,8 @@ export async function buildConnectionResolver<T>(
     sort?: Record<string | keyof T, "asc" | "desc">;
   }
 ): Promise<Connection<T>> {
-  const db = getDatabaseConnection();
   const totalCountQuery = query.clone().clearSelect().count("id AS count");
-
-  const resultSetQuery = query.clone().clearSelect().select();
-
-  Object.entries(sort).forEach(([key, direction]) => {
-    if (before) {
-      resultSetQuery.orderBy(key, flipDirection(direction));
-    } else {
-      resultSetQuery.orderBy(key, direction);
-    }
-  });
+  const resultSetQuery = query.clone();
 
   let cursor: Cursor = {};
 
@@ -64,9 +53,17 @@ export async function buildConnectionResolver<T>(
 
   for (const [column, [sortDirection, value]] of Object.entries(cursor)) {
     if (before) {
-      resultSetQuery.where(column, sortDirection === "asc" ? ">" : "<", value);
+      resultSetQuery.where(column, sortDirection === "desc" ? ">" : "<", value);
     } else {
-      resultSetQuery.where(column, sortDirection === "asc" ? "<" : ">", value);
+      resultSetQuery.where(column, sortDirection === "desc" ? "<" : ">", value);
+    }
+  }
+
+  for (const [key, direction] of Object.entries(sort)) {
+    if (before) {
+      resultSetQuery.orderBy(key, flipDirection(direction));
+    } else {
+      resultSetQuery.orderBy(key, direction);
     }
   }
 
@@ -77,48 +74,78 @@ export async function buildConnectionResolver<T>(
     resultSetQuery.limit(first);
   }
 
-  const totalCount = new Promise<number>(async (resolve) => {
-    const count = await totalCountQuery;
-    resolve(count[0].count);
-  });
+  let totalCount: Promise<number>;
+  const totalCountFn = () => {
+    if (!totalCount) {
+      totalCount = new Promise<number>(async (resolve) => {
+        const count = await totalCountQuery;
+        resolve(count[0].count);
+      });
+    }
+    return totalCount;
+  };
 
-  const hasNextPage = new Promise<boolean>(async (resolve) => {
-    resolve(false);
-  });
+  let hasNextPage: Promise<boolean>;
+  const hasNextPageFn = () => {
+    if (!hasNextPage) {
+      hasNextPage = new Promise<boolean>(async (resolve) => {
+        resolve(false);
+      });
+    }
+    return hasNextPage;
+  };
 
-  const hasPreviousPage = new Promise<boolean>(async (resolve) => {
-    resolve(false);
-  });
+  let hasPreviousPage: Promise<boolean>;
+  const hasPreviousPageFn = () => {
+    if (!hasPreviousPage) {
+      hasPreviousPage = new Promise<boolean>(async (resolve) => {
+        resolve(false);
+      });
+    }
+    return hasPreviousPage;
+  };
 
-  const edges = new Promise<
+  let edges: Promise<
     {
       cursor: string;
       node: T;
     }[]
-  >(async (resolve) => {
-    const edges: {
-      cursor: string;
-      node: T;
-    }[] = [];
+  >;
+  const edgesFn = () => {
+    if (!edges) {
+      edges = new Promise<
+        {
+          cursor: string;
+          node: T;
+        }[]
+      >(async (resolve) => {
+        const edges: {
+          cursor: string;
+          node: T;
+        }[] = [];
 
-    const results = await resultSetQuery;
-    for (const result of results) {
-      edges.push({
-        cursor: serializeCursor(result, sort),
-        node: result,
+        const results = await resultSetQuery;
+        for (const result of results) {
+          edges.push({
+            cursor: serializeCursor(result, sort),
+            node: result,
+          });
+        }
+
+        resolve(edges);
       });
     }
-
-    resolve(edges);
-  });
+    return edges;
+  };
 
   return {
     pageInfo: {
-      totalCount: () => totalCount,
-      hasNextPage: () => hasNextPage,
-      hasPreviousPage: () => hasPreviousPage,
+      totalCount: totalCountFn,
+      hasNextPage: hasNextPageFn,
+      hasPreviousPage: hasPreviousPageFn,
     },
-    edges: () => edges,
+    edges: edgesFn,
+    _resultsQueryText: resultSetQuery.toQuery(),
   };
 }
 
@@ -139,7 +166,7 @@ function serializeCursor(
 ): string {
   const cursor: Cursor = {};
   for (const [column, direction] of Object.entries(sortFields)) {
-    cursor[column] = [entity[column], direction];
+    cursor[column] = [direction, entity[column]];
   }
   return Buffer.from(JSON.stringify(cursor)).toString("base64");
 }

@@ -1,3 +1,4 @@
+import { node } from "execa";
 import { getTestConnection, destroyTestConnection } from "../db";
 
 import { buildConnectionResolver } from "./buildConnectionResolver";
@@ -72,6 +73,21 @@ it("returns the total count", async () => {
   });
   await expect(connection.pageInfo.totalCount()).resolves.toEqual(26);
   await expect(connection.pageInfo.totalCount()).resolves.not.toEqual(20);
+});
+
+it("type test", async () => {
+  const db = await getTestConnection();
+  const connection = await buildConnectionResolver<User>(db.table("users"), {
+    first: 10,
+  });
+
+  const edges = await connection.edges();
+  const nodes = edges.map((edge) => edge.node);
+
+  // @ts-expect-error
+  nodes[0].id = "fail";
+  // @ts-expect-error
+  nodes[0].name = 1;
 });
 
 describe("Basic sort by ID", () => {

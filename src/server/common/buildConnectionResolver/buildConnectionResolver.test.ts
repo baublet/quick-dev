@@ -86,25 +86,58 @@ describe("Basic sort by ID", () => {
     );
     await expect(connection.edges()).resolves.toEqual([
       {
-        cursor: "eyJpZCI6WyJhc2MiLDFdfQ==",
+        cursor: "eyJpZCI6MSwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDFdfX0=",
         node: { age: 26, id: 1, name: "Amy" },
       },
       {
-        cursor: "eyJpZCI6WyJhc2MiLDJdfQ==",
+        cursor: "eyJpZCI6MiwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDJdfX0=",
         node: { age: 25, id: 2, name: "Ben" },
       },
       {
-        cursor: "eyJpZCI6WyJhc2MiLDNdfQ==",
+        cursor: "eyJpZCI6MywiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDNdfX0=",
         node: { age: 24, id: 3, name: "Claire" },
       },
     ]);
+  });
+
+  it("resolves hasPreviousPage properly: has no previous page", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver(db.table("users"), {
+      first: 3,
+    });
+    await expect(connection.pageInfo.hasPreviousPage()).resolves.toEqual(false);
+  });
+
+  it("resolves hasPreviousPage properly: has a previous page", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver(db.table("users"), {
+      first: 3,
+      after: "eyJpZCI6MiwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDJdfX0=",
+    });
+    await expect(connection.pageInfo.hasPreviousPage()).resolves.toEqual(true);
+  });
+
+  it("resolves hasNextPage properly: has more results", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver(db.table("users"), {
+      first: 3,
+    });
+    await expect(connection.pageInfo.hasNextPage()).resolves.toEqual(true);
+  });
+
+  it("resolves hasNextPage properly: has no more results", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver(db.table("users"), {
+      last: 3,
+    });
+    await expect(connection.pageInfo.hasNextPage()).resolves.toEqual(true);
   });
 
   it("returns proper results: next 3 after the first 3", async () => {
     const db = await getTestConnection();
     const connection = await buildConnectionResolver(db.table("users"), {
       first: 3,
-      after: "eyJpZCI6WyJhc2MiLDNdfQ==",
+      after: "eyJpZCI6MywiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDNdfX0=",
     });
 
     expect(connection._resultsQueryText).toEqual(
@@ -112,15 +145,15 @@ describe("Basic sort by ID", () => {
     );
     await expect(connection.edges()).resolves.toEqual([
       {
-        cursor: "eyJpZCI6WyJhc2MiLDRdfQ==",
+        cursor: "eyJpZCI6NCwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDRdfX0=",
         node: { age: 23, id: 4, name: "Danielle" },
       },
       {
-        cursor: "eyJpZCI6WyJhc2MiLDVdfQ==",
+        cursor: "eyJpZCI6NSwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDVdfX0=",
         node: { age: 22, id: 5, name: "Earl" },
       },
       {
-        cursor: "eyJpZCI6WyJhc2MiLDZdfQ==",
+        cursor: "eyJpZCI6NiwiY3Vyc29yRGF0YSI6eyJpZCI6WyJhc2MiLDZdfX0=",
         node: { age: 21, id: 6, name: "Francis" },
       },
     ]);
@@ -143,15 +176,18 @@ describe("Multiple field sort", () => {
     );
     await expect(connection.edges()).resolves.toEqual([
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjZdLCJuYW1lIjpbImFzYyIsIkFteSJdfQ==",
+        cursor:
+          "eyJpZCI6MSwiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjZdLCJuYW1lIjpbImFzYyIsIkFteSJdfX0=",
         node: { age: 26, id: 1, name: "Amy" },
       },
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjVdLCJuYW1lIjpbImFzYyIsIkJlbiJdfQ==",
+        cursor:
+          "eyJpZCI6MiwiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjVdLCJuYW1lIjpbImFzYyIsIkJlbiJdfX0=",
         node: { age: 25, id: 2, name: "Ben" },
       },
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjRdLCJuYW1lIjpbImFzYyIsIkNsYWlyZSJdfQ==",
+        cursor:
+          "eyJpZCI6MywiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjRdLCJuYW1lIjpbImFzYyIsIkNsYWlyZSJdfX0=",
         node: { age: 24, id: 3, name: "Claire" },
       },
     ]);
@@ -161,7 +197,8 @@ describe("Multiple field sort", () => {
     const db = await getTestConnection();
     const connection = await buildConnectionResolver(db.table("users"), {
       first: 3,
-      after: "eyJhZ2UiOlsiZGVzYyIsMjRdLCJuYW1lIjpbImFzYyIsIkNsYWlyZSJdfQ==",
+      after:
+        "eyJpZCI6MywiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjRdLCJuYW1lIjpbImFzYyIsIkNsYWlyZSJdfX0=",
       sort: {
         age: "desc",
         name: "asc",
@@ -173,15 +210,18 @@ describe("Multiple field sort", () => {
     );
     await expect(connection.edges()).resolves.toEqual([
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjNdLCJuYW1lIjpbImFzYyIsIkRhbmllbGxlIl19",
+        cursor:
+          "eyJpZCI6NCwiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjNdLCJuYW1lIjpbImFzYyIsIkRhbmllbGxlIl19fQ==",
         node: { age: 23, id: 4, name: "Danielle" },
       },
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjJdLCJuYW1lIjpbImFzYyIsIkVhcmwiXX0=",
+        cursor:
+          "eyJpZCI6NSwiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjJdLCJuYW1lIjpbImFzYyIsIkVhcmwiXX19",
         node: { age: 22, id: 5, name: "Earl" },
       },
       {
-        cursor: "eyJhZ2UiOlsiZGVzYyIsMjFdLCJuYW1lIjpbImFzYyIsIkZyYW5jaXMiXX0=",
+        cursor:
+          "eyJpZCI6NiwiY3Vyc29yRGF0YSI6eyJhZ2UiOlsiZGVzYyIsMjFdLCJuYW1lIjpbImFzYyIsIkZyYW5jaXMiXX19",
         node: { age: 21, id: 6, name: "Francis" },
       },
     ]);

@@ -1,6 +1,4 @@
-import { node } from "execa";
 import { getTestConnection, destroyTestConnection } from "../db";
-
 import { buildConnectionResolver } from "./buildConnectionResolver";
 
 type User = {
@@ -241,5 +239,79 @@ describe("Multiple field sort", () => {
         node: { age: 21, id: 6, name: "Francis" },
       },
     ]);
+  });
+});
+
+describe("Before cursors", () => {
+  it("returns proper results: last 3", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver<User>(db.table("users"), {
+      last: 3,
+      sort: {
+        age: "desc",
+        name: "asc",
+      },
+    });
+
+    expect(connection._resultsQueryText).toEqual(
+      "select * from `users` order by `age` asc, `name` desc limit 3"
+    );
+    await expect(connection.edges()).resolves.toEqual([
+      {
+        cursor:
+          "eyJpZCI6MjYsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDFdLCJuYW1lIjpbImFzYyIsIlplYnVsb24iXX19",
+        node: { age: 1, id: 26, name: "Zebulon" },
+      },
+      {
+        cursor:
+          "eyJpZCI6MjUsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDJdLCJuYW1lIjpbImFzYyIsIll2b25uZSJdfX0=",
+        node: { age: 2, id: 25, name: "Yvonne" },
+      },
+      {
+        cursor:
+          "eyJpZCI6MjQsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDNdLCJuYW1lIjpbImFzYyIsIlhhbmRlciJdfX0=",
+        node: { age: 3, id: 24, name: "Xander" },
+      },
+    ]);
+
+    await expect(connection.pageInfo.hasPreviousPage()).resolves.toEqual(false);
+    await expect(connection.pageInfo.hasNextPage()).resolves.toEqual(true);
+  });
+
+  it("returns proper results: last 3 after the above last 3", async () => {
+    const db = await getTestConnection();
+    const connection = await buildConnectionResolver(db.table("users"), {
+      last: 3,
+      before:
+        "eyJpZCI6MjQsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDNdLCJuYW1lIjpbImFzYyIsIlhhbmRlciJdfX0=",
+      sort: {
+        age: "desc",
+        name: "asc",
+      },
+    });
+
+    expect(connection._resultsQueryText).toEqual(
+      "select * from `users` where `age` > 3 and `name` < 'Xander' order by `age` asc, `name` desc limit 3"
+    );
+    await expect(connection.edges()).resolves.toEqual([
+      {
+        cursor:
+          "eyJpZCI6MjMsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDRdLCJuYW1lIjpbImFzYyIsIldpbGxpYW0iXX19",
+        node: { age: 4, id: 23, name: "William" },
+      },
+      {
+        cursor:
+          "eyJpZCI6MjIsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDVdLCJuYW1lIjpbImFzYyIsIlZpb2xldCJdfX0=",
+        node: { age: 5, id: 22, name: "Violet" },
+      },
+      {
+        cursor:
+          "eyJpZCI6MjEsImN1cnNvckRhdGEiOnsiYWdlIjpbImRlc2MiLDZdLCJuYW1lIjpbImFzYyIsIlVscmljaCJdfX0=",
+        node: { age: 6, id: 21, name: "Ulrich" },
+      },
+    ]);
+
+    await expect(connection.pageInfo.hasPreviousPage()).resolves.toEqual(true);
+    await expect(connection.pageInfo.hasNextPage()).resolves.toEqual(true);
   });
 });

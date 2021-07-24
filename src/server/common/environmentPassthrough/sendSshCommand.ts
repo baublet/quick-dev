@@ -41,19 +41,21 @@ export function sendSshCommand({
       });
 
       const writeBuffer = async () => {
-        if (!environmentCommandId || !environmentId) {
-          return;
-        }
-        if (buffer.length === 0) {
-          return;
-        }
-        const toWrite = buffer;
-        buffer = "";
-        await environmentCommandLog.create(db, {
-          environmentCommandId,
-          environmentId,
-          logOutput: toWrite,
-        });
+        try {
+          if (!environmentCommandId || !environmentId) {
+            return;
+          }
+          if (buffer.length === 0) {
+            return;
+          }
+          const toWrite = buffer;
+          buffer = "";
+          await environmentCommandLog.create(db, {
+            environmentCommandId,
+            environmentId,
+            logOutput: toWrite,
+          });
+        } catch (e) {}
       };
 
       const bufferWriter = setInterval(async () => {

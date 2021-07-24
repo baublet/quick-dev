@@ -7,7 +7,8 @@ import { log } from "../../../../common/logger";
 import { enqueueJob } from "../../enqueueJob";
 import { getExternalEnvironmentHandler } from "../../externalEnvironmentHandler";
 import { getRepoStrapYardFile } from "../../gitHub";
-import { environment as envEntity } from "../../entities";
+import { environment as envEntity, repositories } from "../../entities";
+import { getRepositoryByUrl } from "../../gitHub";
 
 export async function setNew({
   context,
@@ -23,7 +24,7 @@ export async function setNew({
     throw new Error(`You must be logged in to create new environments`);
   }
 
-  return context.db.transaction(async (trx) => {
+  const operation = await context.db.transaction(async (trx) => {
     let sshKeyId: string;
     try {
       const providerKey = await getExternalEnvironmentHandler({
@@ -60,8 +61,19 @@ export async function setNew({
       subdomain,
       userId: user.user.id,
     });
-    await enqueueJob("createEnvironmentCommands", {
-      environmentId: environment.id,
+
+    const repositoryInSource = await getRepositoryByUrl(context, {
+      repositoryUrl: input.repositoryUrl,
+    });
+    await repositories.upsertRepository(trx, {
+      use: true,
+      userId: user.user.id,
+      gitUrl: repositoryInSource.gitUrl,
+      htmlUrl: repositoryInSource.htmlUrl,
+      name: repositoryInSource.name,
+      source: "github",
+      sourceId: repositoryInSource.id,
+      isPrivate: repositoryInSource.private,
     });
 
     return {
@@ -70,4 +82,13 @@ export async function setNew({
       environment: environment,
     };
   });
+
+  const environment = operation.environment;
+  if (operation.operationSuccess && environment) {
+    await enqueueJob("createEnvironmentCommands", {
+      environmentId: environment.id,
+    });
+  }
+
+  return operation;
 }

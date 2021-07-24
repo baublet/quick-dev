@@ -12,7 +12,7 @@ export async function processCreatingEnvironment(
   // the environment in the external provider. This is a big error, so move the
   // environment to failed...
   if (!environment.sourceId) {
-    await environmentStateMachine.setErrorProvisioning({
+    await environmentStateMachine.setErrorCreating({
       trx,
       environment,
     });
@@ -20,7 +20,7 @@ export async function processCreatingEnvironment(
   }
 
   try {
-    const canProvision = await environmentStateMachine.canSetProvisioning({
+    const canProvision = await environmentStateMachine.canSetErrorCreating({
       trx,
       environment,
     });

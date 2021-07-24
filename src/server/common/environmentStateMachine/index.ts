@@ -19,6 +19,7 @@ import {
   canSetStartingFromSnapshot,
   setStartingFromSnapshot,
 } from "./setStartingFromSnapshot";
+import { canSetErrorCreating, setErrorCreating } from "./setErrorCreating";
 
 export interface StateMachineReturnValue {
   operationSuccess: boolean;
@@ -32,6 +33,9 @@ export const environmentStateMachine = {
 
   canSetCreating,
   setCreating,
+
+  canSetErrorCreating,
+  setErrorCreating,
 
   canSetProvisioning,
   setProvisioning,

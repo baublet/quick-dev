@@ -33,7 +33,7 @@ export const newEnvironment: ExternalEnvironmentHandler["newEnvironment"] = asyn
       name,
       region: "nyc3",
       size,
-      image: environment.sourceSnapshotId || "ubuntu-16-04-x64",
+      image: environment.sourceSnapshotId || "ubuntu-20-04-x64",
       ssh_keys: [providerSshKey.sourceId],
       tags: [environment.id],
     };

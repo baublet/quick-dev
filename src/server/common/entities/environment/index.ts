@@ -3,6 +3,7 @@ import { ImageSlug } from "../../strapYardFile/images";
 export type EnvironmentLifecycleStatus =
   | "new"
   | "creating"
+  | "error_creating"
   | "provisioning"
   | "error_provisioning"
   | "finished_provisioning"

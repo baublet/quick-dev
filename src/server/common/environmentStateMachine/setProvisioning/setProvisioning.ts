@@ -40,6 +40,7 @@ export async function setProvisioning({
       });
     }
     await envEntity.update(trx, environment.id, {
+      sourceId: environmentInProvider.id,
       lifecycleStatus: "provisioning",
       ipv4,
     });

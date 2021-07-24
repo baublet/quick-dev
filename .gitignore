@@ -2,7 +2,6 @@ builtServer/*
 builtWeb/*
 builtProvisioner/*
 .env
-.ngrokDomain
 tmp/*
 generated.ts
 thing*.json

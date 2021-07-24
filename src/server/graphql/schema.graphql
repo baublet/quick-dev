@@ -110,6 +110,7 @@ type User {
   email: String!
   repositories: Repositories!
   environments: EnvironmentConnection!
+  avatarUrl: String
 }
 
 input EnvironmentInput {

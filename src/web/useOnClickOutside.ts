@@ -7,8 +7,18 @@ export function useOnClickOutside(
   React.useEffect(
     () => {
       const listener = (event: MouseEvent | TouchEvent) => {
-        // Do nothing if clicking ref's element or descendent elements
-        if (!ref?.current?.contains(event.target)) {
+        const element = ref.current;
+        // No ref? Do nothing
+        if (!element) {
+          return;
+        }
+
+        // Do nothing if clicking ref's element or descendent elements contain
+        // the target element
+        console.log({
+          target: event.target,
+        });
+        if (element.contains(event.target)) {
           return;
         }
 

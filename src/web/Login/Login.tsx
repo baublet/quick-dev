@@ -2,6 +2,7 @@ import React from "react";
 
 import { useAuth } from "../useAuth";
 import { useCurrentUser } from "../useCurrentUser";
+import { Link } from "../components/Link";
 
 export function Login() {
   const { gitHubLink } = useAuth();
@@ -15,7 +16,7 @@ export function Login() {
       <h2>Login</h2>
       <ul>
         <li>
-          <a href={gitHubLink}>Sign in with GitHub</a>
+          <Link to={gitHubLink}>Sign in with GitHub</Link>
         </li>
       </ul>
     </div>

@@ -3,5 +3,6 @@ query CurrentUser {
     id
     name
     email
+    avatarUrl
   }
 }

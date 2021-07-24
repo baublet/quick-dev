@@ -29,6 +29,8 @@ export function useCurrentUser() {
     }
   }, [data?.user]);
 
+  console.log({ data });
+
   if (loading) {
     return { loading: true, authenticated: false };
   }

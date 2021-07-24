@@ -14,7 +14,13 @@ export function UserAvatar({
       style={{ width: 42, height: 42 }}
       className="rounded-full overflow-hidden"
     >
-      {avatarUrl ? <img src={avatarUrl} /> : <Avatar />}
+      {avatarUrl ? (
+        <img src={avatarUrl} />
+      ) : (
+        <div style={{ transform: "translate(0, 5px)" }}>
+          <Avatar />
+        </div>
+      )}
     </div>
   );
 }

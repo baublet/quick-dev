@@ -17,6 +17,12 @@ applyGraphqlMiddleware(app).then(() => {
   // Send any static assets
   app.use(express.static(path.resolve(process.cwd(), "builtWeb")));
 
+  // Log out
+  app.get("/logout", (request, response) => {
+    response.clearCookie("auth");
+    response.sendFile(path.resolve(process.cwd(), "builtWeb", "index.html"));
+  });
+
   // Finally, if all else fails, send the index for the FE to try to route it
   app.get("*", (request, response) => {
     response.sendFile(path.resolve(process.cwd(), "builtWeb", "index.html"));

@@ -45,9 +45,13 @@ export function UserProfilePanel() {
       </button>
       <div className={profilePanelClassName}>
         {user && <>{user.name}</>}
-        {!authenticated && (
+        {!authenticated ? (
           <ProfilePanelLink to={gitHubLink} external={true}>
             Sign in with GitHub
+          </ProfilePanelLink>
+        ) : (
+          <ProfilePanelLink to="/logout" external={true}>
+            Logout
           </ProfilePanelLink>
         )}
       </div>

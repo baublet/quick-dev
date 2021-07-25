@@ -15,9 +15,6 @@ export function useOnClickOutside(
 
         // Do nothing if clicking ref's element or descendent elements contain
         // the target element
-        console.log({
-          target: event.target,
-        });
         if (element.contains(event.target)) {
           return;
         }

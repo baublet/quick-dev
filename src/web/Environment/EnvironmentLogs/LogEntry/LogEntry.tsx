@@ -7,6 +7,7 @@ import type { EnvironmentCommand } from "../../../../server/common/entities";
 import { LogOutput } from "../../../components/LogOutput";
 import { StatusIndicator } from "../../../components/StatusIndicator";
 import { useGetEnvironmentCommandLogsLazyQuery } from "../../../generated";
+import { MoreButton } from "./MoreButton";
 import { LogEntryProps } from ".";
 
 const hasLogs: Record<EnvironmentCommand["status"], boolean> = {
@@ -81,15 +82,24 @@ export function LogEntry({
   const [lastCursor, setLastCursor] = React.useState<string>();
   const [firstCursor, setFirstCursor] = React.useState<string>();
   const [logData, setLogData] = React.useState("");
+  const [hasMoreHead, setHasMoreHead] = React.useState<boolean>();
+  const [hasMoreTail, setHasMoreTail] = React.useState<boolean>();
 
   const [
     tail,
     { loading: tailLoading },
   ] = useGetEnvironmentCommandLogsLazyQuery({
+    fetchPolicy: "network-only",
     onError: (error) => console.error(error),
     onCompleted: (data) => {
+      console.log({ data });
       const results = data?.environmentCommandLogs?.edges || [];
+      console.log({ status });
       if (results.length === 0) {
+        if (status === "success" || status === "failed") {
+          console.log("no more tail");
+          setHasMoreTail(false);
+        }
         return;
       }
       setLogData(
@@ -99,6 +109,22 @@ export function LogEntry({
       if (!firstCursor) {
         setFirstCursor(results[0].cursor);
       }
+      if (hasMoreHead === undefined) {
+        setHasMoreHead(
+          Boolean(data.environmentCommandLogs?.pageInfo.hasPreviousPage)
+        );
+      }
+      if (status === "failed" || status === "success") {
+        console.log(
+          "setting failski --hasnextpage ",
+          Boolean(data.environmentCommandLogs?.pageInfo.hasNextPage)
+        );
+        setHasMoreTail(
+          Boolean(data.environmentCommandLogs?.pageInfo.hasNextPage)
+        );
+      } else if (status === "running") {
+        setHasMoreTail(true);
+      }
     },
   });
 
@@ -106,46 +132,32 @@ export function LogEntry({
     head,
     { loading: headLoading },
   ] = useGetEnvironmentCommandLogsLazyQuery({
+    fetchPolicy: "network-only",
     onError: (error) => console.error(error),
     onCompleted: (data) => {
+      console.log({ data });
       const results = data?.environmentCommandLogs?.edges || [];
       if (results.length === 0) {
+        if (status === "success" || status === "failed") {
+          setHasMoreHead(false);
+        }
         return;
       }
       setLogData(
         (data) => results.map((result) => result.node.logOutput).join("") + data
       );
       setFirstCursor(results[0].cursor);
+      setHasMoreHead(
+        Boolean(data.environmentCommandLogs?.pageInfo.hasPreviousPage)
+      );
     },
   });
-
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (!tailInView) {
-  //       return;
-  //     }
-  //     if (!hasLogs[status]) {
-  //       return;
-  //     }
-  //     if (tailLoading) {
-  //       return;
-  //     }
-  //     tail({
-  //       variables: {
-  //         last: 10,
-  //         before: lastCursor,
-  //         commandId,
-  //       },
-  //     });
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, [tailInView, lastCursor]);
 
   // By default, load the last 100 lines
   React.useEffect(() => {
     tail({
       variables: {
-        last: 5,
+        last: 100,
         commandId,
       },
     });
@@ -171,33 +183,48 @@ export function LogEntry({
       </div>
       <Route path={logExpandedPath}>
         <div className="mt-2">
-          <button
-            onClick={() => {
-              head({
-                variables: {
-                  last: 5,
-                  before: firstCursor,
-                  commandId,
-                },
-              });
-            }}
-          >
-            More
-          </button>
-          <LogOutput logText={logData} footer={<div ref={tailRef} />} />
-          <button
-            onClick={() => {
-              tail({
-                variables: {
-                  first: 5,
-                  after: lastCursor,
-                  commandId,
-                },
-              });
-            }}
-          >
-            More
-          </button>
+          <LogOutput
+            logText={logData}
+            header={
+              <MoreButton
+                type="head"
+                disabled={!hasMoreHead}
+                onClick={() => {
+                  console.log("wut");
+                  head({
+                    variables: {
+                      last: 500,
+                      before: firstCursor,
+                      commandId,
+                    },
+                  });
+                }}
+              >
+                More
+              </MoreButton>
+            }
+            footer={
+              <>
+                <div ref={tailRef} />{" "}
+                <MoreButton
+                  type="tail"
+                  disabled={!hasMoreTail}
+                  onClick={() => {
+                    console.log("tailin");
+                    tail({
+                      variables: {
+                        first: 500,
+                        after: lastCursor,
+                        commandId,
+                      },
+                    });
+                  }}
+                >
+                  More
+                </MoreButton>
+              </>
+            }
+          />
         </div>
       </Route>
     </div>

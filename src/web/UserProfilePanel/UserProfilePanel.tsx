@@ -21,16 +21,11 @@ export function UserProfilePanel() {
   );
   const icon = profilePanelOpen ? "▴" : "▾";
 
-  useOnClickOutside(panelRef, () => {
-    console.log("Click outside");
-    setProfilePanelOpen(false);
-  });
+  useOnClickOutside(panelRef, () => setProfilePanelOpen(false));
 
   if (loading) {
     return null;
   }
-
-  console.log({ user });
 
   return (
     <div className="relative hover:bg-gray-100 rounded-lg" ref={panelRef}>

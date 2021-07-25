@@ -6,14 +6,15 @@ import { EnvironmentCommandLogsNodeInput } from "../../generated";
 import {
   buildConnectionResolver,
   Connection,
-} from "../../common/buildConnectionResolver";
+} from "../../../common/buildConnectionResolver";
 import { Context } from "../../../common/context";
 
 export function environmentCommandLogs(
   parent: EnvironmentCommand,
-  { input }: { input: EnvironmentCommandLogsNodeInput },
+  { input: incomingInput }: { input: EnvironmentCommandLogsNodeInput },
   context: Context
 ): Promise<Connection<EnvironmentCommandLog>> {
+  const input = incomingInput || {};
   const query = context
     .db<EnvironmentCommandLog>("environmentCommandLogs")
     .where("environmentId", "=", parent.environmentId)

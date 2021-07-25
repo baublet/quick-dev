@@ -139,10 +139,15 @@ export async function buildConnectionResolver<T>(
 
         const results = await resultSetQuery;
         for (const result of results) {
-          edges.push({
+          const edge = {
             cursor: serializeCursor(result, idProp, sort),
             node: result,
-          });
+          };
+          if (isBeforeQuery) {
+            edges.unshift(edge);
+          } else {
+            edges.push(edge);
+          }
         }
 
         resolve(edges);
@@ -156,8 +161,11 @@ export async function buildConnectionResolver<T>(
     if (!hasNextPage) {
       hasNextPage = new Promise<boolean>(async (resolve) => {
         const resolvedEdges = await edgesFn();
+
+        const lastSubsetResultEdge: undefined | { node: Record<string, any> } =
+          resolvedEdges[resolvedEdges.length - 1];
         const lastSubsetResult: undefined | Record<string, any> =
-          resolvedEdges[resolvedEdges.length - 1].node;
+          lastSubsetResultEdge?.node;
 
         if (!lastSubsetResult) {
           return resolve(false);
@@ -185,8 +193,10 @@ export async function buildConnectionResolver<T>(
     if (!hasPreviousPage) {
       hasPreviousPage = new Promise<boolean>(async (resolve) => {
         const resolvedEdges = await edgesFn();
+        const firstSubsetResultEdge: undefined | { node: Record<string, any> } =
+          resolvedEdges[0];
         const firstSubsetResult: undefined | Record<string, any> =
-          resolvedEdges[0].node;
+          firstSubsetResultEdge?.node;
 
         if (!firstSubsetResult) {
           return resolve(false);

@@ -90,6 +90,11 @@ export function sendSshCommand({
           stream
             .on("close", async (code: number, signal: string) => {
               connection.end();
+              buffer =
+                buffer +
+                `${new Date().toISOString()}: ${
+                  signal ? signal + " " : ""
+                }}Exited with code ${code}`;
               await cancelTimers();
               resolve({
                 error: false,
@@ -99,10 +104,10 @@ export function sendSshCommand({
               });
             })
             .on("data", (data: string) => {
-              buffer = buffer + data;
+              buffer = buffer + `${new Date().toISOString()}: ` + data;
             })
             .stderr.on("data", (data: string) => {
-              buffer = buffer + data;
+              buffer = buffer + `${new Date().toISOString()}: ` + data;
             });
         }
       );

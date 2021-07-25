@@ -92,12 +92,9 @@ export function LogEntry({
     fetchPolicy: "network-only",
     onError: (error) => console.error(error),
     onCompleted: (data) => {
-      console.log({ data });
       const results = data?.environmentCommandLogs?.edges || [];
-      console.log({ status });
       if (results.length === 0) {
         if (status === "success" || status === "failed") {
-          console.log("no more tail");
           setHasMoreTail(false);
         }
         return;

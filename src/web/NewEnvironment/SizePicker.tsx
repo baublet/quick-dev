@@ -63,7 +63,7 @@ export function SizePicker({ formState }: { formState: FormState }) {
 
   return (
     <>
-      <H4>Size</H4>
+      <H4 className="mt-4">Size</H4>
       <div className="overflow-x-auto">
         <div className="flex px-2 py-4">
           <SizeButton size={"s"} checked={checked("s")} setSize={setSize} />

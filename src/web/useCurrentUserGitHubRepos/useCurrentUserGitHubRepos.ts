@@ -3,7 +3,23 @@ import { useCurrentUserGitHubReposQuery } from "../generated";
 export function useCurrentUserGitHubRepos(
   page: number = 1,
   perPage: number = 10
-) {
+): {
+  loading: boolean;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  repositories: {
+    id: string;
+    name: string;
+    gitUrl: string;
+    htmlUrl: string;
+  }[];
+  popular: {
+    id: string;
+    name: string;
+    gitUrl: string;
+    htmlUrl: string;
+  }[];
+} {
   const { loading, data } = useCurrentUserGitHubReposQuery({
     variables: {
       page,
@@ -17,6 +33,7 @@ export function useCurrentUserGitHubRepos(
       repositories: [],
       hasPreviousPage: false,
       hasNextPage: false,
+      popular: [],
     };
   }
 
@@ -30,5 +47,6 @@ export function useCurrentUserGitHubRepos(
     hasPreviousPage,
     hasNextPage,
     repositories: nodes,
+    popular: data?.user?.repositories.popularGitHubRepos.nodes || [],
   };
 }

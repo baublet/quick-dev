@@ -23,8 +23,39 @@ type Mutation {
   ): EnvironmentMutationPayload!
 }
 
+######################
+# Scalars and enums  #
+######################
+
 scalar Date
 scalar ID
+
+enum EnvironmentCommandStatus {
+  cancelled
+  ready
+  running
+  sending
+  failed
+  success
+}
+
+enum EnvironmentLifecycleStatus {
+  new
+  creating
+  error_creating
+  provisioning
+  finished_provisioning
+  error_provisioning
+  ready
+  stopping
+  stopped
+  snapshotting
+  starting_from_snapshot
+}
+
+##################
+#     Inputs     #
+##################
 
 input EnvironmentCommandLogsInput {
   environmentCommandId: ID!
@@ -50,73 +81,29 @@ input StartEnvironmentMutationInput {
   id: ID!
 }
 
-type EnvironmentMutationPayload {
-  errors: [String!]!
-  environment: Environment
-}
-
-enum EnvironmentCommandStatus {
-  cancelled
-  ready
-  running
-  sending
-  failed
-  success
-}
-
-enum EnvironmentLifecycleStatus {
-  new
-  creating
-  error_creating
-  provisioning
-  finished_provisioning
-  error_provisioning
-  ready
-  stopping
-  stopped
-  snapshotting
-  starting_from_snapshot
-}
-
-type Environment {
-  created: Date!
-  deleted: Boolean!
-  id: ID!
-  image: String!
-  ipv4: String
-  lifecycleStatus: EnvironmentLifecycleStatus!
-  logs: EnvironmentLogsConnection
-  name: String!
-  permissions: EnvironmentPermissions!
-  repositoryUrl: String!
-  repositoryHttpUrl: String!
-  size: String!
-  subdomain: String!
-  updated: Date!
-  url: String!
-  secret: String
-  working: Boolean!
-}
-
-type EnvironmentPermissions {
-  canDelete: Boolean!
-  canOpen: Boolean!
-  canStop: Boolean!
-  canStart: Boolean!
-}
-
-type User {
-  id: ID!
-  name: String!
-  email: String!
-  repositories: Repositories!
-  environments: EnvironmentConnection!
-  avatarUrl: String
-}
-
 input EnvironmentInput {
   id: ID!
 }
+
+input PaginationInput {
+  perPage: Int
+  page: Int
+}
+
+input UserRepositoryInputFilters {
+  popular: Boolean
+}
+
+input EnvironmentCommandLogsNodeInput {
+  first: Int
+  after: String
+  last: Int
+  before: String
+}
+
+###################
+#     Types       #
+###################
 
 type Repository {
   id: ID!
@@ -125,20 +112,11 @@ type Repository {
   htmlUrl: String!
 }
 
-input PaginationInput {
-  perPage: Int
-  page: Int
-}
-
 type Repositories {
-  gitHub(input: PaginationInput): RepositoryConnection!
-}
-
-input EnvironmentCommandLogsNodeInput {
-  first: Int
-  after: String
-  last: Int
-  before: String
+  gitHub(
+    filter: UserRepositoryInputFilters
+    pageOptions: PaginationInput
+  ): RepositoryConnection!
 }
 
 type EnvironmentCommand {
@@ -212,4 +190,45 @@ type JobEdge {
 
 type JobConnection {
   edges: [JobEdge!]!
+}
+
+type EnvironmentMutationPayload {
+  errors: [String!]!
+  environment: Environment
+}
+
+type Environment {
+  created: Date!
+  deleted: Boolean!
+  id: ID!
+  image: String!
+  ipv4: String
+  lifecycleStatus: EnvironmentLifecycleStatus!
+  logs: EnvironmentLogsConnection
+  name: String!
+  permissions: EnvironmentPermissions!
+  repositoryUrl: String!
+  repositoryHttpUrl: String!
+  size: String!
+  subdomain: String!
+  updated: Date!
+  url: String!
+  secret: String
+  working: Boolean!
+}
+
+type EnvironmentPermissions {
+  canDelete: Boolean!
+  canOpen: Boolean!
+  canStop: Boolean!
+  canStart: Boolean!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  repositories(input: UserRepositoryInputFilters): Repositories!
+  environments: EnvironmentConnection!
+  avatarUrl: String
 }

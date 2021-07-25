@@ -10,3 +10,4 @@
 - Copy icon by Fengquan Li from the Noun Project
 - Checkmark icon by Cahaya Malam from the Noun Project
 - avatar by pejyt from the Noun Project
+- link by Creaticca Creative Agency from the Noun Project

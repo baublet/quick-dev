@@ -9,6 +9,7 @@ export async function getPopularRepositories(db: Connection, userId: string) {
     })
     .limit(5)
     .orderBy("uses")
+    .orderBy("updated_at")
     .returning("*");
 
   return environments;

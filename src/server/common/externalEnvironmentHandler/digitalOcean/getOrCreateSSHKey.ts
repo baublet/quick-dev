@@ -106,6 +106,7 @@ async function saveKeyInDigitalOcean({
   }>({
     path: "account/keys",
     expectStatus: 201,
+    timeout: 5000,
     method: "post",
     body: {
       name: keyTitle,

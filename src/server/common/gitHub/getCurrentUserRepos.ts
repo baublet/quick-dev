@@ -7,6 +7,7 @@ interface GitHubRepoResponse {
   private: boolean;
   url: string;
   git_url: string;
+  html_url: string;
 }
 
 export interface GitHubRepo {
@@ -52,7 +53,7 @@ export async function getCurrentUserRepos(
       id: `${repo.id}`,
       name: repo.full_name,
       private: repo.private,
-      htmlUrl: repo.url,
+      htmlUrl: repo.html_url,
       gitUrl: repo.git_url,
     }));
 

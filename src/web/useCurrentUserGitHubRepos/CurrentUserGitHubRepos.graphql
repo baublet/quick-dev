@@ -1,7 +1,18 @@
 query CurrentUserGitHubRepos($page: Int!, $perPage: Int!) {
   user {
     repositories {
-      gitHub(input: { page: $page, perPage: $perPage }) {
+      popularGitHubRepos: gitHub(
+        filter: { popular: true }
+        pageOptions: { page: 1, perPage: 10 }
+      ) {
+        nodes {
+          id
+          name
+          gitUrl
+          htmlUrl
+        }
+      }
+      gitHub(pageOptions: { page: $page, perPage: $perPage }) {
         totalCount
         currentPage
         hasNextPage

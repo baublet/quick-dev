@@ -39,6 +39,7 @@ export function RepositoryPicker({ formState }: { formState: FormState }) {
                   type="radio"
                   checked={formState.repository?.gitUrl === repo.gitUrl}
                   className="mr-2"
+                  readOnly
                 />
                 <label
                   className="cursor-pointer border-b-2 border-opacity-0 hover:border-opacity-100 border-blue-400"
@@ -79,6 +80,7 @@ export function RepositoryPicker({ formState }: { formState: FormState }) {
                     type="radio"
                     checked={formState.repository?.gitUrl === repo.gitUrl}
                     className="mr-2"
+                    readOnly
                   />
                   <label
                     className="cursor-pointer border-b-2 border-opacity-0 hover:border-opacity-100 border-blue-400"

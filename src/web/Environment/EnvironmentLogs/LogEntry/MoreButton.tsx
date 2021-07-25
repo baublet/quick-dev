@@ -24,7 +24,7 @@ export function MoreButton({
           }
         )}
       >
-        {children} {disabled ? "disabled" : ""}
+        {children}
       </button>
     </>
   );

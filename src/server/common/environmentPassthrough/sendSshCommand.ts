@@ -94,7 +94,7 @@ export function sendSshCommand({
                 buffer +
                 `${new Date().toISOString()}: ${
                   signal ? signal + " " : ""
-                }}Exited with code ${code}`;
+                }Exited with code ${code}`;
               await cancelTimers();
               resolve({
                 error: false,

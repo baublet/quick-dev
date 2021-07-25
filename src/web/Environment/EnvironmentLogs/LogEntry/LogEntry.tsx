@@ -76,9 +76,6 @@ export function LogEntry({
       ? `/environment/${environmentId}/logs/`
       : logExpandedPath;
 
-  const [tailRef, tailInView] = useInView();
-  const [headRef, headInView] = useInView();
-
   const [lastCursor, setLastCursor] = React.useState<string>();
   const [firstCursor, setFirstCursor] = React.useState<string>();
   const [logData, setLogData] = React.useState("");
@@ -112,10 +109,6 @@ export function LogEntry({
         );
       }
       if (status === "failed" || status === "success") {
-        console.log(
-          "setting failski --hasnextpage ",
-          Boolean(data.environmentCommandLogs?.pageInfo.hasNextPage)
-        );
         setHasMoreTail(
           Boolean(data.environmentCommandLogs?.pageInfo.hasNextPage)
         );
@@ -132,7 +125,6 @@ export function LogEntry({
     fetchPolicy: "network-only",
     onError: (error) => console.error(error),
     onCompleted: (data) => {
-      console.log({ data });
       const results = data?.environmentCommandLogs?.edges || [];
       if (results.length === 0) {
         if (status === "success" || status === "failed") {
@@ -187,7 +179,6 @@ export function LogEntry({
                 type="head"
                 disabled={!hasMoreHead}
                 onClick={() => {
-                  console.log("wut");
                   head({
                     variables: {
                       last: 500,
@@ -202,12 +193,10 @@ export function LogEntry({
             }
             footer={
               <>
-                <div ref={tailRef} />{" "}
                 <MoreButton
                   type="tail"
                   disabled={!hasMoreTail}
                   onClick={() => {
-                    console.log("tailin");
                     tail({
                       variables: {
                         first: 500,

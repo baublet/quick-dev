@@ -17,6 +17,7 @@ export function SubmitButton({
 }) {
   return (
     <button
+      type="button"
       {...props}
       className={cx(
         "border px-6 py-4 rounded text-l font-bold relative",

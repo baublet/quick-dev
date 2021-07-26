@@ -1,0 +1,10 @@
+mutation createEnvironment($repo: String!) {
+  createEnvironment(input: { repositoryUrl: $repo }) {
+    errors
+    environment {
+      lifecycleStatus
+      id
+      name
+    }
+  }
+}

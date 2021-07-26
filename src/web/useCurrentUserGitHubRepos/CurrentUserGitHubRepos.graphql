@@ -1,5 +1,6 @@
 query CurrentUserGitHubRepos($page: Int!, $perPage: Int!) {
   user {
+    id
     repositories {
       popularGitHubRepos: gitHub(
         filter: { popular: true }

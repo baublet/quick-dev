@@ -30,7 +30,9 @@ export function NewEnvironment() {
       <RepositoryPicker formState={formState} />
       <SizePicker formState={formState} />
       <VSpace />
-      <SubmitButton>Create Environment</SubmitButton>
+      <SubmitButton onClick={() => formState.save()}>
+        Create Environment
+      </SubmitButton>
     </form>
   );
 }

@@ -1,1 +1,0 @@
-export { processEnvironment } from "./processEnvironment";

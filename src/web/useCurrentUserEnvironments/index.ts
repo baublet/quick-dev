@@ -1,1 +1,0 @@
-export { useCurrentUserEnvironments } from "./useCurrentUserEnvironments";

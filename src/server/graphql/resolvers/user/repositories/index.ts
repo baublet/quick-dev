@@ -1,1 +1,0 @@
-export { repositories } from "./repositories";

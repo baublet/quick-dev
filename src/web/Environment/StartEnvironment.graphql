@@ -1,9 +1,0 @@
-mutation startEnvironment($id: ID!) {
-  startEnvironment(input: { id: $id }) {
-    errors
-    environment {
-      id
-      lifecycleStatus
-    }
-  }
-}

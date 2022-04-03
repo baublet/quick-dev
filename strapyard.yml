@@ -1,6 +1,6 @@
 name: StrapYard
 description: Develop StrapYard.... with StrapYard!
-steps:
+environment:
   - name: Install NVM
     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
@@ -12,3 +12,4 @@ steps:
 
   - name: Install Dependencies
     command: yarn
+

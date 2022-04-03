@@ -7,8 +7,8 @@ import { Request, Response } from "express";
 
 import { authenticateRequest } from "./authentication/authenticateRequest";
 import { log } from "./config/log";
-import { UserAccountEntity } from "./dataServices";
 import { UserEntity } from "./dataServices/user";
+export { UserAccountEntity } from "./dataServices/userAccount";
 import { getClientId } from "./helpers";
 
 export interface Context {
